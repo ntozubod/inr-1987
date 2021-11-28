@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1985, J Howard Johnson, University of Waterloo.
+ * Copyright (c) 1987, J Howard Johnson, University of Waterloo.
  *
  * This software was developed while I was a student and, later, professor
  * at the University of Waterloo.  It has only minimal enhancements and bug

@@ -1,3 +1,4 @@
+extern S_flag;
 /*
  * Copyright (c) 1985, J Howard Johnson, University of Waterloo.
  *
@@ -22,8 +23,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-extern S_flag;
 
 #include <stdio.h>
 
