@@ -1,11 +1,13 @@
-diff src/Aload.c try1/Aload.c
+diff -r 01_ref/1.1f/Aload.c src/1.1f/Aload.c
 48c48
-<        FILE *fpin, *fpout;
+< FILE *fpin = stdin, *fpout = stdout;
 ---
->        FILE *fpin = stdin, *fpout = stdout;
-diff src/local.h try1/local.h
+> FILE *fpin, *fpout;
+diff -r 01_ref/1.1f/local.h src/1.1f/local.h
 26c26
-< /* #define VAX */
+< #define VAX
 ---
-> #define VAX
-Only in try1: y.tab.c
+> /* #define VAX */
+Only in 01_ref/1.1f: y.tab.c
+Only in 01_ref: doc
+Only in 01_ref: egs
