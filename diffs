@@ -9,5 +9,22 @@ diff -r 01_ref/1.1f/local.h src/1.1f/local.h
 ---
 > /* #define VAX */
 Only in 01_ref/1.1f: y.tab.c
+diff -r 01_ref/2.0e/Aload.c src/2.0e/Aload.c
+48c48
+< FILE *fpin = stdin, *fpout = stdout;
+---
+> FILE *fpin, *fpout;
+diff -r 01_ref/2.0e/Makefile src/2.0e/Makefile
+49c49
+< 	rm $(OFILES) y.tab.c
+---
+> 	rm $(OFILES) y.tab.c y.tab.h
+diff -r 01_ref/2.0e/local.h src/2.0e/local.h
+26c26
+< #define VAX
+---
+> /* #define VAX */
+Only in 01_ref/2.0e: y.tab.c
+Only in 01_ref/2.0e: y.tab.h
 Only in 01_ref: doc
 Only in 01_ref: egs

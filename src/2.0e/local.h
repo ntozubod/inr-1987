@@ -23,5 +23,5 @@
  *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define VAX
+/* #define VAX */
 #define UNIX
