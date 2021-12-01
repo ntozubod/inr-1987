@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include "local.h"
 
-extern FILE *fpout;
+extern FILE *fpin, *fpout;
 
 typedef struct S_f {
     unsigned    S_linkb : 26;
@@ -54,13 +54,15 @@ static S_ft *S_lo = 0,
 
 static int   S_alld_cnt[S_m];
 
-#ifdef UNIX
+#ifdef USE_SBRK
 extern char *sbrk();
-#endif
-
+#else
 #ifdef CMS
 extern char *_getmain();
 int    CMSmem = 0;
+#else
+int    LINUXmem = 0;
+#endif
 #endif
 
 /*
@@ -117,10 +119,10 @@ void S_init()
     register S_ft *p;
     register int i;
     if ( S_lo == 0 ) {
-#ifdef UNIX
+#ifdef USE_SBRK
         (void) sbrk( -(int)sbrk(0) & 0x3ff );
         S_lo = S_hi = (S_ft *) sbrk(0);
-#endif
+#else
 #ifdef CMS
         for( CMSmem = 16 * 1024 * 1024; S_lo == 0; ) {
             if ( CMSmem > 4 * 1024 * 1024 )
@@ -128,6 +130,15 @@ void S_init()
             else    CMSmem -= 128 * 1024;
             S_lo = S_hi = (S_ft *) _getmain( CMSmem );
         }
+#else
+        int mem = 0;
+        for( mem = 512 * 1024 * 1024; S_lo == 0; mem /= 2 ) {
+            LINUXmem = mem;
+            S_lo = S_hi = (S_ft *) malloc( mem + 16 );
+        }
+#endif
+        if ( !fpin ) fpin = stdin;
+        if ( !fpout ) fpout = stdout;
         fflush( fpout );
 #endif
         set_linkf( p = &S_avail[ S_m ], 0 );
@@ -170,7 +181,7 @@ register int k;
 
     register int a, b;
     register S_ft *p;
-#ifdef UNIX
+#ifdef USE_SBRK
     if ( k < 7 ) k = 7;
     a = S_hi - S_lo;
     p = (S_ft *)sbrk( sizeof(S_ft) * ( ( (a+(2<<k)-1) >> k << k ) - a ) );
@@ -179,11 +190,16 @@ register int k;
     a = S_hi - S_lo;
     S_hi = (S_ft *) sbrk(0);
     /*      scribble( S_lo + a, S_hi ); */
-#endif
+#else
 #ifdef CMS
     if ( S_hi != S_lo ) Error( "S_morecore: Out of Memory" );
     a = 0;
     S_hi = S_lo + CMSmem / sizeof(S_ft);
+#else
+    if ( S_hi != S_lo ) Error( "S_morecore: Out of Memory" );
+    a = 0;
+    S_hi = S_lo + LINUXmem / sizeof(S_ft);
+#endif
 #endif
     b = S_hi - S_lo;
     while ( a < b ) {
@@ -309,12 +325,17 @@ void S_arena()
     }
     fprintf( fpout, "            %5dK", ( grand + 1023 ) / 1024 );
     fprintf( fpout, "       %5dK\n", ( gran2 + 1023 ) / 1024 );
+#ifdef USE_SBRK
+    size = (int) sbrk(0);
+    fprintf( fpout, "High Water Mark %5dK\n", size / 1024 );
+#else
 #ifdef CMS
     size = CMSmem;
     fprintf( fpout, "Memory Size %5dK\n", size / 1024 );
 #else
-    size = (int) sbrk(0);
-    fprintf( fpout, "High Water Mark %5dK\n", size / 1024 );
+    size = LINUXmem;
+    fprintf( fpout, "Memory Size %5dK\n", size / 1024 );
+#endif
 #endif
     if ( size % 1024 != 0 )
         fprintf ( fpout, "Excess %d bytes\n", size % 1024 );
@@ -324,6 +345,8 @@ void S_arena()
  *     Interface to provide allocator for INR.
  *     The length code and an audit flag are stored in allocated blocks
  */
+
+#if USE_BB
 
 char *Salloc( n )
 register int n;
@@ -458,7 +481,88 @@ void Saudit()
     }
 }
 
-#ifndef CMS
+#else
+
+#define OFFS    8
+#define MINSIZE    8
+
+char *Salloc( n )
+int n;
+{
+    char *p;
+    int *pi;
+    if ( n < MINSIZE ) n = MINSIZE;
+    p = malloc( n + OFFS + OFFS );
+    pi = (int *) p;
+    *pi = n;
+    return ( p + OFFS );
+}
+
+void Sfree( p )
+char *p;
+{
+    if ( p == 0 ) return;
+    free( p - OFFS );
+}
+
+char *Srealloc( p, n )
+char *p;
+int n;
+{
+    char *q;
+    int *qi;
+    int *pi;
+    int np;
+    if ( p ) {
+        pi = (int *) ( p - OFFS );
+        np = *pi;
+        q = realloc( p - OFFS, n + OFFS + OFFS );
+        qi = (int *) q;
+        *qi = n;
+        return ( q + OFFS );
+    } else {
+        return Salloc( n );
+    }
+}
+
+char *Scopy( p )
+char *p;
+{
+    char *q;
+    int *qi;
+    int size;
+    char *r;
+    q = p - OFFS;
+    qi = q;
+    size = *qi;
+    r = malloc( size + OFFS + OFFS );
+    copymem( size + OFFS + OFFS, q, r );
+    return ( r + OFFS );
+}
+
+int Ssize( p )
+char *p;
+{
+    char *q;
+    int *qi;
+    q = p - OFFS;
+    qi = q;
+    return ( *qi );
+}
+
+Sarena()
+{
+    /* do nothing */
+}
+
+Saudit()
+{
+    /* do nothing */
+}
+
+#endif
+
+#ifdef USE_SBRK
 /*
  *     Hook for malloc.  The above allocator will fail if any other
  *     allocator is active!
