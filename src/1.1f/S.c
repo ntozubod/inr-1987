@@ -346,7 +346,7 @@ void S_arena()
  *     The length code and an audit flag are stored in allocated blocks
  */
 
-#if USE_BB
+#ifdef USE_BB
 
 char *Salloc( n )
 register int n;
@@ -483,7 +483,8 @@ void Saudit()
 
 #else
 
-#define OFFS    8
+#define SPACE_BEFORE    8
+#define SPACE_AFTER    0
 #define MINSIZE    8
 
 char *Salloc( n )
@@ -492,17 +493,17 @@ int n;
     char *p;
     int *pi;
     if ( n < MINSIZE ) n = MINSIZE;
-    p = malloc( n + OFFS + OFFS );
+    p = malloc( n + SPACE_BEFORE + SPACE_AFTER );
     pi = (int *) p;
     *pi = n;
-    return ( p + OFFS );
+    return ( p + SPACE_BEFORE );
 }
 
 void Sfree( p )
 char *p;
 {
     if ( p == 0 ) return;
-    free( p - OFFS );
+    free( p - SPACE_BEFORE );
 }
 
 char *Srealloc( p, n )
@@ -511,33 +512,14 @@ int n;
 {
     char *q;
     int *qi;
-    int *pi;
-    int np;
     if ( p ) {
-        pi = (int *) ( p - OFFS );
-        np = *pi;
-        q = realloc( p - OFFS, n + OFFS + OFFS );
+        q = realloc( p - SPACE_BEFORE, n + SPACE_BEFORE + SPACE_AFTER );
         qi = (int *) q;
         *qi = n;
-        return ( q + OFFS );
+        return ( q + SPACE_BEFORE );
     } else {
         return Salloc( n );
     }
-}
-
-char *Scopy( p )
-char *p;
-{
-    char *q;
-    int *qi;
-    int size;
-    char *r;
-    q = p - OFFS;
-    qi = q;
-    size = *qi;
-    r = malloc( size + OFFS + OFFS );
-    copymem( size + OFFS + OFFS, q, r );
-    return ( r + OFFS );
 }
 
 int Ssize( p )
@@ -545,9 +527,20 @@ char *p;
 {
     char *q;
     int *qi;
-    q = p - OFFS;
-    qi = q;
+    q = p - SPACE_BEFORE;
+    qi = (int *) q;
     return ( *qi );
+}
+
+char *Scopy( p )
+char *p;
+{
+    int n;
+    char *q;
+    n = Ssize( p );
+    q = Salloc( n );
+    copymem( n, p, q );
+    return ( q );
 }
 
 Sarena()
