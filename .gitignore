@@ -36,6 +36,8 @@ a.out
 *.i*86
 *.x86_64
 *.hex
+tinr
+ginr
 
 # Debug files
 *.dSYM/
