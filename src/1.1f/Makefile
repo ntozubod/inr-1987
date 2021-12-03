@@ -14,10 +14,10 @@ CMSFILES = O.h localc.h $(CFILES) y.tab.c compcms.exec cwinr.exec
 HWFILES  = O.h localh.h $(CFILES) y.tab.c comphw.exec
 
 .c.o:
-	cc -O -c $*.c
+	cc -g -O -c $*.c
 
 tinr:	$(OFILES)
-	cc -O $(OFILES) -o tinr
+	cc -g -O $(OFILES) -o tinr
 
 inrx.a:
 	echo hi >inrx.a
