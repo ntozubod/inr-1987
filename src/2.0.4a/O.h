@@ -31,8 +31,8 @@
 #define U_Object        4
 #define A_Object        5
 
-typedef unsigned int    SHORT;
-#define MAXSHORT        037777777777
+typedef unsigned short  SHORT;
+#define MAXSHORT        0177777
 
 typedef struct {
     SHORT           R_a;
@@ -157,12 +157,12 @@ void            U_stats();
 
 // Acrea.c
 A_OBJECT    A_create();
-void        A_destroy( register A_OBJECT );
-A_OBJECT    A_rept( register A_OBJECT );
-void        A_exchange( register A_OBJECT, register A_OBJECT );
-A_OBJECT    A_copy( register A_OBJECT );
-A_OBJECT    A_deems( register A_OBJECT );
-A_OBJECT    A_adems( register A_OBJECT );
+void        A_destroy( A_OBJECT );
+A_OBJECT    A_rept( A_OBJECT );
+void        A_exchange( A_OBJECT, A_OBJECT );
+A_OBJECT    A_copy( A_OBJECT );
+A_OBJECT    A_deems( A_OBJECT );
+A_OBJECT    A_adems( A_OBJECT );
 
 A_OBJECT        A_add();
 A_OBJECT        A_open();
