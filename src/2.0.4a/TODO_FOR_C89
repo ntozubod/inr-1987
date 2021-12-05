@@ -1,4 +1,7 @@
-Work to do to cleanup source to C89
+Work to do to cleanup source to C89 & 64-bit architecture
+(1) change function prototypes
+(2) remove any hidden dependencies of pointers being 32-bit
+(3) remove register declarations
 
 ==================================================
 == Currently working on:

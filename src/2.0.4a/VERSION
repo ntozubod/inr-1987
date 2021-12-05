@@ -1,4 +1,14 @@
 ==================================================
+== 20211205
+
+(1) modified S.c to add an alternative storage allocator that does not use
+the binary buddy system but calls malloc/free directly. Make the choice of
+allocator selectable and the simpler one the default.
+
+O.h     add direct simple storage allocator
+O.h     control selection using #ifdef USE_BB == use Binary Buddy impl
+
+==================================================
 == 20211204
 
 (1) checked out version 6109cfc as 2.0.4a from ntozubod/ginr

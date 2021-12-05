@@ -28,9 +28,13 @@
 #include <strings.h>
 #include "local.h"
 
+// #define USE_BB true
+
 void Error();
 
 extern FILE *fpout;
+
+#ifdef USE_BB
 
 typedef struct S_f {
     unsigned char fill_1;
@@ -65,6 +69,8 @@ static int   S_alld_cnt[ S_m ];
 
 int LINUXmem = 0;
 
+#endif
+
 /*
  *     Copy a block of memory
  */
@@ -98,6 +104,8 @@ register char *p, *q;
         *p++ = 0x55;
     }
 }
+
+#ifdef USE_BB
 
 /*
  *     Binary Buddy system storage allocator as in Knuth vol. 1
@@ -425,3 +433,78 @@ void Saudit()
         p = p + (1 << kval(p));
     }
 }
+
+#else
+
+#define SPACE_BEFORE    8
+#define SPACE_AFTER    0
+#define MINSIZE    8
+
+char *Salloc( n )
+int n;
+{
+    char *p;
+    int *pi;
+    if ( n < MINSIZE ) n = MINSIZE;
+    p = malloc( n + SPACE_BEFORE + SPACE_AFTER );
+    pi = (int *) p;
+    *pi = n;
+    return ( p + SPACE_BEFORE );
+}
+
+void Sfree( p )
+char *p;
+{
+    if ( p == 0 ) return;
+    free( p - SPACE_BEFORE );
+}
+
+char *Srealloc( p, n )
+char *p;
+int n;
+{
+    char *q;
+    int *qi;
+    if ( p ) {
+        q = realloc( p - SPACE_BEFORE, n + SPACE_BEFORE + SPACE_AFTER );
+        qi = (int *) q;
+        *qi = n;
+        return ( q + SPACE_BEFORE );
+    } else {
+        return Salloc( n );
+    }
+}
+
+int Ssize( p )
+char *p;
+{
+    char *q;
+    int *qi;
+    q = p - SPACE_BEFORE;
+    qi = (int *) q;
+    return ( *qi );
+}
+
+
+char *Scopy( p )
+char *p;
+{
+    int n;
+    char *q;
+    n = Ssize( p );
+    q = Salloc( n );
+    copymem( n, p, q );
+    return ( q );
+}
+
+void Sarena()
+{
+    /* do nothing */
+}
+
+void Saudit()
+{
+    /* do nothing */
+}
+
+#endif
