@@ -165,11 +165,13 @@ A_OBJECT    A_deems( A_OBJECT );
 A_OBJECT    A_adems( A_OBJECT );
 
 // Aopen.c
-A_OBJECT        A_add();
-A_OBJECT        A_open();
-A_OBJECT        A_close();
-A_OBJECT        A_rename();
-A_OBJECT        A_mkdense();
+A_OBJECT    A_add( A_OBJECT, int, int, int );
+A_OBJECT    A_open( A_OBJECT );
+A_OBJECT    A_close( A_OBJECT );
+A_OBJECT    A_rename( A_OBJECT, SHORT * );
+A_OBJECT    A_mkdense( A_OBJECT );
+
+// Aload.c
 A_OBJECT        A_load();
 A_OBJECT        A_lwds();
 A_OBJECT        A_store();

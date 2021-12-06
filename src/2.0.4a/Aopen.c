@@ -33,11 +33,9 @@ extern FILE *fpout;
 SHORT *s_rena = 0;
 int f_rena = 0;
 
-A_OBJECT A_add( A, a, b, c )
-register A_OBJECT A;
-register int a, b, c;
+A_OBJECT A_add( A_OBJECT A, int a, int b, int c )
 {
-    register A_row *p;
+    A_row *p;
 
     if ( A == NULL ) Error( "A_add: No OBJECT" );
     if ( A-> A_mode != OPEN ) Error( "A_add: Object not OPEN" );
@@ -60,8 +58,7 @@ register int a, b, c;
     return( A );
 }
 
-A_OBJECT A_open( A )
-register A_OBJECT A;
+A_OBJECT A_open( A_OBJECT A )
 {
     if ( A == NULL ) Error( "A_open: No OBJECT" );
     A-> A_mode = OPEN;
@@ -70,11 +67,10 @@ register A_OBJECT A;
     return( A );
 }
 
-A_OBJECT A_close( A )
-register A_OBJECT A;
+A_OBJECT A_close( A_OBJECT A )
 {
-    register int i;
-    register A_row *p, *q, *t1, *t2;
+    int i;
+    A_row *p, *q, *t1, *t2;
 
     int N, NQ, NS;
     A_row *t1z, *t2z;
@@ -189,12 +185,10 @@ register A_OBJECT A;
     return( A );
 }
 
-A_OBJECT A_rename( A, rena )
-register A_OBJECT A;
-register SHORT *rena;
+A_OBJECT A_rename( A_OBJECT A, SHORT *rena )
 {
-    register A_row  *p, *pz;
-    register SHORT  *trena, *sp;
+    A_row  *p, *pz;
+    SHORT  *trena, *sp;
     int             nrena, i;
 
     if ( A == NULL ) Error( "A_rename: No OBJECT" );
@@ -250,11 +244,10 @@ register SHORT *rena;
     return( A_close( A_open( A ) ) );
 }
 
-A_OBJECT A_mkdense( A )
-register A_OBJECT A;
+A_OBJECT A_mkdense( A_OBJECT A )
 {
-    register A_row        *p, *pz;
-    register R_OBJECT R;
+    A_row        *p, *pz;
+    R_OBJECT R;
 
     if ( A == NULL ) Error( "A_rename: No OBJECT" );
 

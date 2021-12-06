@@ -6,11 +6,11 @@ Work to do to cleanup source to C89 & 64-bit architecture
 ==================================================
 == Currently working on:
 Aopen.c
+Aload.c
 
 ==================================================
 == Not Done:
 stamp.c
-Aload.c
 Atrim.c
 Alameq.c
 Alamcm.c
