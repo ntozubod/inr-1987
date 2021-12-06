@@ -5,8 +5,14 @@
 the binary buddy system but calls malloc/free directly. Make the choice of
 allocator selectable and the simpler one the default.
 
-O.h     add direct simple storage allocator
-O.h     control selection using #ifdef USE_BB == use Binary Buddy impl
+(2) convert function prototypes for S.c to C89 form
+
+(3) remove register declarations for S.c
+
+S.c     add direct simple storage allocator
+S.c     control selection using #ifdef USE_BB == use Binary Buddy impl
+S.c     cleanup for C89
+O.h     cleanup for C89
 
 ==================================================
 == 20211204

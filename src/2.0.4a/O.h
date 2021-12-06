@@ -108,15 +108,15 @@ typedef struct A_desc {
 #define START           0
 #define FINAL           1
 
-char    *Salloc();
-SHORT   *s_alloc();
-int     *i_alloc();
-char    *Srealloc();
-char    *Scopy();
+char    *Salloc( int );
+SHORT   *s_alloc( int );
+int     *i_alloc( int );
+char    *Srealloc( char *, int );
+char    *Scopy( char * );
 int     Ssize( char * );
-void    Sfree();
+void    Sfree( char * );
 void    Sarena();
-void    copymem();
+void    copymem( int, char *, char * );
 char    *strcpy();
 
 T_OBJECT        T_create();
