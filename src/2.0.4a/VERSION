@@ -1,4 +1,13 @@
 ==================================================
+== 20211206
+
+(1) verify cleanup for Acrea.c
+
+(2) cleanup for Aopen.c
+
+(3) cleanup for Aload.c
+
+==================================================
 == 20211205
 
 (1) modified S.c to add an alternative storage allocator that does not use

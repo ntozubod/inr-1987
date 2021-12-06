@@ -172,10 +172,12 @@ A_OBJECT    A_rename( A_OBJECT, SHORT * );
 A_OBJECT    A_mkdense( A_OBJECT );
 
 // Aload.c
-A_OBJECT        A_load();
-A_OBJECT        A_lwds();
-A_OBJECT        A_store();
-A_OBJECT        A_save();
+A_OBJECT    A_load( char *, T_OBJECT );
+A_OBJECT    A_store( A_OBJECT, char *, T_OBJECT );
+A_OBJECT    A_save( A_OBJECT, char *, T_OBJECT );
+A_OBJECT    A_lwds( char *, T_OBJECT );
+
+// Atrim.c
 A_OBJECT        A_trim();
 A_OBJECT        A_lameq();
 A_OBJECT        A_lamcm();
