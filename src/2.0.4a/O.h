@@ -164,6 +164,7 @@ A_OBJECT    A_copy( A_OBJECT );
 A_OBJECT    A_deems( A_OBJECT );
 A_OBJECT    A_adems( A_OBJECT );
 
+// Aopen.c
 A_OBJECT        A_add();
 A_OBJECT        A_open();
 A_OBJECT        A_close();
