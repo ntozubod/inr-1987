@@ -3,3 +3,6 @@
 
 (1) A_trim reserves to values MAXSHORT and MAXSHORT - 1 as sentinals.
 Hence, max number of states <= MAXSHORT - 2.
+
+(2) A_lameq reserves to values MAXSHORT and MAXSHORT - 1 as sentinals.
+Hence, max number of states <= MAXSHORT - 2.

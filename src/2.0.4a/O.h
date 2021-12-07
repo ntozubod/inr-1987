@@ -181,7 +181,9 @@ A_OBJECT    A_lwds( char *, T_OBJECT );
 A_OBJECT    A_trim( A_OBJECT );
 
 // Alameq.c
-A_OBJECT        A_lameq();
+A_OBJECT    A_lameq( A_OBJECT );
+
+// Alamcm.c
 A_OBJECT        A_lamcm();
 A_OBJECT        A_clsure();
 A_OBJECT        A_subs();

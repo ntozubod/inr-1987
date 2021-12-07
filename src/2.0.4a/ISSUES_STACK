@@ -3,3 +3,9 @@
 
 (1) A_trim does a deep recursion that reaches a depth of the maximum path
 length from the start state. Each frame has 2 SHORTs and a pointer (12 bytes).
+
+(2) A_lameq does a deep recursion that reaches a depth of the maximum path
+length from the start state. Each frame has 2 ints and 2 pointers (24 bytes).
+***** could these 2 ints be SHORTs?
+***** could one of the pointers be eliminated?
+
