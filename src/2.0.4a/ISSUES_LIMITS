@@ -1,0 +1,5 @@
+==================================================
+== Limits on maximum number of states in automaton:
+
+(1) A_trim reserves to values MAXSHORT and MAXSHORT - 1 as sentinals.
+Hence, max number of states <= MAXSHORT - 2.

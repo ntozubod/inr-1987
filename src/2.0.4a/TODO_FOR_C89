@@ -5,12 +5,11 @@ Work to do to cleanup source to C89 & 64-bit architecture
 
 ==================================================
 == Currently working on:
-Atrim.c
+Alameq.c
 
 ==================================================
 == Not Done:
 stamp.c
-Alameq.c
 Alamcm.c
 Aclos.c
 Asubs.c
@@ -41,3 +40,4 @@ S.c
 Acrea.c
 Aopen.c
 Aload.c
+Atrim.c

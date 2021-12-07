@@ -1,4 +1,11 @@
 ==================================================
+== 20211207
+
+(1) cleanup for Atrim.c
+
+(2) start tracking implementation issues with ISSUES_LIMITS and ISSUES_STACK.
+
+==================================================
 == 20211206
 
 (1) verify cleanup for Acrea.c
