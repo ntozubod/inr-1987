@@ -187,7 +187,9 @@ A_OBJECT    A_lameq( A_OBJECT );
 A_OBJECT    A_lamcm( A_OBJECT );
 
 // Aclos.c
-A_OBJECT        A_clsure();
+A_OBJECT    A_clsure( A_OBJECT );
+
+// Asubs.c
 A_OBJECT        A_subs();
 A_OBJECT        A_min();
 void            A_conform();
