@@ -9,3 +9,5 @@ length from the start state. Each frame has 2 ints and 2 pointers (24 bytes).
 ***** could these 2 ints be SHORTs?
 ***** could one of the pointers be eliminated?
 
+(2) A_lamcm does a deep recursion that reaches a depth of the maximum path
+length from the start state. Each frame has 1 int (4 bytes).
