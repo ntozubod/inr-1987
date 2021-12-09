@@ -5,12 +5,11 @@ Work to do to cleanup source to C89 & 64-bit architecture
 
 ==================================================
 == Currently working on:
-Asubs.c
+Amin.c
 
 ==================================================
 == Not Done:
 stamp.c
-Amin.c
 Abasic.c
 Aenum.c
 Acompose.c
@@ -41,3 +40,4 @@ Atrim.c
 Alameq.c
 Alamcm.c
 Aclos.c
+Asubs.c
