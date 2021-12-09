@@ -32,11 +32,10 @@ extern FILE *fpout;
 #define UNMARK  MAXSHORT
 #define LAST    (MAXSHORT-1)
 
-A_OBJECT A_min( A )
-register A_OBJECT A;
+A_OBJECT A_min( A_OBJECT A )
 {
-    register A_row *p;
-    register int f, s, j, ns;
+    A_row *p;
+    int f, s, j, ns;
     int x, b;
     A_row *lo, *hi;
     int mode;
@@ -154,10 +153,6 @@ register A_OBJECT A;
         JL_H = LAST;
 
         for(;;) {
-
-            /*-------------------------------------------------------------------------*/
-            /**/                                                                     /**/
-
             if ( x != heap[1]-> A_b || hsize == 0 ) {
 
                 for( j = JL_H; j < LAST; j = JL_N[j] ) {
@@ -234,10 +229,6 @@ register A_OBJECT A;
                 heap[f] = heap[s];
             }
             heap[ f ] = lo;
-
-            /**/                                                                     /**/
-            /*-------------------------------------------------------------------------*/
-
         }
     }
 

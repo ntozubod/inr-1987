@@ -193,7 +193,9 @@ A_OBJECT    A_clsure( A_OBJECT );
 A_OBJECT    A_subs( A_OBJECT );
 
 // Amin.c
-A_OBJECT        A_min();
+A_OBJECT    A_min( A_OBJECT );
+
+// Abasic.c
 void            A_conform();
 A_OBJECT        A_phi();
 A_OBJECT        A_lambda();
