@@ -196,23 +196,25 @@ A_OBJECT    A_subs( A_OBJECT );
 A_OBJECT    A_min( A_OBJECT );
 
 // Abasic.c
-void            A_conform();
-A_OBJECT        A_phi();
-A_OBJECT        A_lambda();
-A_OBJECT        A_letter();
-A_OBJECT        A_deecho();
-A_OBJECT        A_opt();
-A_OBJECT        A_plus();
-A_OBJECT        A_star();
-A_OBJECT        A_union();
-A_OBJECT        A_percent();
-A_OBJECT        A_concat();
-A_OBJECT        A_intersect();
-A_OBJECT        A_differ();
-A_OBJECT        A_xor();
-A_OBJECT        A_alph();
-A_OBJECT        A_rev();
-A_OBJECT        A_shuffle();
+void        A_conform( A_OBJECT, A_OBJECT );
+A_OBJECT    A_phi();
+A_OBJECT    A_lambda();
+A_OBJECT    A_letter( int, int);
+A_OBJECT    A_deecho( A_OBJECT, int, int );
+A_OBJECT    A_opt( A_OBJECT );
+A_OBJECT    A_plus( A_OBJECT );
+A_OBJECT    A_star( A_OBJECT );
+A_OBJECT    A_union( A_OBJECT, A_OBJECT );
+A_OBJECT    A_percent( A_OBJECT, A_OBJECT );
+A_OBJECT    A_concat( A_OBJECT, A_OBJECT );
+A_OBJECT    A_intersect( A_OBJECT, A_OBJECT );
+A_OBJECT    A_differ( A_OBJECT, A_OBJECT );
+A_OBJECT    A_xor( A_OBJECT, A_OBJECT );
+A_OBJECT    A_alph( A_OBJECT );
+A_OBJECT    A_rev( A_OBJECT );
+A_OBJECT    A_shuffle( A_OBJECT, A_OBJECT );
+
+// Aenum.c
 A_OBJECT        A_enum();
 int             A_card();
 A_OBJECT        A_pref();

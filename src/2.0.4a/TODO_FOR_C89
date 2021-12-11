@@ -6,11 +6,11 @@ Work to do to cleanup source to C89 & 64-bit architecture
 ==================================================
 == Currently working on:
 Abasic.c
+Aenum.c
 
 ==================================================
 == Not Done:
 stamp.c
-Aenum.c
 Acompose.c
 Ajoin.c
 Apowers.c
