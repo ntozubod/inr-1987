@@ -215,10 +215,12 @@ A_OBJECT    A_rev( A_OBJECT );
 A_OBJECT    A_shuffle( A_OBJECT, A_OBJECT );
 
 // Aenum.c
-A_OBJECT        A_enum();
-int             A_card();
-A_OBJECT        A_pref();
-A_OBJECT        A_suff();
+A_OBJECT    A_enum( A_OBJECT, T_OBJECT, int );
+int         A_card( A_OBJECT );
+A_OBJECT    A_pref( A_OBJECT );
+A_OBJECT    A_suff( A_OBJECT );
+
+// Acompose.c
 A_OBJECT        A_compose();
 A_OBJECT        A_join();
 A_OBJECT        A_retape();
