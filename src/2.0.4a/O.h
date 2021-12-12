@@ -221,8 +221,12 @@ A_OBJECT    A_pref( A_OBJECT );
 A_OBJECT    A_suff( A_OBJECT );
 
 // Acompose.c
-A_OBJECT        A_compose();
-A_OBJECT        A_join();
+A_OBJECT    A_compose( A_OBJECT, A_OBJECT );
+
+// Ajoin.c
+A_OBJECT    A_join( A_OBJECT, A_OBJECT );
+
+// Aretape.c
 A_OBJECT        A_retape();
 A_OBJECT        A_comma();
 A_OBJECT        A_catpow();

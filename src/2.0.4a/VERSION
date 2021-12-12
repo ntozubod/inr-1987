@@ -1,4 +1,11 @@
 ==================================================
+== 20211212
+
+(1) cleanup for Acompose.c
+
+(2) cleanup for Ajoin.c (almost identical to above)
+
+==================================================
 == 20211211
 
 (1) cleanup for Abasic.c
