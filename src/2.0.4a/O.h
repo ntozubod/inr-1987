@@ -231,9 +231,11 @@ A_OBJECT    A_retape( A_OBJECT, A_OBJECT, T_OBJECT );
 A_OBJECT    A_comma( A_OBJECT, A_OBJECT );
 
 // Apowers.c
-A_OBJECT        A_catpow();
-A_OBJECT        A_ident();
-A_OBJECT        A_cmpow();
+A_OBJECT    A_catpow( A_OBJECT, int );
+A_OBJECT    A_ident( A_OBJECT );
+A_OBJECT    A_cmpow( A_OBJECT, int );
+
+// Alenmin.c
 A_OBJECT        A_lenmin();
 int             A_minlen( A_OBJECT );
 A_OBJECT        A_sseq();
