@@ -236,17 +236,18 @@ A_OBJECT    A_ident( A_OBJECT );
 A_OBJECT    A_cmpow( A_OBJECT, int );
 
 // Alenmin.c
-A_OBJECT        A_lenmin();
-int             A_minlen( A_OBJECT );
+A_OBJECT    A_lenmin( A_OBJECT );
+int         A_minlen( A_OBJECT );
+
+// Astems.c
+void            A_st_free();
+SHORT **        A_stems();
+void            A_prstems( A_OBJECT, T_OBJECT, int );
 A_OBJECT        A_sseq();
 A_OBJECT        A_LMsseq();
 A_OBJECT        A_GMsseq();
 A_OBJECT        A_prsseq();
 A_OBJECT        A_clsseq();
-
-void            A_st_free();
-SHORT **        A_stems();
-void            A_prstems( A_OBJECT, T_OBJECT, int );
 
 extern  int     A_report;
 

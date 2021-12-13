@@ -4,3 +4,4 @@
 (1) A_retape has a second argument that controls the form of the retaping
 operation. Is it bullet-proof against mal-formed inputs.
 
+(2) Review what A_lenmin and A_minlen are doing.
