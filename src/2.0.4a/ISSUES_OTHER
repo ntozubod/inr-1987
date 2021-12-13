@@ -1,0 +1,6 @@
+==================================================
+== Other obscure corners where bugs are likely to lurk
+
+(1) A_retape has a second argument that controls the form of the retaping
+operation. Is it bullet-proof against mal-formed inputs.
+

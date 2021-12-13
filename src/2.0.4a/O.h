@@ -227,8 +227,10 @@ A_OBJECT    A_compose( A_OBJECT, A_OBJECT );
 A_OBJECT    A_join( A_OBJECT, A_OBJECT );
 
 // Aretape.c
-A_OBJECT        A_retape();
-A_OBJECT        A_comma();
+A_OBJECT    A_retape( A_OBJECT, A_OBJECT, T_OBJECT );
+A_OBJECT    A_comma( A_OBJECT, A_OBJECT );
+
+// Apowers.c
 A_OBJECT        A_catpow();
 A_OBJECT        A_ident();
 A_OBJECT        A_cmpow();
