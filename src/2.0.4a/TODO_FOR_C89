@@ -5,12 +5,11 @@ Work to do to cleanup source to C89 & 64-bit architecture
 
 ==================================================
 == Currently working on:
-V.c
+R.c
 
 ==================================================
 == Not Done:
 stamp.c
-R.c
 U.c
 util.c
 Lex.c
@@ -21,6 +20,7 @@ Colon.c
 S.c
 
 T.c
+V.c
 
 Acrea.c
 Aopen.c

@@ -129,18 +129,19 @@ char *      T_name( T_OBJECT, int );
 void        T_stats();
 
 // V.c
-SHORT *         veccpy( SHORT *, SHORT * );
-int             veccmp( SHORT *, SHORT * );
-int             veclen( SHORT * );
+SHORT *     veccpy( SHORT *, SHORT * );
+int         veccmp( SHORT *, SHORT * );
+int         veclen( SHORT * );
 
-V_OBJECT        V_create();
-void            V_destroy();
-int             V_member();
-V_OBJECT        V_grow();
-int             V_insert();
-SHORT *         V_vec();
-void            V_stats();
+V_OBJECT    V_create();
+void        V_destroy( V_OBJECT );
+int         V_member( V_OBJECT, SHORT * );
+V_OBJECT    V_grow( V_OBJECT, int );
+int         V_insert( V_OBJECT, SHORT * );
+SHORT *     V_vec( V_OBJECT, int );
+void        V_stats();
 
+// R.c
 R_OBJECT        R_create();
 void            R_destroy();
 int             R_member();
