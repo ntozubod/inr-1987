@@ -151,13 +151,13 @@ R_row *     R_rec( R_OBJECT, int );
 void        R_stats();
 
 // U.c
-U_OBJECT        U_create();
-void            U_destroy();
-int             U_member();
-U_OBJECT        U_grow();
-int             U_insert();
-A_row *         U_rec();
-void            U_stats();
+U_OBJECT    U_create();
+void        U_destroy( U_OBJECT );
+int         U_member( U_OBJECT, int, int, int );
+U_OBJECT    U_grow( U_OBJECT, int );
+int         U_insert( U_OBJECT, int, int, int );
+A_row *     U_rec( U_OBJECT, int );
+void        U_stats();
 
 // Acrea.c
 A_OBJECT    A_create();

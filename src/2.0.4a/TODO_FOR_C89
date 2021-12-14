@@ -5,14 +5,14 @@ Work to do to cleanup source to C89 & 64-bit architecture
 
 ==================================================
 == Currently working on:
-U.c
+util.c
 
 ==================================================
 == Not Done:
 stamp.c
-util.c
 Lex.c
 Colon.c
+Parse.y
 
 ==================================================
 == Done:
@@ -21,6 +21,7 @@ S.c
 T.c
 V.c
 R.c
+U.c
 
 Acrea.c
 Aopen.c
