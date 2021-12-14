@@ -118,6 +118,10 @@ void    Sarena();
 void    copymem( int, char *, char * );
 char    *strcpy();
 
+// stamp.c
+extern char Version[];
+extern char Date[];
+
 // util.c
 void        Warning( char * );
 void        Error( char * );

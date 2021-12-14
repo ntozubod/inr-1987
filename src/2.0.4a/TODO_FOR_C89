@@ -5,18 +5,17 @@ Work to do to cleanup source to C89 & 64-bit architecture
 
 ==================================================
 == Currently working on:
-stamp.c
+Colon.c
 
 ==================================================
 == Not Done:
 Lex.c
-Colon.c
 Parse.y
 
 ==================================================
 == Done:
+stamp.c
 S.c
-
 util.c
 
 T.c

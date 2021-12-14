@@ -324,8 +324,6 @@ int yylex()
 
 char Notice[]
     = "Copyright (c) 1985, 1988, J Howard Johnson, University of Waterloo";
-extern char Version[];
-extern char Date[];
 
 int main( int argc, char *argv[] )
 {
