@@ -119,14 +119,16 @@ void    Sarena();
 void    copymem( int, char *, char * );
 char    *strcpy();
 
-T_OBJECT        T_create();
-void            T_destroy();
-int             T_member();
-T_OBJECT        T_grow();
-int             T_insert();
-char *          T_name();
-void            T_stats();
+// T.c
+T_OBJECT    T_create();
+void        T_destroy( T_OBJECT );
+int         T_member( T_OBJECT, char * );
+T_OBJECT    T_grow( T_OBJECT, int );
+int         T_insert( T_OBJECT, char * );
+char *      T_name( T_OBJECT, int );
+void        T_stats();
 
+// V.c
 SHORT *         veccpy( SHORT *, SHORT * );
 int             veccmp( SHORT *, SHORT * );
 int             veclen( SHORT * );
