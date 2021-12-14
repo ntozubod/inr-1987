@@ -142,14 +142,15 @@ SHORT *     V_vec( V_OBJECT, int );
 void        V_stats();
 
 // R.c
-R_OBJECT        R_create();
-void            R_destroy();
-int             R_member();
-R_OBJECT        R_grow();
-int             R_insert();
-R_row *         R_rec();
-void            R_stats();
+R_OBJECT    R_create();
+void        R_destroy( R_OBJECT );
+int         R_member( R_OBJECT, int, int );
+R_OBJECT    R_grow( R_OBJECT, int );
+int         R_insert( R_OBJECT, int, int );
+R_row *     R_rec( R_OBJECT, int );
+void        R_stats();
 
+// U.c
 U_OBJECT        U_create();
 void            U_destroy();
 int             U_member();
