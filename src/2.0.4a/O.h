@@ -271,8 +271,14 @@ A_OBJECT    A_GMsseq( A_OBJECT );
 // Aclsseq.c
 A_OBJECT    A_clsseq( A_OBJECT );
 
+// Colon.c
+extern int  disp_flag;
+int         do_n_i( char * );
+A_OBJECT    do_n_a( A_OBJECT, char * );
+A_OBJECT    do_ann_a( A_OBJECT, char *, char * );
+A_OBJECT    do_nn_a( char *, char * );
+
+
 
 extern  int     A_report;
-
-
 int tonum( char * );
