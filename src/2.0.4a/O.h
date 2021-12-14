@@ -108,9 +108,8 @@ typedef struct A_desc {
 #define START           0
 #define FINAL           1
 
+
 char    *Salloc( int );
-SHORT   *s_alloc( int );
-int     *i_alloc( int );
 char    *Srealloc( char *, int );
 char    *Scopy( char * );
 int     Ssize( char * );
@@ -118,6 +117,13 @@ void    Sfree( char * );
 void    Sarena();
 void    copymem( int, char *, char * );
 char    *strcpy();
+
+// util.c
+void        Warning( char * );
+void        Error( char * );
+SHORT       *s_alloc( int );
+int         *i_alloc( int );
+void        pr_time_diff();
 
 // T.c
 T_OBJECT    T_create();
@@ -264,8 +270,5 @@ A_OBJECT    A_clsseq( A_OBJECT );
 
 extern  int     A_report;
 
-void Error( char * );
-void Warning( char * );
-void pr_time_diff();
 
 int tonum( char * );
