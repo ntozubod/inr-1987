@@ -5,11 +5,9 @@ Work to do to cleanup source to C89 & 64-bit architecture
 
 ==================================================
 == Currently working on:
-Lex.c
 
 ==================================================
 == Not Done:
-Parse.y
 
 ==================================================
 == Done:
@@ -48,3 +46,5 @@ AGMsseq.c
 Aclsseq.c
 
 Colon.c
+Lex.c
+Parse.y

@@ -24,6 +24,11 @@
  */
 
 #include  "local.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <unistd.h>
 
 #define T_Object        1
 #define V_Object        2
@@ -108,15 +113,18 @@ typedef struct A_desc {
 #define START           0
 #define FINAL           1
 
+extern FILE *fpin;
+extern FILE *fpout;
 
-char    *Salloc( int );
-char    *Srealloc( char *, int );
-char    *Scopy( char * );
-int     Ssize( char * );
-void    Sfree( char * );
-void    Sarena();
-void    copymem( int, char *, char * );
-char    *strcpy();
+// S.c
+void        copymem( int, char *, char * );
+char        *Salloc( int );
+void        Sfree( char * );
+char        *Srealloc( char *, int );
+char        *Scopy( char * );
+int         Ssize( char * );
+void        Sarena();
+void        Saudit();
 
 // stamp.c
 extern char Version[];
@@ -170,6 +178,7 @@ A_row *     U_rec( U_OBJECT, int );
 void        U_stats();
 
 // Acrea.c
+extern int  A_report;
 A_OBJECT    A_create();
 void        A_destroy( A_OBJECT );
 A_OBJECT    A_rept( A_OBJECT );
@@ -179,6 +188,8 @@ A_OBJECT    A_deems( A_OBJECT );
 A_OBJECT    A_adems( A_OBJECT );
 
 // Aopen.c
+extern SHORT * s_rena;
+extern int     f_rena;
 A_OBJECT    A_add( A_OBJECT, int, int, int );
 A_OBJECT    A_open( A_OBJECT );
 A_OBJECT    A_close( A_OBJECT );
@@ -274,11 +285,22 @@ A_OBJECT    A_clsseq( A_OBJECT );
 // Colon.c
 extern int  disp_flag;
 int         do_n_i( char * );
-A_OBJECT    do_n_a( A_OBJECT, char * );
+A_OBJECT    do_an_a( A_OBJECT, char * );
 A_OBJECT    do_ann_a( A_OBJECT, char *, char * );
 A_OBJECT    do_nn_a( char *, char * );
 
+// Colon.c
+extern A_OBJECT A;
+extern A_OBJECT Atemp;
+extern A_OBJECT Alist[100];
+extern T_OBJECT TAlist;
+extern T_OBJECT TT;
+extern char Notice[];
+char *      pad20( char * );
+int         yylex();
+void        yyerror( char * );
+int         tonum( char * );
 
+// Parse.y
+int         yyparse( void );
 
-extern  int     A_report;
-int tonum( char * );

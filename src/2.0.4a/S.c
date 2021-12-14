@@ -23,16 +23,12 @@
  *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "O.h"
+
+/* for bcopy */
 #include <strings.h>
-#include "local.h"
 
 #define USE_BB true
-
-void Error( char * );
-
-extern FILE *fpout;
 
 #ifdef USE_BB
 

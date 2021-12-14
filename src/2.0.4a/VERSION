@@ -20,6 +20,9 @@ complete work -- in the future.
 
 (8) cleanup for Colon.c
 
+(9) cleanup for Lex.c Parse.y and straighten out all externs, includes,
+and overall module structure for whole source base.
+
 ==================================================
 == 20211213
 

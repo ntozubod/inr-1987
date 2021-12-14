@@ -23,25 +23,15 @@
  *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-
 #include "O.h"
 #include "y.tab.h"
-
-FILE    *fopen();
-extern FILE *fpin, *fpout;
 
 A_OBJECT    A, Atemp;
 T_OBJECT    TAlist;
 A_OBJECT    Alist[100];
 T_OBJECT    TT;
 
-char * pad20( s )
-char * s;
+char * pad20( char *s )
 {
     static char tmp[ 41 ];
     if ( strlen( s ) >= 20 ) return( s );
@@ -59,8 +49,7 @@ int ch = ' ';
 char    token[512];
 int in_string = 0;
 
-char *copyof( str )
-char *str;
+char *copyof( char *str )
 {
     return( strcpy( Salloc( strlen( str ) + 1 ), str ) );
 }

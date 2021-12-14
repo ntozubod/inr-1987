@@ -24,10 +24,6 @@ extern int S_flag;
  *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-
-extern FILE *fpout;
-
 #include "O.h"
 
 SHORT *s_rena = 0;
