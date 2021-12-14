@@ -1,4 +1,12 @@
 ==================================================
+== 20211214
+
+(1) cleanup for Astems.c, Asseq.c, ALMsseq.c, AGMsseq.c, Aclsseq.c
+These all require a lot of work: refactoring, debugging, documentation.
+This repo will focus on the minimum. Go to the 'ginr' repo for more
+complete work -- in the future.
+
+==================================================
 == 20211213
 
 (1) cleanup for Aretape.c

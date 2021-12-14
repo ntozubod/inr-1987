@@ -176,6 +176,7 @@ A_OBJECT    A_load( char *, T_OBJECT );
 A_OBJECT    A_store( A_OBJECT, char *, T_OBJECT );
 A_OBJECT    A_save( A_OBJECT, char *, T_OBJECT );
 A_OBJECT    A_lwds( char *, T_OBJECT );
+A_OBJECT    A_prsseq( A_OBJECT, char *, T_OBJECT );
 
 // Atrim.c
 A_OBJECT    A_trim( A_OBJECT );
@@ -240,14 +241,22 @@ A_OBJECT    A_lenmin( A_OBJECT );
 int         A_minlen( A_OBJECT );
 
 // Astems.c
-void            A_st_free();
-SHORT **        A_stems();
-void            A_prstems( A_OBJECT, T_OBJECT, int );
-A_OBJECT        A_sseq();
-A_OBJECT        A_LMsseq();
-A_OBJECT        A_GMsseq();
-A_OBJECT        A_prsseq();
-A_OBJECT        A_clsseq();
+void        A_st_free();
+SHORT **    A_stems( A_OBJECT, int );
+void        A_prstems( A_OBJECT, T_OBJECT, int );
+
+// Asseq.c
+A_OBJECT    A_sseq( A_OBJECT );
+
+// ALMsseq.c
+A_OBJECT    A_LMsseq( A_OBJECT );
+
+// AGMsseq.c
+A_OBJECT    A_GMsseq( A_OBJECT );
+
+// Aclsseq.c
+A_OBJECT    A_clsseq( A_OBJECT );
+
 
 extern  int     A_report;
 

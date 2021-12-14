@@ -33,11 +33,10 @@ extern T_OBJECT TT;
 #define UNMARK          MAXSHORT
 #define LAST            (MAXSHORT-1)
 
-A_OBJECT A_sseq( A )
-register A_OBJECT A;
+A_OBJECT A_sseq( A_OBJECT A )
 {
-    register int i, j, tmp;
-    register A_row *p, *pz;
+    int i, j, tmp;
+    A_row *p, *pz;
     int n, hsize, base, head, current, father, son, gap, vlen;
     int k, sig_lim;
     int aa, bb, cc, nq, len, from, to, label, hi_next, try;
@@ -192,12 +191,12 @@ idone:
     for( ; current < V-> V_n; current++ ) {
         if ( current == FINAL ) continue;
 
-        /*     Unpack current state:
-         * (1) fvec is set to vector of component states followed by their coeffs
-         * (2) load heap with positions in source automaton for each component state
-         * (3) load fr_coeff with the pointers to coeff vectors
-         * (4) heapify the heap
-         */
+  /*     Unpack current state:
+   * (1) fvec is set to vector of component states followed by their coeffs
+   * (2) load heap with positions in source automaton for each component state
+   * (3) load fr_coeff with the pointers to coeff vectors
+   * (4) heapify the heap
+   */
 
         hsize = 0;
         fvec = V_vec( V, current );
@@ -208,17 +207,17 @@ idone:
                 heap[ ++hsize ] = A-> A_p[ j ];
             fr_coeff[ j ] = V_vec( Vs, fvec[ len + i ] );
         }
-        /*
+    /*
         printf( "Processing state %d\n", current );
         printf( "state coeff\n" );
         for( i = 0; i < len; i++ ) {
-        j = fvec[ i ];
-        printf( "%5d ", j );
-        for( tt = 0; fr_coeff[j][tt] != MAXSHORT; tt++ )
-        printf( "%s ", T_name( TT, fr_coeff[j][tt] ) );
-        printf( "\n" );
+            j = fvec[ i ];
+            printf( "%5d ", j );
+            for( tt = 0; fr_coeff[j][tt] != MAXSHORT; tt++ )
+                printf( "%s ", T_name( TT, fr_coeff[j][tt] ) );
+            printf( "\n" );
         }
-        */
+    */
         if ( hsize == 0 ) continue;
         for( base = hsize / 2; base > 0; --base ) {
             insert = heap[ base ];
@@ -230,9 +229,9 @@ idone:
             heap[father] = insert;
         }
 
-        /* Main loop to process current state: Each cycle processes position at the
-         * top of the heap.
-         */
+  /* Main loop to process current state: Each cycle processes position at the
+   * top of the heap.
+   */
 
         last = heap[1];
         for(;;) {
@@ -282,17 +281,17 @@ idone:
                 label = last-> A_b;
                 if ( label == 1 ) label = 2;
                 to = hi_next;
-                /*
+            /*
                 printf( "Destination state\n" );
                 printf( "state coeff\n" );
                 for( i = 0; i < vlen; i++ ) {
-                j = vec[ i ];
-                printf( "%5d ", j );
-                for( tt = 0; to_coeff[j][tt] != MAXSHORT; tt++ )
-                printf( "%s ", T_name( TT, to_coeff[j][tt] ) );
-                printf( "\n" );
+                    j = vec[ i ];
+                    printf( "%5d ", j );
+                    for( tt = 0; to_coeff[j][tt] != MAXSHORT; tt++ )
+                        printf( "%s ", T_name( TT, to_coeff[j][tt] ) );
+                    printf( "\n" );
                 }
-                */
+            */
                 for( j = 0; ; j++ ) {
                     try = to_coeff[vec[0]][j];
                     if ( try == MAXSHORT ) goto done;
@@ -378,7 +377,7 @@ done:
                         for( p = A-> A_p[ queue[i] ]; p < pz; ++p ) {
                             if ( p-> A_b != 1 && p-> A_b % 2 == 1 ) {
                                 if ( p-> A_a == p-> A_c )
-                                    Error( "A_sseq: Relation not single-valued (2)" );
+                            Error( "A_sseq: Relation not single-valued (2)" );
                                 if ( set[ p-> A_c ] == UNMARK ) {
                                     set[ p-> A_c ] = head;
                                     head = p-> A_c;

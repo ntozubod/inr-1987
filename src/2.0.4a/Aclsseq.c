@@ -27,10 +27,9 @@
 
 #include "O.h"
 
-A_OBJECT A_clsseq( A1 )
-register A_OBJECT A1;
+A_OBJECT A_clsseq( A_OBJECT A1 )
 {
-    register A_OBJECT A;
+    A_OBJECT A;
     int current, end_st, i, bb, last_label, label, hi_next, k;
     last_label = 0; /* Initialiaze to suppress warning JHJ */
     SHORT *vec, *cur_vec;
@@ -62,12 +61,12 @@ register A_OBJECT A1;
 
         for( p = A1-> A_p[ cur_vec[0] ]; p < pz; ++p ) {
             if ( p-> A_b == 1 ) {
-                /*
-                                for( k = 1; vec[k] < MAXSHORT; k++ )
-                                    if ( A1-> A_p[ vec[k] ] == A1-> A_p[ vec[k] + 1 ]
-                                      || A1-> A_p[ vec[k] ]-> A_b != 1 ) break;
-                                if ( vec[k] == MAXSHORT )
-                */
+        /*
+                for( k = 1; vec[k] < MAXSHORT; k++ )
+                    if ( A1-> A_p[ vec[k] ] == A1-> A_p[ vec[k] + 1 ]
+                          || A1-> A_p[ vec[k] ]-> A_b != 1 ) break;
+                if ( vec[k] == MAXSHORT )
+        */
                 A = A_add( A, current, 1, FINAL );
                 continue;
             }
