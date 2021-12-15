@@ -19,3 +19,6 @@ restricted the transductions to subsequential functions. NB: mathematically,
 this is impossible in general because the closure of even a sseq-function is
 not rational. I was looking for interesting special cases. I hadn't found any
 before I left U of Waterloo, and never revisited the problem.
+
+(5) Why do I need the declarations of fileno and isascii to suppress warnings
+with the -ansi option?

@@ -11,10 +11,10 @@ SOURCE 	= Makefile $(HFILES) localc.h localh.h locals.h $(CFILES) Parse.y \
 compcms.exec cwinr.exec comphw.exec
 
 .c.o:
-	gcc -Wall -O -c $*.c
+	gcc -ansi -Wall -O -c $*.c
 
 ginr:	$(OFILES)
-	gcc -Wall -O $(OFILES) -o ginr
+	gcc -ansi -Wall -O $(OFILES) -o ginr
 
 inrx.a:
 	echo hi >inrx.a
