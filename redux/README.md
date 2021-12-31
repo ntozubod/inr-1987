@@ -1,2 +1,5 @@
-# inr-1987
-A prototype FST toolkit developed between 1983-1987 at University of Waterloo
+# INR redux
+
+This is rebuild of ginr from its origins at in the 1980s at the University
+of Waterloo.
+The goal is to build solid foundation for future work.
