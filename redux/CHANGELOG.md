@@ -2,7 +2,9 @@
 
 ## 2.0.0e redux (2022-01-01)
 
-The code will compile and run if two bugs are fixed.
+#### 2.0.0e src (1988-03-25)
+
+The code will compile and run if two bugs are fixed:
 
 1. Aload.c initializes the static global variables fpin and fpout to
 non-constant values.
@@ -20,6 +22,13 @@ these two changes, it will compile, and run sufficiently well to define
 a small finite state machine.
 Before other changes will be done, this redux branch will apply some global
 reformating changes.
+
+#### 2.0.0e doc pdf (2010-07-29)
+
+The latex source appears to no longer work, at least with default settings.
+I am including a pdf file produced in 2010 with minimal changes to the source.
+This documentation is not adequate or in the most convenient form at the
+present time.
 
 ## 2.0.0e redux (2021-12-31)
 
