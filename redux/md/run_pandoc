@@ -1,0 +1,3 @@
+#!/bin/bash
+
+pandoc -f latex -t markdown < all.tex > out.md

@@ -1,9 +1,0 @@
-#!/bin/bash
-
-pandoc -f latex -t markdown < 001intro.tex > 001intro.md
-pandoc -f latex -t markdown < 002lex.tex > 002lex.md
-pandoc -f latex -t markdown < 003expr.tex > 003expr.md
-pandoc -f latex -t markdown < 004rate.tex > 004rate.md
-pandoc -f latex -t markdown < 005coerc.tex > 005coerc.md
-pandoc -f latex -t markdown < 006stat.tex > 006stat.md
-pandoc -f latex -t markdown < 007inte.tex > 007inte.md
