@@ -1,7 +1,6 @@
 #!/bin/bash
 
 rm -f main.aux
-rm -f main.bbl
 rm -f main.blg
 rm -f main.log
 rm -r main.dvi
@@ -11,8 +10,7 @@ pdflatex main
 pdflatex main
 
 rm -f main.aux
-rm -f main.bbl
 rm -f main.blg
 rm -f main.log
 
-mv main.pdf ../pdf/inr_intro.pdf
+mv main.pdf inr_intro.pdf
