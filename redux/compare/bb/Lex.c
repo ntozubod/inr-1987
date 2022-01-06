@@ -40,200 +40,12 @@ yylex ( )
   if ( in_string ) {
     ch = getc ( fpin ) ;
 
-    if ( ch == '\' ) {
-         ch = getc ( fpin ) ;
-         if ( ch != '\' ) {
-                in_string = 0 ;
-                return ( RPAREN ) ;
-    }
-}
-
-if ( ch == '\\' )
-{
-  ch = getc ( fpin ) ;
-
-  switch ( ch ) {
-  case 'n' :
-    ch = '\n' ;
-    break ;
-
-  case 't' :
-    ch = '\t' ;
-    break ;
-
-  case '_' :
-    ch = ' ' ;
-    break ;
-
-  case 'x' :
-    d = getc ( fpin ) ;
-
-    if ( d >= '0' && d <= '9' ) {
-      d = d - '0' ;
-
-    } else if ( d >= 'a' && d <= 'f' ) {
-      d = d - 'a' + 10 ;
-
-    } else if ( d >= 'A' && d <= 'F' ) {
-      d = d - 'A' + 10 ;
-
-    } else {
-      Error ( "Unexpected Hex digit" ) ;
-    }
-
-    ch = d << 4 ;
-    d = getc ( fpin ) ;
-
-    if ( d >= '0' && d <= '9' ) {
-      d = d - '0' ;
-
-    } else if ( d >= 'a' && d <= 'f' ) {
-      d = d - 'a' + 10 ;
-
-    } else if ( d >= 'A' && d <= 'F' ) {
-      d = d - 'A' + 10 ;
-
-    } else {
-      Error ( "Unexpected Hex digit" ) ;
-    }
-
-    ch += d ;
-  }
-}
-
-if ( ch == EOF )
-{
-  Error ( "End of file in string" ) ;
-}
-
-token [ 0 ] = ch ;
-token [ 1 ] = 0 ;
-yylval . up = copyof ( token ) ;
-return ( NAME ) ;
-}
-in_comment = 0 ;
-
-while ( ch == ' ' || ch == '\t' || ch == '\n' || ch == '#' || in_comment )
-{
-  if ( ch == '#' ) {
-    in_comment = 1 ;
-  }
-
-  if ( ch == '\n' ) {
-    in_comment = 0 ;
-  }
-
-  if ( ch == EOF ) {
-    Error ( "End of file in comment" ) ;
-  }
-
-  ch = getc ( fpin ) ;
-}
-
-if ( ch == EOF )
-{
-  return ( 0 ) ;
-}
-
-d = ch ;
-ch = ' ' ;
-
-switch ( d )
-{
-case '!' :
-  return ( EXCLAM ) ;
-
-case '$' :
-  return ( DOLLAR ) ;
-
-case '%' :
-  return ( PERCENT ) ;
-
-case '&' :
-  return ( AMPERSAND ) ;
-
-case '\' : in_string = 1 ;
-    return ( LPAREN ) ;
-
-case '(' :
-  return ( LPAREN ) ;
-
-case ')' :
-  return ( RPAREN ) ;
-
-case '*' :
-  return ( STAR ) ;
-
-case '+' :
-  return ( PLUS ) ;
-
-case ',' :
-  return ( COMMA ) ;
-
-case '-' :
-  return ( MINUS ) ;
-
-case '/' :
-  return ( SLASH ) ;
-
-case ':' :
-  return ( COLON ) ;
-
-case ';' :
-  return ( SEMI ) ;
-
-case '=' :
-  return ( EQUAL ) ;
-
-case '?' :
-  return ( QUESTION ) ;
-
-case '@' :
-  return ( AT ) ;
-
-case '[' :
-  return ( LBRACK ) ;
-
-case '\\' :
-  return ( BSLASH ) ;
-
-case ']' :
-  return ( RBRACK ) ;
-
-case '^' :
-  return ( CIRCUMFLEX ) ;
-
-case '{' :
-  return ( LBRACE ) ;
-
-case '|' :
-  return ( VBAR ) ;
-
-case '}' :
-  return ( RBRACE ) ;
-
-case '"' :
-case '<' :
-case '>' :
-case '~' :
-  fprintf ( fpout, "Reserved character: %c\n", d ) ;
-  return ( d ) ;
-}
-
-li = 0 ;
-ch = d ;
-lflag = 1 ;
-
-if ( ch == '`' )
-{
-  ch = getc ( fpin ) ;
-
-  while ( ch != EOF ) {
-    if ( ch == '`' ) {
+    if ( ch == '\'' ) {
       ch = getc ( fpin ) ;
 
-      if ( ch != '`' ) {
-        break ;
+      if ( ch != '\'' ) {
+        in_string = 0 ;
+        return ( RPAREN ) ;
       }
     }
 
@@ -289,98 +101,282 @@ if ( ch == '`' )
       }
     }
 
-    token [ li ++ ] = ch ;
+    if ( ch == EOF ) {
+      Error ( "End of file in string" ) ;
+    }
+
+    token [ 0 ] = ch ;
+    token [ 1 ] = 0 ;
+    yylval . up = copyof ( token ) ;
+    return ( NAME ) ;
+  }
+
+  in_comment = 0 ;
+
+  while ( ch == ' ' || ch == '\t' || ch == '\n' || ch == '#' || in_comment ) {
+    if ( ch == '#' ) {
+      in_comment = 1 ;
+    }
+
+    if ( ch == '\n' ) {
+      in_comment = 0 ;
+    }
+
+    if ( ch == EOF ) {
+      Error ( "End of file in comment" ) ;
+    }
+
     ch = getc ( fpin ) ;
   }
 
-  if ( li == 0 ) {
+  if ( ch == EOF ) {
+    return ( 0 ) ;
+  }
+
+  d = ch ;
+  ch = ' ' ;
+
+  switch ( d ) {
+  case '!' :
+    return ( EXCLAM ) ;
+
+  case '$' :
+    return ( DOLLAR ) ;
+
+  case '%' :
+    return ( PERCENT ) ;
+
+  case '&' :
+    return ( AMPERSAND ) ;
+
+  case '\'' :
+    in_string = 1 ;
+    return ( LPAREN ) ;
+
+  case '(' :
+    return ( LPAREN ) ;
+
+  case ')' :
+    return ( RPAREN ) ;
+
+  case '*' :
+    return ( STAR ) ;
+
+  case '+' :
+    return ( PLUS ) ;
+
+  case ',' :
+    return ( COMMA ) ;
+
+  case '-' :
+    return ( MINUS ) ;
+
+  case '/' :
+    return ( SLASH ) ;
+
+  case ':' :
+    return ( COLON ) ;
+
+  case ';' :
+    return ( SEMI ) ;
+
+  case '=' :
+    return ( EQUAL ) ;
+
+  case '?' :
+    return ( QUESTION ) ;
+
+  case '@' :
+    return ( AT ) ;
+
+  case '[' :
+    return ( LBRACK ) ;
+
+  case '\\' :
+    return ( BSLASH ) ;
+
+  case ']' :
+    return ( RBRACK ) ;
+
+  case '^' :
     return ( CIRCUMFLEX ) ;
+
+  case '{' :
+    return ( LBRACE ) ;
+
+  case '|' :
+    return ( VBAR ) ;
+
+  case '}' :
+    return ( RBRACE ) ;
+
+  case '"' :
+  case '<' :
+  case '>' :
+  case '~' :
+    fprintf ( fpout, "Reserved character: %c\n", d ) ;
+    return ( d ) ;
   }
 
-} else
-{
-  while ( lflag && ch != EOF ) {
-    token [ li ++ ] = ch ;
+  li = 0 ;
+  ch = d ;
+  lflag = 1 ;
+
+  if ( ch == '`' ) {
     ch = getc ( fpin ) ;
 
-    if ( li != 2 || token [ 1 ] != '.' || ! isdigit ( token [ 0 ] ) ) {
-      lflag = 0 ;
+    while ( ch != EOF ) {
+      if ( ch == '`' ) {
+        ch = getc ( fpin ) ;
 
-      switch ( ch ) {
-      case '.' :
-      case '_' :
-      case '0' :
-      case '1' :
-      case '2' :
-      case '3' :
-      case '4' :
-      case '5' :
-      case '6' :
-      case '7' :
-      case '8' :
-      case '9' :
-      case 'A' :
-      case 'B' :
-      case 'C' :
-      case 'D' :
-      case 'E' :
-      case 'F' :
-      case 'G' :
-      case 'H' :
-      case 'I' :
-      case 'J' :
-      case 'K' :
-      case 'L' :
-      case 'M' :
-      case 'N' :
-      case 'O' :
-      case 'P' :
-      case 'Q' :
-      case 'R' :
-      case 'S' :
-      case 'T' :
-      case 'U' :
-      case 'V' :
-      case 'W' :
-      case 'X' :
-      case 'Y' :
-      case 'Z' :
-      case 'a' :
-      case 'b' :
-      case 'c' :
-      case 'd' :
-      case 'e' :
-      case 'f' :
-      case 'g' :
-      case 'h' :
-      case 'i' :
-      case 'j' :
-      case 'k' :
-      case 'l' :
-      case 'm' :
-      case 'n' :
-      case 'o' :
-      case 'p' :
-      case 'q' :
-      case 'r' :
-      case 's' :
-      case 't' :
-      case 'u' :
-      case 'v' :
-      case 'w' :
-      case 'x' :
-      case 'y' :
-      case 'z' :
-        lflag = 1 ;
-        break ;
+        if ( ch != '`' ) {
+          break ;
+        }
+      }
+
+      if ( ch == '\\' ) {
+        ch = getc ( fpin ) ;
+
+        switch ( ch ) {
+        case 'n' :
+          ch = '\n' ;
+          break ;
+
+        case 't' :
+          ch = '\t' ;
+          break ;
+
+        case '_' :
+          ch = ' ' ;
+          break ;
+
+        case 'x' :
+          d = getc ( fpin ) ;
+
+          if ( d >= '0' && d <= '9' ) {
+            d = d - '0' ;
+
+          } else if ( d >= 'a' && d <= 'f' ) {
+            d = d - 'a' + 10 ;
+
+          } else if ( d >= 'A' && d <= 'F' ) {
+            d = d - 'A' + 10 ;
+
+          } else {
+            Error ( "Unexpected Hex digit" ) ;
+          }
+
+          ch = d << 4 ;
+          d = getc ( fpin ) ;
+
+          if ( d >= '0' && d <= '9' ) {
+            d = d - '0' ;
+
+          } else if ( d >= 'a' && d <= 'f' ) {
+            d = d - 'a' + 10 ;
+
+          } else if ( d >= 'A' && d <= 'F' ) {
+            d = d - 'A' + 10 ;
+
+          } else {
+            Error ( "Unexpected Hex digit" ) ;
+          }
+
+          ch += d ;
+        }
+      }
+
+      token [ li ++ ] = ch ;
+      ch = getc ( fpin ) ;
+    }
+
+    if ( li == 0 ) {
+      return ( CIRCUMFLEX ) ;
+    }
+
+  } else {
+    while ( lflag && ch != EOF ) {
+      token [ li ++ ] = ch ;
+      ch = getc ( fpin ) ;
+
+      if ( li != 2 || token [ 1 ] != '.' || ! isdigit ( token [ 0 ] ) ) {
+        lflag = 0 ;
+
+        switch ( ch ) {
+        case '.' :
+        case '_' :
+        case '0' :
+        case '1' :
+        case '2' :
+        case '3' :
+        case '4' :
+        case '5' :
+        case '6' :
+        case '7' :
+        case '8' :
+        case '9' :
+        case 'A' :
+        case 'B' :
+        case 'C' :
+        case 'D' :
+        case 'E' :
+        case 'F' :
+        case 'G' :
+        case 'H' :
+        case 'I' :
+        case 'J' :
+        case 'K' :
+        case 'L' :
+        case 'M' :
+        case 'N' :
+        case 'O' :
+        case 'P' :
+        case 'Q' :
+        case 'R' :
+        case 'S' :
+        case 'T' :
+        case 'U' :
+        case 'V' :
+        case 'W' :
+        case 'X' :
+        case 'Y' :
+        case 'Z' :
+        case 'a' :
+        case 'b' :
+        case 'c' :
+        case 'd' :
+        case 'e' :
+        case 'f' :
+        case 'g' :
+        case 'h' :
+        case 'i' :
+        case 'j' :
+        case 'k' :
+        case 'l' :
+        case 'm' :
+        case 'n' :
+        case 'o' :
+        case 'p' :
+        case 'q' :
+        case 'r' :
+        case 's' :
+        case 't' :
+        case 'u' :
+        case 'v' :
+        case 'w' :
+        case 'x' :
+        case 'y' :
+        case 'z' :
+          lflag = 1 ;
+          break ;
+        }
       }
     }
   }
-}
 
-token [ li ] = 0 ;
-yylval . up = copyof ( token ) ;
-return ( NAME ) ;
+  token [ li ] = 0 ;
+  yylval . up = copyof ( token ) ;
+  return ( NAME ) ;
 }
 char Notice [ ] = "Copyright (c) 1985, J Howard Johnson, University of Waterloo" ;
 extern char Version [ ] ;

@@ -46,18 +46,66 @@ foreach my $arg ( @ARGV ) {
 
     elsif ( $buf =~ s{^(["])}{} ) {
       $next = $1;
-      if ( $buf =~ s{^(.*?["])}{} ) {
-        $next .= $1;
-        push( @toks, $next );
+      my $p1 = "";
+      my $p2 = "";
+      my $p3 = "";
+      if ( $buf =~ s{^(.*?)([\\]*)(["])}{}s ) {
+        $p1 = $1;
+        $p2 = $2;
+        $p3 = $3;
+        while ( length( $p2 ) % 2 == 1 ) {
+          $next .= $p1 . $p2 . $p3;
+          if ( $buf =~ s{^(.*?)([\\]*)(["])}{}s ) {
+            $p1 = $1;
+            $p2 = $2;
+            $p3 = $3;
+          }
+          else {
+            print "Illegal double quoted string 2\n";
+            $p1 = "(((IDQS2)))";
+            $p2 = "";
+            $p3 = "";
+          }
+        }
+        $next .= $p1 . $p2 . $p3;
       }
+      else {
+        print "Illegal double quoted string 1\n";
+        $next .= "(((IDQS1)))";
+      }
+      push( @toks, $next );
     }
 
     elsif ( $buf =~ s{^(['])}{} ) {
-      my $next = $1;
-      if ( $buf =~ s{^(.*?['])}{} ) {
-        $next .= $1;
-        push( @toks, $next );
+      $next = $1;
+      my $p1 = "";
+      my $p2 = "";
+      my $p3 = "";
+      if ( $buf =~ s{^(.*?)([\\]*)(['])}{}s ) {
+        $p1 = $1;
+        $p2 = $2;
+        $p3 = $3;
+        while ( length( $p2 ) % 2 == 1 ) {
+          $next .= $p1 . $p2 . $p3;
+          if ( $buf =~ s{^(.*?)([\\]*)(['])}{}s ) {
+            $p1 = $1;
+            $p2 = $2;
+            $p3 = $3;
+          }
+          else {
+            print "Illegal single quoted string 2\n";
+            $p1 = "(((ISQS2)))";
+            $p2 = "";
+            $p3 = "";
+          }
+        }
+        $next .= $p1 . $p2 . $p3;
       }
+      else {
+        print "Illegal single quoted string 1\n";
+        $next .= "(((ISQS1)))";
+      }
+      push( @toks, $next );
     }
 
     elsif ( $buf =~ s/^([ \t]+)// ) {

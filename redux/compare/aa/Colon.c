@@ -64,19 +64,18 @@ int do_n_i ( op ) char * op ;
   } else if ( ! strcmp ( "time", op ) ) {
     pr_time_diff ( ) ;
 
-  } else if ( ! strcmp ( "help", op ) ) {
-    fprintf ( fpout, \ n \ Basic Help \ n \ \ n \ To terminate session type : bye ;
-  }
+  } else if ( ! strcmp ( "help", op ) ) fprintf ( fpout, "\n\
+Basic Help\n\
+\n\
+To terminate session type       :bye;\n\
+\n\
+To get additional help type\n\
+\n\
+     :help ops;          (Priority and meaning of basic operators)\n\
+     :help colonops;     (Colon operators)\n\
+     :help ioops;        (IO operators)\n\
+     :help stats;        (Form of statements)\n\n" ) ;
 
-\ n \ \ n \ To get additional help type \ n \ \ n \ :
-  help ops ;
-( Priority and meaning of basic operators ) \ n \ :
-  help colonops ;
-( Colon operators ) \ n \ :
-  help ioops ;
-( IO operators ) \ n \ :
-  help stats ;
-  ( Form of statements ) \ n \ n ) ;
   else if ( ! strcmp ( "done", op ) || ! strcmp ( "quit", op ) || ! strcmp ( "stop", op ) || ! strcmp ( "bye", op ) ) {
     return 1 ;
 
@@ -370,68 +369,85 @@ char * arg ;
     }
 
   } else if ( ! strcmp ( "help", op ) ) {
-    if ( ! strcmp ( "ops", arg ) ) {
+    if ( ! strcmp ( "ops", arg ) ) fprintf ( fpout, "\n\
+Operations by priority (highest to lowest):\n\
+\n\
++   *   ?               postfix operators for 1 or more, 0 or more, 0 or 1\n\
+<concatenation>         no explicit operator\n\
+\\   /                   left factor, right factor\n\
+&   -                   intersection, set difference\n\
+|   !   ||  !!          union, exclusive or, elseor, shuffle\n\
+$                       project\n\
+@   @@                  composition, join\n\
+<all colon operators>   see :help colonops; for details\n\
+,                       Cartesian product within (), union within {}\n\
+\n\
+All operators associate from left to right.\n\
+Parentheses may be used to indicate a specific order of evaluation.\n\
+{,,,} is a set constructor.\n\
+(,,,) is a tuple construtor.\n\
+[   ] is the tape-shifting operator\n\
+'   ' is a string of single letter tokens.\n\
+`   ` is a token containing arbitrary symbols.\n\
+^     indicates the empty word (or an explicit concatenation operator).\n\n" ) ;
 
-      fprintf ( fpout, \ n \ Operations by priority ( highest to lowest ) : \ n \ \ n \ + * ? postfix operators for 1 or more, 0 or more, 0 or 1 \ n \ < concatenation > no explicit operator \ n \ \ \ / left factor, right factor \ n \ & - intersection, set difference \ n \ | ! || !! union, exclusive or, elseor, shuffle \ n \ $ project \ n \ @ @ @ composition, join \ n \ < all colon operators > see : help colonops ;
-    }
+    else if ( ! strcmp ( "colonops", arg ) ) fprintf ( fpout, "\n\
+Colon operations (postfix operators at lowest priority)\n\
+\n\
+Transformation Operators               Displaying Operators\n\
+:acomp      Active complement          :card       Print cardinality\n\
+:alph       Active alphabet            :enum       Enumerate language\n\
+:clsseq     Subsequential closure      :length     Display min word length\n\
+:comp       Complement w.r.t. SIGMA*   :pr         Display automaton\n\
+:lenmin     Words of min length        :prsseq     Subsequential display\n\
+:pref       Set of prefixes            :report     Display report line\n\
+:rev        Reverse                    :stems #    Print tape # stems\n\
+:sseq       Subsequential transducer\n\
+:LMsseq     LM Subsequential transducer\n\
+:GMsseq     GM Subsequential transducer\n\
+:suff       Set of suffixes            Coercing operators\n\
+:<number>   Concatenation power        :update :nfa :trim :lameq\n\
+:(<number>) Composition power          :lamcm :closed :dfa :dfamin\n\
+\n\
+:enum may take an optional argument to specify the quantity of output.\n\n" ) ;
 
-  for details \ n \, Cartesian product within ( ), union within {
-      }
+    else if ( ! strcmp ( "ioops", arg ) ) fprintf ( fpout, "\n\
+IO operations\n\
+\n\
+:pr <filename>        Postfix operator to display automaton into a file\n\
+:save <filename>      Postfix operator to save automaton in compressed form\n\
+:load <filename>      Operator without left argument to get value from a file\n\
+:readwords <filename> Operator with no argument to load a word file\n\
+\n\
+:get <variable>       Operator with no arguments to get value from a variable\n\
+\n\
+<var> = :load;        Short for <var> = :load <var>;\n\
+:save <var>;          Short for <var> :save <var>;\n\n" ) ;
 
-    \ n \ \ n \ All operators associate from left to right . \ n \ Parentheses may be used to indicate a specific order of evaluation . \ n \ {
-      ,,,
-    }
-    is a set constructor . \ n \ (,,, ) is a tuple construtor . \ n \ [ ] is the tape - shifting operator \ n \ '   ' is a string of single letter tokens . \ n \ ` ` is a token containing arbitrary symbols . \ n \ ^ indicates the empty word ( or an explicit concatenation operator ) . \ n \ n ) ;
-else if ( ! strcmp ( "colonops", arg ) ) fprintf ( fpout, \ n \ Colon operations ( postfix operators at lowest priority ) \ n \ \ n \ Transformation Operators Displaying Operators \ n \ : acomp Active complement : card Print cardinality \ n \ : alph Active alphabet : enum Enumerate language \ n \ : clsseq Subsequential closure : length Display min word length \ n \ : comp Complement w . r . t . SIGMA * : pr Display automaton \ n \ : lenmin Words of min length : prsseq Subsequential display \ n \ : pref Set of prefixes : report Display report line \ n \ : rev Reverse : stems #    Print tape # stems\n\
-              : sseq Subsequential transducer \ n \ : LMsseq LM Subsequential transducer \ n \ : GMsseq GM Subsequential transducer \ n \ : suff Set of suffixes Coercing operators \ n \ : < number > Concatenation power : update : nfa : trim : lameq \ n \ : ( < number > ) Composition power : lamcm : closed : dfa : dfamin \ n \ \ n \ : enum may take an optional argument to specify the quantity of output . \ n \ n ) ;
+    else if ( ! strcmp ( "stats", arg ) ) fprintf ( fpout, "\n\
+Statement forms\n\
+\n\
+:bye;           Terminate session\n\
+\n\
+:alph;          Display token symbol table\n\
+:free;          Display storage management report\n\
+:list;          Display report lines for variables\n\
+:noreport;      Turn off debug reporting\n\
+:pr;            Save each variable into a file with the variable as file name\n\
+:report;        Turn on debug reporting\n\
+:save;          Save in compressed form all variables into files\n\
+\n\
+<var> = <exp>;  Assign value of expression to variable\n\
+<exp>;          Compute and display expression\n\
+<exp>:;         Compute and enumerate words in expression\n\
+\n\
+The action of <exp>; depends on the last operator evaluated:\n\
+Coercing Operator:  display the value using :pr implicitly\n\
+Printing Operator:  do not perform additional display\n\
+Other:              coerce to DFAMIN and display using :pr\n\n" ) ;
 
-        else if ( ! strcmp ( "ioops", arg ) ) {
-        fprintf ( fpout, \ n \ IO operations \ n \ \ n \ : pr < filename > Postfix operator to display automaton into a file \ n \ : save < filename > Postfix operator to save automaton in compressed form \ n \ : load < filename > Operator without left argument to get value from a file \ n \ : readwords < filename > Operator with no argument to load a word file \ n \ \ n \ : get < variable > Operator with no arguments to get value from a variable \ n \ \ n \ < var > = : load ;
-      }
-
-Short for < var > { = : load < var > ; }
-\ n \ :
-  save < var > ;
-
-Short for < var > { : save < var > ; }
-  \ n \ n ) ;
-  else if ( ! strcmp ( "stats", arg ) ) {
-    fprintf ( fpout, \ n \ Statement forms \ n \ \ n \ : bye ;
-  }
-
-Terminate session \ n \ \ n \ :
-  alph ;
-Display token symbol table \ n \ :
-  free ;
-Display storage management report \ n \ :
-  list ;
-
-Display report lines for variables \ n \ :
-    noreport ;
-
-Turn off debug reporting \ n \ :
-    pr ;
-Save each variable into a file with the variable as file name \ n \ :
-    report ;
-Turn on debug reporting \ n \ :
-    save ;
-    Save in compressed form all variables into files \ n \ \ n \ < var > = < exp > ;
-    Assign value of expression to variable \ n \ < exp > ;
-Compute and display expression \ n \ < exp > :
-    ;
-    Compute and enumerate words in expression \ n \ \ n \ The action of < exp > ;
-depends on the last operator evaluated :
-\ n \ Coercing Operator :
-display the value using :
-pr implicitly \ n \ Printing Operator :
-
-    do {
-not perform additional display \ n \ Other :
-coerce to DFAMIN and display using :
-      pr \ n \ n ) ;
-
-    } else {
-    fprintf ( fpout, "Unknown help request" ) ;
+    else {
+      fprintf ( fpout, "Unknown help request" ) ;
     }
 
   } else {
