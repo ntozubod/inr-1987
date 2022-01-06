@@ -4,37 +4,40 @@
 
 #### 2.0.0g src (2022-01-06)
 
-The code compiles for immediately crashes because it tries to use a
-version of the binary buddy storage manager that was designed to run
-on a VAX 11/780 running Berkley UNIX.
-It takes an expansive approach of providing complete malloc/free support
-by calling the low level sbrk system call that increased the size of the
-data segment, and then providing suballocation of the memory for INR and
-any calls to malloc/free from code called from INR.
-This might have made sense in the 1980s but has a lot of problems if
-continued now.
+The code now compiles but immediately crashes because it tries to use a
+storage manager that was designed to run on a VAX 11/780 with 32-bit
+addressing and much less RAM running Berkley UNIX.
+At that time, the system version of malloc/free was not very good at avoiding
+fragmentation.
+INR's algorithms need to grow data structures dynamically and so this was
+a problem that led to a replacment implementation based on the binary buddy
+system.
 
-An alternative version of primary allocation was set up for IBM VM/CMS
-that involved acquiring a large chunk of contiguous storage using malloc and
-then suballocating that.
-If this storage becomes exhausted, INR cannot proceed so the primary
-allocation is made as large as possible.
-This approach is better but has problems in some kinds of environments.
+The original code takes an expansive approach of providing complete
+malloc/free support by over-riding the system version.
+It assumes that it can create an arena for allocation at the end of the
+data segment and uses the system call sbrk to grow the data segment and
+arena as needed.
+If any other part of the process calls sbrk, this will not work.
+This approach is clearly not portable to other environments.
+
+The version set up for IBM VM/CMS involved acquiring a large arena using
+the system malloc and then suballocating that using the binary buddy system.
+Since when this storage becomes exhausted INR cannot proceed, the primary
+allocation was made as large as possible.
 
 This version of the source contains a number of changes made immediately
 to the 2.0e version of March 25, 1988 prior to the release of INR under
-a GPL3 license in 2010.
-These changes removed all of the conditional compilations for VAX, CMS,
-UNIX and Honeywell platforms.
-The storage manager was changed to the second scheme (the CMS version).
+a GPL3 license in June of 2010.
+All of the conditional compilations for VAX, CMS, UNIX and Honeywell
+platforms were removed and the storage manager was changed to the second
+scheme (the CMS version).
 
-The basic unit of storage was increased to 24 bytes to avoid the use of bit
-fields and accomodate larger 64-bit pointer types.
-In addition, the reporting routing Saudit was modified to handle the
-printing of larger arenas.
-A small number of addtional problems were addressed but all of these
-changes qualify as routine bug-fixes to address the changes that
-had occurred in the intervening years.
+The minimum allocation unit of storage was increased to 24 bytes to
+accomodate 64-bit pointer types.
+In addition, Saudit was modified to handle the reporting for larger arenas.
+All of these changes qualify as routine bug-fixes to allow INR to run on
+more modern systems.
 
 #### compare tool (2022-01-06)
 
@@ -43,18 +46,15 @@ maintainable, fixing bugs, and documenting the process as well as the
 resulting product.
 
 In order to do this, it is important to install all of the bug-fixes that
-were found and patched in other branches in spite of the fact that the
-formatting of the source is different.
-To facilitate this, a tool was developed using perl and astyle that
-removes all white-space formatting and then re-introduces a formatting
-that can be used to highlight real changes.
+were patched previously in other branches of the repo.
+A tool was developed using perl and astyle that removes all white-space
+formatting and then re-introduces a formatting that can be used to highlight
+real changes.
 
-This code is located in a new directory named compare and it is used to
-compare the source directory with a reference directory copied from another
-source.
-In this case, the c9c1eff commit from the ginr repository is copied to rsrc
-and used to ensure that all updates have been made as done in 2010, in
-spite of fact that the new redux formatting is used.
+This code is used to compare the source directory with a reference directory
+copied from another source.
+The 'c9c1eff' commit from the ginr repository is copied to rsrc and used
+to ensure that all updates have been made as of June 2010.
 
 ## 2.0.0f redux reformat (2022-01-01)
 
