@@ -15,10 +15,6 @@ be described using the extended regular expression indicating the
 intersection of words containing $a$ and words containing $b$:
 $$\{a,b\}^*a\{a,b\}^* \wedge \{a,b\}^*b\{a,b\}^*.$$ This expression can
 be presented to INR in the following form:
-<img src="https://render.githubusercontent.com/render/math?math=x_{1,2} = \frac{-b \pm \sqrt{b^2-4ac}}{2b}">
-to
-<img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^*a\{a,b\}^* \wedge \{a,b\}^*b\{a,b\}^*">
-
 
 >     {a,b}* a {a,b}* & {a,b}* b {a,b}*;
 
