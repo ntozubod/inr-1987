@@ -1,5 +1,23 @@
 # INR redux Changelog
 
+## 2.0.2a redux (2022-01-09)
+
+#### src (version 2.0.2 August 3, 2010)
+
+Update to AGMsseq.c to fix a bug found while preparing paper for CIAA 2010.
+
+New routine mkdense.
+Reassigns state numbers to remove gaps.
+This makes the usage of arrays indexed by the state number work better.
+
+#### doc (version 2.0.2 August 3, 2010)
+
+Copy a more complete bibtex file.
+
+#### egs (version 2.0.2 August 3, 2010)
+
+Added a new example to show GMsseq functionality for the CIAA paper.
+
 ## 2.0.1a redux (2022-01-08)
 
 #### src (version 2.0.1 July 29, 2010)
