@@ -745,7 +745,7 @@ is by means of some regular characterizing language. Then the usual
 optimizations and transformations which apply to regular languages can
 then be applied without changing the implied transduction. This is
 exactly what INR does. Instead of $a_0$ and $a_1$, INR uses the notation
-'0.a' and '1.a'.
+`0.a` and `1.a`.
 
 Regular languages are defined in other ways than by their automata
 however. For example regular expressions, especially when extended to
@@ -766,7 +766,7 @@ define characterizing languages by using marking the letters with
 numbers 0, 1, or 2. Again there will always be a regular characterizing
 language, and similar closure properties. The process can, of course, be
 continued to relations of any degree. INR currently restricts the degree
-to 10: '0.a', '1.a', $\ldots$, '9.a'.
+to 10: `0.a`, `1.a`, $\ldots$, `9.a`.
 
 Finite transductions are also called rational relations or rational
 transductions since they are closed under the rational operations:
@@ -784,8 +784,9 @@ it by the tape number and a period.
     (START) 1.abc 2
     2 -| (FINAL)
 
-Note that `1.\`abc` will not work because the lexical scanner parses this
-as `1.\`̀  followed by `abc` followed by an unmatched `\``.
+Note that `` 1.`abc` `` will not work because the lexical scanner
+parses this as `` 1.` `` followed by `abc` followed by an unmatched
+`` ` ``.
 
 Variable
 --------
@@ -1101,13 +1102,14 @@ when it does. This is performed by the `:sseq` operator.
     8 0.-| 2
     8 0.a 7
 
-Note that '(START)', '3' and '8' are read states since they must read
-exactly one character (or end-marker) from tape zero. States '2', '5',
-'6' and '7' are write states. They can only write and the choice is
-determined. Note also that explicit end-markers are introduced. The
-existence of explicit end-markers can confuse some of the operations
-that use the characterizing language idea. End-markers can be deleted by
-using the '\$' operator. It removes explicit end-markers from any tape.
+Note that `(START)`, `3` and `8` are read states since they must
+read exactly one character (or end-marker) from tape zero. States `2`,
+`5`, `6` and `7` are write states. They can only write and the
+choice is determined. Note also that explicit end-markers are
+introduced. The existence of explicit end-markers can confuse some of
+the operations that use the characterizing language idea. End-markers
+can be deleted by using the `$` operator. It removes explicit
+end-markers from any tape.
 
 Coercing and Displaying Operators
 =================================
