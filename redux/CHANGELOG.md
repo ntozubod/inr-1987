@@ -2,6 +2,53 @@
 
 ## 2.0.2a redux (2022-01-09)
 
+## Brief comments on subsequential transduction in INR
+
+At the end of the time I was at the University of Waterloo, I was exploring
+the concept of Subsequential Transducers.
+This is a complicated name for a very simple idea but it has the advantage of
+being very precise.
+
+A subsequential transducer is a modification to a deterministic finite
+automaton (DFA) that is supplemented with output strings on every transition.
+The underlying DFA can be used to recognized a regular language as before
+but the understanding is that whenever a transition arc is traversed the
+corresponding output is added to the end of a growing output string.
+
+To get full generality, when the end of the input is encountered and the input
+is accepted, a final string it added to the end of the output and the process
+ends.
+
+This concept is very old but many of the original papers focussed more on
+non-deterministic models and did not have the output-before-exit modification.
+To be equally precise, this led to an alternate name "Deterministic
+Generalized Sequential Machine with Endmarkers".
+
+To be brief, all of the 'sseq' routines included in INR are for producing
+subsequential transducers given some form of 2-tape transducer as an input.
+The simplest and most reliable is A_sseq that simply produces such a
+transducer from an input transducer that only requires a change in form.
+
+The other 'sseq' routines are more Procrustean in nature, taking a transducer
+that does not represent a Subsequential Function and by an algorithm
+finding a Subsequential Transducer that contains some part of the input's
+behaviour.
+
+GMsseq was one of these more general algorithms.
+It was the topic of a paper: "Uniformizing Rational Relations
+for Natural Language Applications using Weighted Determinization"
+presented at CIAA 2010.
+
+It the process of preparing this paper, I found a bug in INR's algorithm and
+repaired it.
+I also discovered a theoretical issue that I couldn't resolve at the time.
+There remain theoretical questions from this work as well as implementation
+issues.
+INR's implementation has not been extensively utilized and likely has
+undiscovered bugs.
+It also does not fail gracefully and is not described in the documentation.
+This is work in progress that has been dormant for a long time.
+
 #### src (version 2.0.2 August 3, 2010)
 
 Update to AGMsseq.c to fix a bug found while preparing paper for CIAA 2010.
