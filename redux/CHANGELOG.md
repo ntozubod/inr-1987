@@ -5,27 +5,26 @@
 #### Brief comments on subsequential transduction in INR
 
 Towards the end of the time I was at the University of Waterloo, I was
-exploring the concept of Subsequential Transducers.
+exploring the implementation and use of Subsequential Transducers.
 
 A *subsequential transducer* is a deterministic finite automaton (DFA)
-with a simple output capability added in a rather obvious way.
+with an output capability added in a rather obvious way.
 Every transition and every final state is augmented with an string of
 output symbols.
 This underlying DFA recognizes a regular language as before and in the process
 of accepting an input string traces out a path deterministically in the DFA
 from the start state to a final state.
 The corresponding output is formed by concatenating together all of the
-outputs encountered on the path with final state output concatenated to the
-end.
+outputs encountered on the path.
+The output associated with the final state is then added to the end.
 In other words, a subsequential tranducer is a DFA with print statements
 added to transitions and final states.
 
 This concept is very old and occurs in some of the original papers about
-finite automata.
-However, interest quickly shifted to non-deterministic models and did not
-have the output-before-exit modification.
+finite automata; however, research interest quickly shifted to
+non-deterministic models and did not have the output-before-exit modification.
 Such an automaton was called a generalized sequential machine (GSM).
-An alternate name for a subsequential transducer is 'Deterministic
+Thus, an alternate name for a subsequential transducer is 'Deterministic
 Generalized Sequential Machine with Endmarkers'.
 
 All of the 'sseq' routines included in INR produce a subsequential transducer
@@ -38,9 +37,8 @@ The theory here is well developed (for example, see Christian Choffrut's
 2003 paper in TCS 292).
 
 The other 'sseq' routines are more Procrustean in nature, taking a transducer
-that does not represent a subsequential function and by an algorithm
-finding a subsequential transducer that contains some part or ascpect of the
-input's behaviour.
+that does not represent a subsequential function and finding a subsequential
+transducer that represents some aspect of the input's behaviour.
 
 GMsseq was one of these more general algorithms and was
 the topic of a paper: "Uniformizing Rational Relations
@@ -49,18 +47,20 @@ that I presented at CIAA 2010.
 It the process of preparing this paper, I found a bug in INR's algorithm and
 repaired it.
 I also discovered a theoretical issue that I couldn't resolve at the time.
-This is work in progress that has been dormant for a long time.
+There is a particular need for documentation and testing for all of the
+sseq routines.
 
 #### src (version 2.0.2 August 3, 2010)
 
-Update to AGMsseq.c to fix a bug found while preparing paper for CIAA 2010.
+Updated AGMsseq.c to fix a bug found while preparing paper for CIAA 2010.
 
-New routine mkdense whose function is to reassign state numbers to remove gaps.
-This makes the usage of arrays indexed by the state number work better.
+Added a new routine 'mkdense' whose function is to reassign state
+numbers to remove gaps.
+( Arrays indexed by the state number work better. )
 
 #### doc (version 2.0.2 August 3, 2010)
 
-Copy a more complete bibtex file.
+Added a more complete bibtex file.
 
 #### egs (version 2.0.2 August 3, 2010)
 
