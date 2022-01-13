@@ -220,9 +220,11 @@ A_OBJECT A_deems ( A ) A_OBJECT A ;
 
   for ( p = A -> A_t + A -> A_nrows ;
         -- p >= A -> A_t ;
-      ) if ( p -> A_b > 1 && p -> A_b <= lst_em ) {
+      ) {
+    if ( p -> A_b > 1 && p -> A_b <= lst_em ) {
       p -> A_b = 0 ;
     }
+  }
 
   A = A_close ( A ) ;
   A -> A_mode = new_mode ;
@@ -260,10 +262,12 @@ A_OBJECT A_adems ( A ) A_OBJECT A ;
 
   for ( p = A -> A_t + A -> A_nrows ;
         -- p >= A -> A_t ;
-      ) if ( p -> A_b == 1 ) {
+      ) {
+    if ( p -> A_b == 1 ) {
       p -> A_b = fst_em ;
       p -> A_c = base ;
     }
+  }
 
   for ( i = fst_em + 1 ;
         i <= lst_em ;
@@ -275,5 +279,5 @@ A_OBJECT A_adems ( A ) A_OBJECT A ;
   A = A_close ( A ) ;
   A -> A_mode = new_mode ;
   A -> A_ems = 1 ;
-  return A ;
+  return ( A ) ;
 }

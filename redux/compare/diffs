@@ -33,28 +33,10 @@ diff -r -w aa/Acrea.c bb/Acrea.c
 < A_OBJECT A_deems ( A_OBJECT A )
 ---
 > A_OBJECT A_deems ( A ) A_OBJECT A ;
-223,224c223
-<       ) {
-<     if ( p -> A_b > 1 && p -> A_b <= lst_em ) {
----
->       ) if ( p -> A_b > 1 && p -> A_b <= lst_em ) {
-227d225
-<   }
-234c232
+234c234
 < A_OBJECT A_adems ( A_OBJECT A )
 ---
 > A_OBJECT A_adems ( A ) A_OBJECT A ;
-265,266c263
-<       ) {
-<     if ( p -> A_b == 1 ) {
----
->       ) if ( p -> A_b == 1 ) {
-270d266
-<   }
-282c278
-<   return ( A ) ;
----
->   return A ;
 diff -r -w aa/Aenum.c bb/Aenum.c
 178c178
 < int A_card ( A ) A_OBJECT A ;
@@ -81,7 +63,7 @@ diff -r -w aa/ALMsseq.c bb/ALMsseq.c
 >   from = 0 ;
 >   /* Initialiaze to suppress warning JHJ */
 diff -r -w aa/Aopen.c bb/Aopen.c
-1,22c1,25
+1,22c1,24
 < // Copyright (c) 1985, J Howard Johnson, University of Waterloo.
 < //
 < // This software was developed while I was a student and, later, professor
@@ -105,7 +87,6 @@ diff -r -w aa/Aopen.c bb/Aopen.c
 < //   You should have received a copy of the GNU General Public License
 < //   along with INR.  If not, see <http://www.gnu.org/licenses/>.
 ---
-> extern int S_flag ;
 > /*
 >  * Copyright (c) 1985, J Howard Johnson, University of Waterloo.
 >  *
@@ -130,101 +111,46 @@ diff -r -w aa/Aopen.c bb/Aopen.c
 >  *   You should have received a copy of the GNU General Public License
 >  *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
 >  */
-24d26
-< #include <assert.h>
-29c31,32
-< A_OBJECT A_add ( A_OBJECT A, int a, int b, int c )
----
-> A_OBJECT A_add ( A, a, b, c ) A_OBJECT A ;
-> int a, b, c ;
-37,39c40,50
-<   assert ( A -> A_mode == OPEN ) ;
-<   assert ( a >= 0 && b >= 0 && c >= 0 ) ;
-<   assert ( a < MAXSHORT && b < MAXSHORT && c < MAXSHORT ) ;
----
->   if ( A -> A_mode != OPEN ) {
->     Error ( "A_add: Object not OPEN" ) ;
->   }
-> 
->   if ( a < 0 || b < 0 || c < 0 ) {
->     Error ( "A_add: Numbers cannot be negative" ) ;
->   }
-> 
->   if ( a >= MAXSHORT || b >= MAXSHORT || c >= MAXSHORT ) {
->     Error ( "A_add: Numbers are too big" ) ;
->   }
-65c76
-< A_OBJECT A_open ( A_OBJECT A )
----
-> A_OBJECT A_open ( A ) A_OBJECT A ;
-76c87
-< A_OBJECT A_close ( A_OBJECT A )
----
-> A_OBJECT A_close ( A ) A_OBJECT A ;
-111d121
-<   assert ( N > 0 ) ;
-128d137
-<     assert ( p -> A_c < N ) ;
-142,143d150
-<   assert ( p == t2 ) ;
+32,36c34
 < 
-147c154
-<     q = -- ptr [ p -> A_c ] ;
----
->     q = -- ptr [ i = p -> A_c ] ;
-149d155
-<     assert ( p -> A_b < N ) ;
-151c157
-<     q -> A_c = p -> A_c ;
----
->     q -> A_c = i ;
-164,165d169
-<   assert ( p == t1 ) ;
-< 
-169,170c173
-<     q = -- ptr [ p -> A_b ] ;
-<     assert ( p -> A_a < N ) ;
----
->     q = -- ptr [ i = p -> A_b ] ;
-172c175
-<     q -> A_b = p -> A_b ;
----
->     q -> A_b = i ;
-186,187d188
-<   assert ( p == t2 ) ;
-< 
-191,192c192,193
-<     q = -- ptr [ p -> A_a ] ;
-<     q -> A_a = p -> A_a ;
----
->     q = -- ptr [ i = p -> A_a ] ;
->     q -> A_a = i ;
-202c203
-<   ( t2z + 1 ) -> A_c = MAXSHORT ;
----
->   ( t2z + 1 ) -> A_a = MAXSHORT ;
-220,222c221
-<     while ( ( ++ t1 ) -> A_c == ( ++ t2 ) -> A_c && t1 -> A_b == t2 -> A_b && t1 -> A_a == t2 -> A_a ) {
-<       ;
-<     }
----
->     while ( ( ++ t1 ) -> A_c == ( ++ t2 ) -> A_c && t1 -> A_b == t2 -> A_b && t1 -> A_a == t2 -> A_a ) ;
-245c244,245
-< A_OBJECT A_rename ( A_OBJECT A, SHORT * rena )
----
-> A_OBJECT A_rename ( A, rena ) A_OBJECT A ;
-> SHORT * rena ;
-297,298c297
-<       ) {
-<     if ( ( p -> A_c = trena [ p -> A_c ] ) == MAXSHORT || ( p -> A_a == p -> A_c && p -> A_b == 0 ) ) {
----
->       ) if ( ( p -> A_c = trena [ p -> A_c ] ) == MAXSHORT || ( p -> A_a == p -> A_c && p -> A_b == 0 ) ) {
-304d302
+<   if ( A == NULL ) {
+<     Error ( "A_add: No OBJECT" ) ;
 <   }
-335c333
-< A_OBJECT A_mkdense ( A_OBJECT A )
+< 
 ---
-> A_OBJECT A_mkdense ( A ) A_OBJECT A ;
+>   assert ( A != NULL ) ;
+67,70c65
+<   if ( A == NULL ) {
+<     Error ( "A_open: No OBJECT" ) ;
+<   }
+< 
+---
+>   assert ( A != NULL ) ;
+84,87c79
+< 
+<   if ( A == NULL ) {
+<     Error ( "A_close: No OBJECT" ) ;
+<   }
+---
+>   assert ( A != NULL ) ;
+220a213
+>       /* empty */
+250,254c243
+< 
+<   if ( A == NULL ) {
+<     Error ( "A_rename: No OBJECT" ) ;
+<   }
+< 
+---
+>   assert ( A != NULL ) ;
+339,343c328
+< 
+<   if ( A == NULL ) {
+<     Error ( "A_rename: No OBJECT" ) ;
+<   }
+< 
+---
+>   assert ( A != NULL ) ;
 diff -r -w aa/Asseq.c bb/Asseq.c
 39a40,42
 >   label = 0 ;

@@ -191,8 +191,9 @@ register A_OBJECT A;
     if ( A-> A_mode < NFA_EQLAM )   new_mode = A-> A_mode;
     else                            new_mode = NFA_EQLAM;
     A = A_open( A );
-    for ( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; )
+    for ( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; ) {
         if ( p-> A_b > 1 && p-> A_b <= lst_em ) p-> A_b = 0;
+    }
     A = A_close( A );
     A-> A_mode = new_mode;
     A-> A_ems = 0;
@@ -217,16 +218,17 @@ register A_OBJECT A;
     else                            new_mode = DFA_MIN;
     A = A_open( A );
     base = A-> A_nQ;
-    for ( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; )
+    for ( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; ) {
         if ( p-> A_b == 1 ) {
             p-> A_b = fst_em;
             p-> A_c = base;
         }
+    }
     for ( i = fst_em + 1; i <= lst_em; i++ )
         A = A_add( A, base + i - fst_em - 1, i, base + i - fst_em );
     A = A_add( A, base + lst_em - fst_em, 1, FINAL );
     A = A_close( A );
     A-> A_mode = new_mode;
     A-> A_ems = 1;
-    return A;
+    return ( A );
 }

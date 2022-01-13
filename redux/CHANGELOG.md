@@ -5,6 +5,13 @@
 The redux branch is now tracing the dev branch to pick up any useful
 changes that occur there.
 
+#### src (from version 2.0.3b September 21, 2018)
+
+Acrea.c: Converted function declarations.
+
+Aopen.c: Converted function declatations and added use of assert() macro
+calls as an alternative to test and call to Error().
+
 ## 2.0.3e redux (2022-01-13)
 
 At this point, the redux branch agrees with the master except in formatting
