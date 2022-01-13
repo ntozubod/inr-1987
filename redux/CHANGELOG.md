@@ -1,5 +1,10 @@
 # INR redux Changelog
 
+## 2.0.3f redux (2022-01-14)
+
+The redux branch is now tracing the dev branch to pick up any useful
+changes that occur there.
+
 ## 2.0.3e redux (2022-01-13)
 
 At this point, the redux branch agrees with the master except in formatting

@@ -12,6 +12,49 @@ diff -r -w aa/Acompose.c bb/Acompose.c
 >   t1 = 0 ;
 >   t2 = 0 ;
 >   /* Initialiaze to suppress warning JHJ */
+diff -r -w aa/Acrea.c bb/Acrea.c
+46c46
+< void A_destroy ( A_OBJECT A )
+---
+> void A_destroy ( A ) A_OBJECT A ;
+55c55
+< A_OBJECT A_rept ( A_OBJECT A )
+---
+> A_OBJECT A_rept ( A ) A_OBJECT A ;
+123c123
+< void A_exchange ( A_OBJECT A1, A_OBJECT A2 )
+---
+> void A_exchange ( A1, A2 ) A_OBJECT A1, A2 ;
+175c175
+< A_OBJECT A_copy ( A_OBJECT A )
+---
+> A_OBJECT A_copy ( A ) A_OBJECT A ;
+200c200
+< A_OBJECT A_deems ( A_OBJECT A )
+---
+> A_OBJECT A_deems ( A ) A_OBJECT A ;
+223,224c223
+<       ) {
+<     if ( p -> A_b > 1 && p -> A_b <= lst_em ) {
+---
+>       ) if ( p -> A_b > 1 && p -> A_b <= lst_em ) {
+227d225
+<   }
+234c232
+< A_OBJECT A_adems ( A_OBJECT A )
+---
+> A_OBJECT A_adems ( A ) A_OBJECT A ;
+265,266c263
+<       ) {
+<     if ( p -> A_b == 1 ) {
+---
+>       ) if ( p -> A_b == 1 ) {
+270d266
+<   }
+282c278
+<   return ( A ) ;
+---
+>   return A ;
 diff -r -w aa/Aenum.c bb/Aenum.c
 178c178
 < int A_card ( A ) A_OBJECT A ;
@@ -38,8 +81,150 @@ diff -r -w aa/ALMsseq.c bb/ALMsseq.c
 >   from = 0 ;
 >   /* Initialiaze to suppress warning JHJ */
 diff -r -w aa/Aopen.c bb/Aopen.c
-0a1
+1,22c1,25
+< // Copyright (c) 1985, J Howard Johnson, University of Waterloo.
+< //
+< // This software was developed while I was a student and, later, professor
+< // at the University of Waterloo.  It has only minimal enhancements and bug
+< // fixes from later than August 1988.  It was released under the GPLv3
+< // licence on July 26, 2010.
+< //                 -- J Howard Johnson ( j.howard.johnson *at* gmail.com )
+< //
+< // This file is part of INR.
+< //
+< //   INR is free software: you can redistribute it and/or modify
+< //   it under the terms of the GNU General Public License as published by
+< //   the Free Software Foundation, either version 3 of the License, or
+< //   (at your option) any later version.
+< //
+< //   INR is distributed in the hope that it will be useful,
+< //   but WITHOUT ANY WARRANTY; without even the implied warranty of
+< //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+< //   GNU General Public License for more details.
+< //
+< //   You should have received a copy of the GNU General Public License
+< //   along with INR.  If not, see <http://www.gnu.org/licenses/>.
+---
 > extern int S_flag ;
+> /*
+>  * Copyright (c) 1985, J Howard Johnson, University of Waterloo.
+>  *
+>  * This software was developed while I was a student and, later, professor
+>  * at the University of Waterloo.  It has only minimal enhancements and bug
+>  * fixes from later than August 1988.  It was released under the GPLv3
+>  * licence on July 26, 2010.
+>  *                 -- J Howard Johnson ( j.howard.johnson *at* gmail.com )
+>  *
+>  * This file is part of INR.
+>  *
+>  *   INR is free software: you can redistribute it and/or modify
+>  *   it under the terms of the GNU General Public License as published by
+>  *   the Free Software Foundation, either version 3 of the License, or
+>  *   (at your option) any later version.
+>  *
+>  *   INR is distributed in the hope that it will be useful,
+>  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  *   GNU General Public License for more details.
+>  *
+>  *   You should have received a copy of the GNU General Public License
+>  *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
+>  */
+24d26
+< #include <assert.h>
+29c31,32
+< A_OBJECT A_add ( A_OBJECT A, int a, int b, int c )
+---
+> A_OBJECT A_add ( A, a, b, c ) A_OBJECT A ;
+> int a, b, c ;
+37,39c40,50
+<   assert ( A -> A_mode == OPEN ) ;
+<   assert ( a >= 0 && b >= 0 && c >= 0 ) ;
+<   assert ( a < MAXSHORT && b < MAXSHORT && c < MAXSHORT ) ;
+---
+>   if ( A -> A_mode != OPEN ) {
+>     Error ( "A_add: Object not OPEN" ) ;
+>   }
+> 
+>   if ( a < 0 || b < 0 || c < 0 ) {
+>     Error ( "A_add: Numbers cannot be negative" ) ;
+>   }
+> 
+>   if ( a >= MAXSHORT || b >= MAXSHORT || c >= MAXSHORT ) {
+>     Error ( "A_add: Numbers are too big" ) ;
+>   }
+65c76
+< A_OBJECT A_open ( A_OBJECT A )
+---
+> A_OBJECT A_open ( A ) A_OBJECT A ;
+76c87
+< A_OBJECT A_close ( A_OBJECT A )
+---
+> A_OBJECT A_close ( A ) A_OBJECT A ;
+111d121
+<   assert ( N > 0 ) ;
+128d137
+<     assert ( p -> A_c < N ) ;
+142,143d150
+<   assert ( p == t2 ) ;
+< 
+147c154
+<     q = -- ptr [ p -> A_c ] ;
+---
+>     q = -- ptr [ i = p -> A_c ] ;
+149d155
+<     assert ( p -> A_b < N ) ;
+151c157
+<     q -> A_c = p -> A_c ;
+---
+>     q -> A_c = i ;
+164,165d169
+<   assert ( p == t1 ) ;
+< 
+169,170c173
+<     q = -- ptr [ p -> A_b ] ;
+<     assert ( p -> A_a < N ) ;
+---
+>     q = -- ptr [ i = p -> A_b ] ;
+172c175
+<     q -> A_b = p -> A_b ;
+---
+>     q -> A_b = i ;
+186,187d188
+<   assert ( p == t2 ) ;
+< 
+191,192c192,193
+<     q = -- ptr [ p -> A_a ] ;
+<     q -> A_a = p -> A_a ;
+---
+>     q = -- ptr [ i = p -> A_a ] ;
+>     q -> A_a = i ;
+202c203
+<   ( t2z + 1 ) -> A_c = MAXSHORT ;
+---
+>   ( t2z + 1 ) -> A_a = MAXSHORT ;
+220,222c221
+<     while ( ( ++ t1 ) -> A_c == ( ++ t2 ) -> A_c && t1 -> A_b == t2 -> A_b && t1 -> A_a == t2 -> A_a ) {
+<       ;
+<     }
+---
+>     while ( ( ++ t1 ) -> A_c == ( ++ t2 ) -> A_c && t1 -> A_b == t2 -> A_b && t1 -> A_a == t2 -> A_a ) ;
+245c244,245
+< A_OBJECT A_rename ( A_OBJECT A, SHORT * rena )
+---
+> A_OBJECT A_rename ( A, rena ) A_OBJECT A ;
+> SHORT * rena ;
+297,298c297
+<       ) {
+<     if ( ( p -> A_c = trena [ p -> A_c ] ) == MAXSHORT || ( p -> A_a == p -> A_c && p -> A_b == 0 ) ) {
+---
+>       ) if ( ( p -> A_c = trena [ p -> A_c ] ) == MAXSHORT || ( p -> A_a == p -> A_c && p -> A_b == 0 ) ) {
+304d302
+<   }
+335c333
+< A_OBJECT A_mkdense ( A_OBJECT A )
+---
+> A_OBJECT A_mkdense ( A ) A_OBJECT A ;
 diff -r -w aa/Asseq.c bb/Asseq.c
 39a40,42
 >   label = 0 ;
@@ -52,12 +237,21 @@ diff -r -w aa/Astems.c bb/Astems.c
 < int tape ;
 ---
 > void A_prstems ( A_OBJECT A, T_OBJECT T, int tape )
+Only in aa: bugs.txt
 diff -r -w aa/Lex.c bb/Lex.c
 417,418c417
 < int main ( argc, argv ) int argc ;
 < char * argv [ ] ;
 ---
 > int main ( int argc, char * argv [ ] )
+461c460
+<     fprintf ( fpout, "Version %s (Sep 11, 2018)\n", Version ) ;
+---
+>     fprintf ( fpout, "Version %s (Mar 25, 1988)\n", Version ) ;
+463c462
+<     fprintf ( fpout, "             Copyright (C) 1988-2018 J Howard Johnson\n" ) ;
+---
+>     fprintf ( fpout, "             Copyright (C) 1988 J Howard Johnson\n" ) ;
 510c509,513
 <   PROMT ( void ) yyparse ( ) ;
 ---
@@ -75,23 +269,21 @@ diff -r -w aa/Lex.c bb/Lex.c
 ---
 > int tonum ( char * p )
 diff -r -w aa/Makefile bb/Makefile
-13c13
-< 	gcc -Wall -O -g -c $*.c
----
-> 	gcc -Wall -O0 -g -c $*.c
-16,20c16
-< 	gcc -Wall -O -g $(OFILES) -o ginr
-< 
+18,21d17
 < format:	$(CFILES) $(HFILES)
 < 	astyle --style=1tbs --indent=spaces=2 --pad-oper --pad-paren-in \
 < --break-blocks=all $(CFILES) $(HFILES)
----
-> 	gcc -Wall -O0 -g $(OFILES) -o ginr
+< 
 diff -r -w aa/Parse.y bb/Parse.y
 30a31,33
 >   int yylex ( ) ;
 >   int yyparse ( void ) ;
 >   void yyerror ( char * ) ;
+diff -r -w aa/R.c bb/R.c
+60c60
+<   p = R -> R_hash + ( ( ( ( 16807 * reca + recb ) & 017777777777 ) * 16807 ) & 017777777777 ) % R -> R_lhash ;
+---
+>   p = R -> R_hash + ( ( ( ( 16807 * ( unsigned ) reca + recb ) & 017777777777 ) * 16807 ) & 017777777777 ) % R -> R_lhash ;
 diff -r -w aa/S.c bb/S.c
 67c67,68
 <   if ( from >= to ) while ( -- n >= 0 ) {
@@ -106,11 +298,16 @@ diff -r -w aa/S.c bb/S.c
 > long Ssize ( char * p )
 diff -r -w aa/stamp.c bb/stamp.c
 28,29c28,29
-< char Version [ ] = "2.0.3a" ;
+< char Version [ ] = "2.0.3b" ;
 < char Date [ ] = "Sept 11, 2018" ;
 ---
-> char Version [ ] = "2.0.3e" ;
-> char Date [ ] = "Jan 13 2022" ;
+> char Version [ ] = "2.0.3f" ;
+> char Date [ ] = "Jan 14 2022" ;
+diff -r -w aa/U.c bb/U.c
+60c60
+<   p = U -> U_hash + ( ( ( ( 16807 * ( ( 16807 * reca + recb ) & 017777777777 ) + recc ) & 017777777777 ) * 16807 ) & 017777777777 ) % U -> U_lhash ;
+---
+>   p = U -> U_hash + ( ( ( ( 16807 * ( ( 16807 * ( unsigned ) reca + recb ) & 017777777777 ) + recc ) & 017777777777 ) * 16807 ) & 017777777777 ) % U -> U_lhash ;
 diff -r -w aa/util.c bb/util.c
 29c29
 < void Warning ( s ) char * s ;
