@@ -5,7 +5,7 @@
 The tryaug branch was an attempt in August 2018 to extend and improve INR.
 It did not go very far but there may be some useful mods to merge into redux.
 
-#### src (from version 2.0.4a August 15, 2018)
+#### src (from version 2.0.4a August 15, 2018 updated Sept 6, 2018)
 
 TBD
 
