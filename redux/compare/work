@@ -1,3 +1,4 @@
+===============================================================
 diff -r -w aa/Abasic.c bb/Abasic.c
 166,167c166
 <       ) {
@@ -43,6 +44,7 @@ diff -r -w aa/Abasic.c bb/Abasic.c
 >       ) if ( p -> A_b == 1 ) {
 590d582
 <   }
+===============================================================
 diff -r -w aa/Aclos.c bb/Aclos.c
 121,122c121
 <       ) {
@@ -72,6 +74,7 @@ diff -r -w aa/Aclos.c bb/Aclos.c
 >         ) if ( c_mark [ p -> A_a ] == CONDEMN || c_mark [ p -> A_c ] == CONDEMN ) {
 168d160
 <     }
+===============================================================
 diff -r -w aa/Aclsseq.c bb/Aclsseq.c
 32c32
 < // Initialiaze to suppress warning JHJ
@@ -104,6 +107,7 @@ diff -r -w aa/Aclsseq.c bb/Aclsseq.c
 >   /*
 >       A1 = A_min( A_rename( A1, 0 ) );
 >   */
+===============================================================
 diff -r -w aa/Acompose.c bb/Acompose.c
 33c33
 < // Initialiaze to suppress warning JHJ
@@ -117,11 +121,13 @@ diff -r -w aa/Acompose.c bb/Acompose.c
 <           s2 = MAXSTATE ;
 ---
 >           s2 = MAXSHORT ;
+===============================================================
 diff -r -w aa/Acrea.c bb/Acrea.c
 282c282
 <   return A ;
 ---
 >   return ( A ) ;
+===============================================================
 diff -r -w aa/Aenum.c bb/Aenum.c
 43,44c43
 <         ++ p ) {
@@ -144,6 +150,7 @@ diff -r -w aa/Aenum.c bb/Aenum.c
 >         ++ p ) if ( p -> A_b == 1 ) {
 178d172
 <   }
+===============================================================
 diff -r -w aa/AGMsseq.c bb/AGMsseq.c
 54c54,56
 <   int aa, bb, cc, nq, len, from, to, label, hi_next, try1 ;
@@ -430,6 +437,7 @@ diff -r -w aa/AGMsseq.c bb/AGMsseq.c
 >   /*
 >       A = A_rename( A, 0 );
 >   */
+===============================================================
 diff -r -w aa/Ajoin.c bb/Ajoin.c
 33c33
 < // Initialiaze to suppress warning JHJ
@@ -443,6 +451,7 @@ diff -r -w aa/Ajoin.c bb/Ajoin.c
 <           s2 = MAXSTATE ;
 ---
 >           s2 = MAXSHORT ;
+===============================================================
 diff -r -w aa/Alamcm.c bb/Alamcm.c
 82,83c82
 <         ) {
@@ -472,6 +481,7 @@ diff -r -w aa/Alamcm.c bb/Alamcm.c
 >         ) if ( c_rena [ i ] >= FAIL ) {
 124d116
 <     }
+===============================================================
 diff -r -w aa/Alameq.c bb/Alameq.c
 38c38
 <   l_low [ state ] = ( dfn = l_cnt ++ ) ;
@@ -493,6 +503,7 @@ diff -r -w aa/Alameq.c bb/Alameq.c
 123,124d118
 <     }
 <   }
+===============================================================
 diff -r -w aa/Alenmin.c bb/Alenmin.c
 75,76c75
 <         p ++ ) {
@@ -501,6 +512,7 @@ diff -r -w aa/Alenmin.c bb/Alenmin.c
 >         p ++ ) if ( dis [ p -> A_a ] >= dis [ p -> A_c ] ) {
 79d77
 <   }
+===============================================================
 diff -r -w aa/ALMsseq.c bb/ALMsseq.c
 38c38,40
 <   int aa, bb, cc, nq, len, from, to, label, hi_next, try1 ;
@@ -739,6 +751,7 @@ diff -r -w aa/ALMsseq.c bb/ALMsseq.c
 >   /*
 >       A = A_rename( A, 0 );
 >   */
+===============================================================
 diff -r -w aa/Amin.c bb/Amin.c
 100c100
 <   in_B [ START ] = ( in_B [ 2 ] = 0 ) ;
@@ -775,6 +788,7 @@ diff -r -w aa/Amin.c bb/Amin.c
 >       /**/
 >       /**/
 >       /*-------------------------------------------------------------------------*/
+===============================================================
 diff -r -w aa/Aopen.c bb/Aopen.c
 1d0
 < extern int S_flag ;
@@ -876,6 +890,7 @@ diff -r -w aa/Aopen.c bb/Aopen.c
 < 
 ---
 >   assert ( A != NULL ) ;
+===============================================================
 diff -r -w aa/Aretape.c bb/Aretape.c
 54,55c54
 <         i ++ ) {
@@ -884,6 +899,7 @@ diff -r -w aa/Aretape.c bb/Aretape.c
 >         i ++ ) if ( A2 -> A_t [ i ] . A_a != i + 1 || A2 -> A_t [ i ] . A_c != i + 2 ) {
 58d56
 <   }
+===============================================================
 diff -r -w aa/Asseq.c bb/Asseq.c
 37c37,39
 <   int aa, bb, cc, nq, len, from, to, label, hi_next, try1 ;
@@ -1110,6 +1126,7 @@ diff -r -w aa/Asseq.c bb/Asseq.c
 >   /*
 >       A = A_rename( A, 0 );
 >   */
+===============================================================
 diff -r -w aa/Astems.c bb/Astems.c
 61c61
 <   int try1, newtry ;
@@ -1164,6 +1181,7 @@ diff -r -w aa/Astems.c bb/Astems.c
 <   }
 ---
 >                 i ++ ) ;
+===============================================================
 diff -r -w aa/Asubs.c bb/Asubs.c
 95c95
 <   vec [ ( i = 0 ) ] = START ;
@@ -1203,6 +1221,7 @@ diff -r -w aa/Asubs.c bb/Asubs.c
 ---
 >                        ++ i ) if ( set [ i ] != UNMARK ) {
 >               set [ vec [ n ++ ] = i ] = UNMARK ;
+===============================================================
 diff -r -w aa/Atrim.c bb/Atrim.c
 38c38
 <   t_low [ state ] = ( dfn = t_cnt ++ ) ;
@@ -1248,6 +1267,7 @@ diff -r -w aa/Atrim.c bb/Atrim.c
 >         ) if ( ( p - 1 ) -> A_b == p -> A_b && ( p - 1 ) -> A_a == p -> A_a ) {
 153d145
 <     }
+===============================================================
 diff -r -w aa/Colon.c bb/Colon.c
 76,77c76
 <           i ++ ) {
@@ -1306,6 +1326,7 @@ diff -r -w aa/Colon.c bb/Colon.c
 <     } else {
 ---
 >     else {
+===============================================================
 diff -r -w aa/Lex.c bb/Lex.c
 168,169c168,169
 < //  case '"':   not used
@@ -1350,6 +1371,7 @@ diff -r -w aa/Lex.c bb/Lex.c
 >     Error ( "yyparse returned unexpectedly" ) ;
 >   }
 > 
+===============================================================
 diff -r -w aa/Makefile bb/Makefile
 13c13
 < 	gcc -Wall -O -c $*.c
@@ -1370,6 +1392,7 @@ diff -r -w aa/Makefile bb/Makefile
 < 	rm -f $(OFILES) y.tab.h y.tab.c
 ---
 > 	rm -f $(OFILES) y.tab.h y.tab.c *.orig
+===============================================================
 diff -r -w aa/O.h bb/O.h
 31,37c31,32
 < typedef unsigned int SHORT ;
@@ -1382,6 +1405,7 @@ diff -r -w aa/O.h bb/O.h
 ---
 > typedef unsigned short SHORT ;
 > #define MAXSHORT        0177777
+===============================================================
 diff -r -w aa/Parse.y bb/Parse.y
 28d27
 < #include <string.h>
@@ -1406,11 +1430,7 @@ diff -r -w aa/Parse.y bb/Parse.y
 >   }
 426d432
 <   }
-diff -r -w aa/R.c bb/R.c
-59c59
-<   p = R -> R_hash + ( ( ( ( 16807 * reca + recb ) & 017777777777 ) * 16807 ) & 017777777777 ) % R -> R_lhash ;
----
->   p = R -> R_hash + ( ( ( ( 16807 * ( unsigned ) reca + recb ) & 017777777777 ) * 16807 ) & 017777777777 ) % R -> R_lhash ;
+===============================================================
 diff -r -w aa/S.c bb/S.c
 29c29
 < void Error ( ) ;
@@ -1608,18 +1628,7 @@ diff -r -w aa/S.c bb/S.c
 <         printf ( "Audit anomaly in free block at %lx:\n", U ( p ) ) ;
 ---
 >         printf ( "Audit anomoly in free block at %lx:\n", U ( p ) ) ;
-diff -r -w aa/stamp.c bb/stamp.c
-28,29c28,29
-< char Version [ ] = "2.0.4a" ;
-< char Date [ ] = "August 15, 2018" ;
----
-> char Version [ ] = "2.0.3f" ;
-> char Date [ ] = "Jan 14 2022" ;
-diff -r -w aa/U.c bb/U.c
-59c59
-<   p = U -> U_hash + ( ( ( ( 16807 * ( ( 16807 * reca + recb ) & 017777777777 ) + recc ) & 017777777777 ) * 16807 ) & 017777777777 ) % U -> U_lhash ;
----
->   p = U -> U_hash + ( ( ( ( 16807 * ( ( 16807 * ( unsigned ) reca + recb ) & 017777777777 ) + recc ) & 017777777777 ) * 16807 ) & 017777777777 ) % U -> U_lhash ;
+===============================================================
 diff -r -w aa/V.c bb/V.c
 49,50c49
 <   while ( *++ p == *++ q ) {
@@ -1628,4 +1637,3 @@ diff -r -w aa/V.c bb/V.c
 >   while ( *++ p == *++ q ) if ( * p == MAXSHORT ) {
 53d51
 <   }
-Only in aa: VERSION
