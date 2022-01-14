@@ -12,6 +12,14 @@ Acrea.c: Converted function declarations.
 Aopen.c: Converted function declatations and added use of assert() macro
 calls as an alternative to test and call to Error().
 
+Aload.c: Removed last instance of conditional compile for CMS.
+
+Lex.c: Postponed updating Copyright years.
+
+All .c files: Removed any use of the register declaration.
+
+All .c files: Converted any function declarations to C89 form.
+
 ## 2.0.3e redux (2022-01-13)
 
 At this point, the redux branch agrees with the master except in formatting
