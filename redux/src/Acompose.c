@@ -128,27 +128,24 @@ A_OBJECT A_compose( A_OBJECT A1, A_OBJECT A2 )
             } else if ( s1 <= s2 && t1 < A1-> A_nT - 1 ) {
                 if ( !flag2 && s1 > 0 )
                     A = A_add( A, current,
-                               ( A-> A_nT == 1 ? s1 :
-                                 ( A-> A_nT == 2 ? (s1 << 1) + t1 :
-                                   s1 * A-> A_nT + t1 ) ),
-                               U_insert( U, (int)p1-> A_c,
-                                         cur_b, 0 ) );
+                        ( A-> A_nT == 1 ? s1 :
+                            ( A-> A_nT == 2 ? (s1 << 1) + t1 :
+                                s1 * A-> A_nT + t1 ) ),
+                        U_insert( U, (int)p1-> A_c, cur_b, 0 ) );
                 ++p1;
                 s1 = (-1);
             } else if ( s2 < s1 && t2 != 0 ) {
                 if ( flag && s2 > 0 )
                     A = A_add( A, current,
-                               ( A-> A_nT == 1 ? s2 :
-                                 ( A-> A_nT == 2 ? (s2 << 1) :
-                                   s2 * A-> A_nT ) ) + t2 + A1-> A_nT - 2,
-                               U_insert( U, cur_a,
-                                         (int)p2-> A_c, 1 ) );
+                        ( A-> A_nT == 1 ? s2 :
+                            ( A-> A_nT == 2 ? (s2 << 1) :
+                                s2 * A-> A_nT ) ) + t2 + A1-> A_nT - 2,
+                        U_insert( U, cur_a, (int)p2-> A_c, 1 ) );
                 ++p2;
                 s2 = (-1);
             } else if ( s1 == s2 && t1 == A1-> A_nT-1 && t2 == 0 ) {
                 A = A_add( A, current, 0,
-                           U_insert( U, (int)p1-> A_c,
-                                     (int)p2-> A_c, 1 ) );
+                    U_insert( U, (int)p1-> A_c, (int)p2-> A_c, 1 ) );
                 ++p1;
                 ++p2;
                 s1 = s2 = (-1);

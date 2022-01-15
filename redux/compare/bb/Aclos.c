@@ -1,27 +1,3 @@
-/*
- * Copyright (c) 1985, J Howard Johnson, University of Waterloo.
- *
- * This software was developed while I was a student and, later, professor
- * at the University of Waterloo.  It has only minimal enhancements and bug
- * fixes from later than August 1988.  It was released under the GPLv3
- * licence on July 26, 2010.
- *                 -- J Howard Johnson ( j.howard.johnson *at* gmail.com )
- *
- * This file is part of INR.
- *
- *   INR is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   INR is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include <stdio.h>
 extern FILE * fpout ;
 #include "O.h"
@@ -118,23 +94,27 @@ A_OBJECT A_clsure ( A_OBJECT A )
 
   for ( i = A -> A_nQ ;
         -- i >= 2 ;
-      ) if ( A -> A_p [ i ] != ( p = A -> A_p [ i + 1 ] ) && ( p - 1 ) -> A_b == 0 ) {
+      ) {
+    if ( A -> A_p [ i ] != ( p = A -> A_p [ i + 1 ] ) && ( p - 1 ) -> A_b == 0 ) {
       c_mark [ i ] = CONDEMN ;
       ++ n_condemned ;
 
     } else {
       c_mark [ i ] = UNMARK ;
     }
+  }
 
   if ( n_condemned > 0 ) {
     pz = A -> A_t + A -> A_nrows ;
 
     for ( p = A -> A_t ;
           p < pz ;
-          p ++ ) if ( p -> A_b != 0 && c_mark [ p -> A_c ] == CONDEMN ) {
+          p ++ ) {
+      if ( p -> A_b != 0 && c_mark [ p -> A_c ] == CONDEMN ) {
         c_mark [ p -> A_c ] = UNMARK ;
         -- n_condemned ;
       }
+    }
   }
 
   GAc2 = A_create ( ) ;
@@ -143,21 +123,25 @@ A_OBJECT A_clsure ( A_OBJECT A )
 
   for ( i = A -> A_nQ ;
         -- i >= START ;
-      ) if ( c_mark [ i ] == UNMARK ) {
+      ) {
+    if ( c_mark [ i ] == UNMARK ) {
       A_cl_DFS ( i ) ;
     }
+  }
 
   Sfree ( ( char * ) c_stk ) ;
 
   if ( n_condemned > 0 ) {
     for ( p = pz = A -> A_t + A -> A_nrows ;
           -- p > A -> A_t ;
-        ) if ( c_mark [ p -> A_a ] == CONDEMN || c_mark [ p -> A_c ] == CONDEMN ) {
+        ) {
+      if ( c_mark [ p -> A_a ] == CONDEMN || c_mark [ p -> A_c ] == CONDEMN ) {
         -- pz ;
         p -> A_a = pz -> A_a ;
         p -> A_b = pz -> A_b ;
         p -> A_c = pz -> A_c ;
       }
+    }
 
     A -> A_nrows = pz - A -> A_t ;
   }

@@ -1,27 +1,3 @@
-/*
- * Copyright (c) 1985, J Howard Johnson, University of Waterloo.
- *
- * This software was developed while I was a student and, later, professor
- * at the University of Waterloo.  It has only minimal enhancements and bug
- * fixes from later than August 1988.  It was released under the GPLv3
- * licence on July 26, 2010.
- *                 -- J Howard Johnson ( j.howard.johnson *at* gmail.com )
- *
- * This file is part of INR.
- *
- *   INR is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   INR is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include <stdio.h>
 extern FILE * fpout ;
 #include "O.h"
@@ -163,10 +139,12 @@ A_OBJECT A_plus ( A_OBJECT A )
 
   for ( p = A -> A_t + A -> A_nrows ;
         -- p >= A -> A_t ;
-      ) if ( p -> A_b == 1 ) {
+      ) {
+    if ( p -> A_b == 1 ) {
       p -> A_b = 0 ;
       p -> A_c = new_state ;
     }
+  }
 
   A = A_add ( A, new_state, 0, START ) ;
   A = A_add ( A, new_state, 1, FINAL ) ;
@@ -294,10 +272,12 @@ A_OBJECT A_concat ( A_OBJECT A1, A_OBJECT A2 )
 
   for ( p = A1 -> A_t + A1 -> A_nrows ;
         -- p >= A1 -> A_t ;
-      ) if ( p -> A_b == 1 && p -> A_c == FINAL ) {
+      ) {
+    if ( p -> A_b == 1 && p -> A_c == FINAL ) {
       p -> A_b = 0 ;
       p -> A_c = base + 1 ;
     }
+  }
 
   A1 -> A_nQ = base + 2 ;
 
@@ -454,10 +434,12 @@ A_OBJECT A_differ ( A_OBJECT A1, A_OBJECT A2 )
         }
       }
 
-    } else while ( p1 < p1z ) {
+    } else {
+      while ( p1 < p1z ) {
         A = A_add ( A, current, ( int ) p1 -> A_b, R_insert ( R, ( int ) p1 -> A_c, dead ) ) ;
         ++ p1 ;
       }
+    }
   }
 
   A_destroy ( A1 ) ;
@@ -518,11 +500,11 @@ A_OBJECT A_xor ( A_OBJECT A1, A_OBJECT A2 )
 
         while ( p1 < p1z || p2 < p2z ) {
           if ( p2 == p2z || ( p1 < p1z && p1 -> A_b < p2 -> A_b ) ) {
-            A = A_add ( A, current, ( int ) p1 -> A_b, R_insert ( R, ( p1 -> A_c == FINAL ) ? dead : ( int ) p1 -> A_c, dead ) ) ;
+            A = A_add ( A, current, ( int ) p1 -> A_b, R_insert ( R, ( ( p1 -> A_c == FINAL ) ? dead : ( int ) p1 -> A_c ), dead ) ) ;
             ++ p1 ;
 
           } else if ( p1 == p1z || ( p2 < p2z && p2 -> A_b < p1 -> A_b ) ) {
-            A = A_add ( A, current, ( int ) p2 -> A_b, R_insert ( R, dead, ( p2 -> A_c == FINAL ) ? dead : ( int ) p2 -> A_c ) ) ;
+            A = A_add ( A, current, ( int ) p2 -> A_b, R_insert ( R, dead, ( ( p2 -> A_c == FINAL ) ? dead : ( int ) p2 -> A_c ) ) ) ;
             ++ p2 ;
 
           } else {
@@ -533,7 +515,7 @@ A_OBJECT A_xor ( A_OBJECT A1, A_OBJECT A2 )
         }
 
       } else while ( p1 < p1z ) {
-          A = A_add ( A, current, ( int ) p1 -> A_b, R_insert ( R, ( p1 -> A_c == FINAL ) ? dead : ( int ) p1 -> A_c, dead ) ) ;
+          A = A_add ( A, current, ( int ) p1 -> A_b, R_insert ( R, ( ( p1 -> A_c == FINAL ) ? dead : ( int ) p1 -> A_c ), dead ) ) ;
           ++ p1 ;
         }
 
@@ -542,7 +524,7 @@ A_OBJECT A_xor ( A_OBJECT A1, A_OBJECT A2 )
       p2z = A2 -> A_p [ cur_st -> R_b + 1 ] ;
 
       while ( p2 < p2z ) {
-        A = A_add ( A, current, ( int ) p2 -> A_b, R_insert ( R, dead, ( p2 -> A_c == FINAL ) ? dead : ( int ) p2 -> A_c ) ) ;
+        A = A_add ( A, current, ( int ) p2 -> A_b, R_insert ( R, dead, ( ( p2 -> A_c == FINAL ) ? dead : ( int ) p2 -> A_c ) ) ) ;
         ++ p2 ;
       }
     }
@@ -567,7 +549,8 @@ A_OBJECT A_alph ( A_OBJECT A )
 
   for ( p = A -> A_t + A -> A_nrows ;
         -- p >= A -> A_t ;
-      ) if ( p -> A_b == 1 ) {
+      ) {
+    if ( p -> A_b == 1 ) {
       p -> A_a = 2 ;
       p -> A_c = FINAL ;
 
@@ -580,6 +563,7 @@ A_OBJECT A_alph ( A_OBJECT A )
       p -> A_c = 2 ;
       p -> A_b /= A -> A_nT ;
     }
+  }
 
   A -> A_nT = 1 ;
   A -> A_nQ = 4 ;

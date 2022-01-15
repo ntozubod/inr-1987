@@ -90,28 +90,33 @@ A_OBJECT A_clsure( A_OBJECT A )
     n_condemned = 0;
     c_mark[ START ] = UNMARK;
     c_mark[ FINAL ] = UNMARK;
-    for( i = A-> A_nQ; --i >= 2; )
+    for( i = A-> A_nQ; --i >= 2; ) {
         if ( A-> A_p[i] != (p = A-> A_p[i+1])
                 && (p - 1)-> A_b == 0 ) {
             c_mark[i] = CONDEMN;
             ++n_condemned;
         } else  c_mark[i] = UNMARK;
+    }
     if ( n_condemned > 0 ) {
         pz = A-> A_t + A-> A_nrows;
-        for( p = A-> A_t; p < pz; p++ )
+        for( p = A-> A_t; p < pz; p++ ) {
             if ( p-> A_b != 0 && c_mark[ p-> A_c ] == CONDEMN ) {
                 c_mark[ p-> A_c ] = UNMARK;
                 --n_condemned;
             }
+        }
     }
     GAc2 = A_create();
     GAc2-> A_nT = A-> A_nT;
     GAc = A;
-    for( i = A-> A_nQ; --i >= START; )
-        if ( c_mark[ i ] == UNMARK ) A_cl_DFS( i );
+    for( i = A-> A_nQ; --i >= START; ) {
+        if ( c_mark[ i ] == UNMARK ) {
+            A_cl_DFS( i );
+        }
+    }
     Sfree( (char *) c_stk );
     if ( n_condemned > 0 ) {
-        for( p = pz = A-> A_t + A-> A_nrows; --p > A-> A_t; )
+        for( p = pz = A-> A_t + A-> A_nrows; --p > A-> A_t; ) {
             if ( c_mark[ p-> A_a ] == CONDEMN
                     || c_mark[ p-> A_c ] == CONDEMN ) {
                 --pz;
@@ -119,6 +124,7 @@ A_OBJECT A_clsure( A_OBJECT A )
                 p-> A_b = pz-> A_b;
                 p-> A_c = pz-> A_c;
             }
+        }
         A-> A_nrows = pz - A-> A_t;
     }
     Sfree( (char *) c_mark );

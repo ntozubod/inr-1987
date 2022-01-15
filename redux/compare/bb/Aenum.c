@@ -1,27 +1,3 @@
-/*
- * Copyright (c) 1985, J Howard Johnson, University of Waterloo.
- *
- * This software was developed while I was a student and, later, professor
- * at the University of Waterloo.  It has only minimal enhancements and bug
- * fixes from later than August 1988.  It was released under the GPLv3
- * licence on July 26, 2010.
- *                 -- J Howard Johnson ( j.howard.johnson *at* gmail.com )
- *
- * This file is part of INR.
- *
- *   INR is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   INR is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include <stdio.h>
 extern FILE * fpout ;
 #include "O.h"
@@ -40,15 +16,17 @@ int A_en_DFS ( SHORT state )
 
   for ( p = GAe -> A_p [ state ] ;
         p < GAe -> A_p [ state + 1 ] ;
-        ++ p ) if ( p -> A_b == 1 ) {
+        ++ p ) {
+    if ( p -> A_b == 1 ) {
       fprintf ( fpout, "    " ) ;
 
       if ( e_lev == 0 ) {
         fprintf ( fpout, "^ " ) ;
 
-      } else for ( i = 0 ;
-                     i < e_lev ;
-                     i ++ ) {
+      } else {
+        for ( i = 0 ;
+              i < e_lev ;
+              i ++ ) {
           ++ en_cnt ;
 
           if ( GAe -> A_nT == 1 ) {
@@ -88,6 +66,7 @@ int A_en_DFS ( SHORT state )
             fprintf ( fpout, "%1d.%s ", e_vec [ i ] % GAe -> A_nT, en_str ) ;
           }
         }
+      }
 
       fprintf ( fpout, "\n" ) ;
 
@@ -108,6 +87,7 @@ int A_en_DFS ( SHORT state )
 
       -- e_lev ;
     }
+  }
 
   return ( 0 ) ;
 }
@@ -158,7 +138,8 @@ int A_cd_DFS ( SHORT state )
 
   for ( p = GAe -> A_p [ state ] ;
         p < GAe -> A_p [ state + 1 ] ;
-        ++ p ) if ( p -> A_b == 1 ) {
+        ++ p ) {
+    if ( p -> A_b == 1 ) {
       ++ count ;
 
     } else {
@@ -170,6 +151,7 @@ int A_cd_DFS ( SHORT state )
 
       count += i ;
     }
+  }
 
   return ( c_vec [ state ] = count ) ;
 }

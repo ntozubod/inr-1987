@@ -43,11 +43,13 @@ int A_en_DFS( SHORT state )
     A_row           *p;
     static SHORT    i;
 
-    for( p = GAe-> A_p[state]; p < GAe-> A_p[state+1]; ++p )
+    for( p = GAe-> A_p[state]; p < GAe-> A_p[state+1]; ++p ) {
         if ( p-> A_b == 1 ) {
             fprintf( fpout, "    " );
-            if ( e_lev == 0 ) fprintf( fpout, "^ " );
-            else for( i = 0; i < e_lev; i++ ) {
+            if ( e_lev == 0 ) {
+                fprintf( fpout, "^ " );
+            } else {
+                for( i = 0; i < e_lev; i++ ) {
                     ++en_cnt;
                     if ( GAe-> A_nT == 1 ) {
                         en_str = T_name( GTe, (int) e_vec[i] );
@@ -76,6 +78,7 @@ int A_en_DFS( SHORT state )
                                  en_str );
                     }
                 }
+            }
             fprintf( fpout, "\n" );
         } else {
             if ( e_lev == en_max ) return( 1 );
@@ -84,6 +87,7 @@ int A_en_DFS( SHORT state )
             if ( A_en_DFS( p-> A_c ) ) return( 1 );
             --e_lev;
         }
+    }
     return( 0 );
 }
 
@@ -125,13 +129,14 @@ int A_cd_DFS( SHORT state )
     count = c_vec[ state ];
     if ( count != 0 ) return( count );
     c_vec[ state ] = (-1);
-    for( p = GAe-> A_p[state]; p < GAe-> A_p[state+1]; ++p )
+    for( p = GAe-> A_p[state]; p < GAe-> A_p[state+1]; ++p ) {
         if ( p-> A_b == 1 ) ++count;
         else {
             i = A_cd_DFS( p-> A_c );
             if ( i < 0 ) return( -1 );
             count += i;
         }
+    }
     return( c_vec[ state ] = count );
 }
 

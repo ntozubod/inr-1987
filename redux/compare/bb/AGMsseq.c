@@ -1,27 +1,3 @@
-/*
- * Copyright (c) 1987, J Howard Johnson, University of Waterloo.
- *
- * This software was developed while I was a student and, later, professor
- * at the University of Waterloo.  It has only minimal enhancements and bug
- * fixes from later than August 1988.  It was released under the GPLv3
- * licence on July 26, 2010.
- *                 -- J Howard Johnson ( j.howard.johnson *at* gmail.com )
- *
- * This file is part of INR.
- *
- *   INR is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   INR is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include <stdio.h>
 #include "O.h"
 extern FILE * fpout ;
@@ -56,7 +32,6 @@ A_OBJECT A_GMsseq ( A_OBJECT A )
 
   label = 0 ;
   from = 0 ;
-  /* Initialiaze to suppress warning JHJ */
   int GMval ;
   A_row * insert, * last, ** heap ;
   SHORT * set, * vec, * fvec, ** fr_coeff, ** to_coeff, * queue, * st_len ;
@@ -138,8 +113,6 @@ A_OBJECT A_GMsseq ( A_OBJECT A )
   }
 
   hi_next = MAXSHORT - 2 ;
-  /* Construct start state as the write closure of START.
-   */
   set [ START ] = head ;
   head = START ;
   ++ vlen ;
@@ -162,7 +135,6 @@ A_OBJECT A_GMsseq ( A_OBJECT A )
           continue ;
         }
 
-        /* Error( "A_sseq: Relation not single-valued (S2)" ); */
         if ( set [ p -> A_c ] == UNMARK ) {
           set [ p -> A_c ] = head ;
           head = p -> A_c ;
@@ -310,12 +282,6 @@ idone :
       continue ;
     }
 
-    /*     Unpack current state:
-     * (1) fvec is set to vector of component states followed by their coeffs
-     * (2) load heap with positions in source automaton for each component state
-     * (3) load fr_coeff with the pointers to coeff vectors
-     * (4) heapify the heap
-     */
     hsize = 0 ;
     fvec = V_vec ( V, current ) ;
     len = veclen ( fvec ) / 2 ;
@@ -332,18 +298,6 @@ idone :
       fr_coeff [ j ] = V_vec ( Vs, fvec [ len + i ] ) ;
     }
 
-    /*
-    printf( "\n" );
-    printf( "Processing state %d\n", current );
-    printf( "state coeff\n" );
-    for( i = 0; i < len; i++ ) {
-    j = fvec[ i ];
-    printf( "%5d ", j );
-    for( tt = 0; fr_coeff[j][tt] != MAXSHORT; tt++ )
-    printf( "%s ", T_name( TT, fr_coeff[j][tt] ) );
-    printf( "\n" );
-    }
-    */
     if ( hsize == 0 ) {
       continue ;
     }
@@ -370,16 +324,11 @@ idone :
       heap [ father ] = insert ;
     }
 
-    /* Main loop to process current state: Each cycle processes position at the
-     * top of the heap.
-     */
     last = heap [ 1 ] ;
 
     for ( ;
           ;
         ) {
-      /* End processing for an output state.
-       */
       if ( ( last -> A_b != heap [ 1 ] -> A_b || hsize == 0 ) && vlen > 0 ) {
         n = 0 ;
 
@@ -452,24 +401,6 @@ idone :
 
         to = hi_next ;
 
-        /*
-        printf( "Destination state\n" );
-        printf( "state coeff\n" );
-        for( i = 0; i < vlen; i++ ) {
-        j = vec[ i ];
-        printf( "%5d ", j );
-        for( tt = 0; to_coeff[j][tt] != MAXSHORT; tt++ ) {
-        int symb = T_name( TT, to_coeff[j][tt] )[ 0 ] & 0xff;
-        if ( symb <= ' ' || symb > 127 ) {
-        printf( "\\%x ", symb );
-        }
-        else {
-        printf( "%s ", T_name( TT, to_coeff[j][tt] ) );
-        }
-        }
-        printf( "\n" );
-        }
-        */
         for ( j = 0 ;
               ;
               j ++ ) {
@@ -533,19 +464,6 @@ done :
 
             if ( j > 2 ) {
               Error ( "A_sseq: Not subsequential (?)" ) ;
-// if ( j > vlen )
-              /*
-                            printf( "Destination state\n" );
-                            printf( "state coeff\n" );
-                            int i1;
-                            for( i1 = 0; i1 < vlen; i1++ ) {
-                              int j1 = vec[ i1 ];
-                              printf( "%5d ", j1 );
-                              for( tt = 0; to_coeff[j1][tt] != MAXSHORT; tt++ )
-                              printf( "%s ", T_name( TT, to_coeff[j1][tt] ) );
-                              printf( "\n" );
-                            }
-              */
             }
           }
         }
@@ -557,9 +475,6 @@ done :
         break ;
       }
 
-      /* Main processing for a transition from the input automaton.
-       * Add state to subset and compute coefficient.
-       */
       aa = heap [ 1 ] -> A_a ;
       bb = heap [ 1 ] -> A_b ;
       cc = heap [ 1 ] -> A_c ;
@@ -618,7 +533,6 @@ done :
           for ( i = 0 ;
                 i < nq ;
                 i ++ ) {
-            /* printf( "--> %d\n", queue[ i ] ); */
             pz = A -> A_p [ queue [ i ] + 1 ] ;
 
             for ( p = A -> A_p [ queue [ i ] ] ;
@@ -629,7 +543,6 @@ done :
                   continue ;
                 }
 
-                /* Error( "A_sseq: Relation not single-valued (2)" ); */
                 if ( set [ p -> A_c ] == UNMARK ) {
                   set [ p -> A_c ] = head ;
                   head = p -> A_c ;
@@ -725,9 +638,6 @@ done :
   A_destroy ( An ) ;
   V_destroy ( V ) ;
   V_destroy ( Vs ) ;
-  /*
-      A = A_rename( A, 0 );
-  */
   A = A_mkdense ( A ) ;
   A = A_close ( A ) ;
   A -> A_mode = SSEQ ;

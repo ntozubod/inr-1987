@@ -1,27 +1,3 @@
-/*
- * Copyright (c) 1985, J Howard Johnson, University of Waterloo.
- *
- * This software was developed while I was a student and, later, professor
- * at the University of Waterloo.  It has only minimal enhancements and bug
- * fixes from later than August 1988.  It was released under the GPLv3
- * licence on July 26, 2010.
- *                 -- J Howard Johnson ( j.howard.johnson *at* gmail.com )
- *
- * This file is part of INR.
- *
- *   INR is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   INR is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include <stdio.h>
 #include "O.h"
 A_OBJECT A_clsseq ( A_OBJECT A1 )
@@ -29,7 +5,6 @@ A_OBJECT A_clsseq ( A_OBJECT A1 )
   A_OBJECT A ;
   int current, end_st, i, bb, last_label, label, hi_next, k ;
   last_label = 0 ;
-  /* Initialiaze to suppress warning JHJ */
   SHORT * vec, * cur_vec ;
   V_OBJECT V ;
   A_row * p, * pz, * lo, * hi, * mid ;
@@ -70,12 +45,6 @@ A_OBJECT A_clsseq ( A_OBJECT A1 )
           p < pz ;
           ++ p ) {
       if ( p -> A_b == 1 ) {
-        /*
-                        for( k = 1; vec[k] < MAXSHORT; k++ )
-                            if ( A1-> A_p[ vec[k] ] == A1-> A_p[ vec[k] + 1 ]
-                              || A1-> A_p[ vec[k] ]-> A_b != 1 ) break;
-                        if ( vec[k] == MAXSHORT )
-        */
         A = A_add ( A, current, 1, FINAL ) ;
         continue ;
       }
@@ -194,9 +163,6 @@ A_OBJECT A_clsseq ( A_OBJECT A1 )
   A_destroy ( A ) ;
   V_destroy ( V ) ;
   Sfree ( ( char * ) vec ) ;
-  /*
-      A1 = A_min( A_rename( A1, 0 ) );
-  */
   A1 = A_min ( A_mkdense ( A1 ) ) ;
   A1 -> A_mode = SSEQ_MIN ;
   A1 -> A_ems = 1 ;

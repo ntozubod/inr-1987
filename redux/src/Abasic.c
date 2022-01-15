@@ -132,11 +132,12 @@ A_OBJECT A_plus( A_OBJECT A )
     if ( A-> A_ems ) A = A_deems( A );
     A = A_open( A_trim( A ) );
     new_state = A-> A_nQ;
-    for( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; )
+    for( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; ) {
         if ( p-> A_b == 1 ) {
             p-> A_b = 0;
             p-> A_c = new_state;
         }
+    }
     A = A_add( A, new_state, 0, START );
     A = A_add( A, new_state, 1, FINAL );
     return( A );
@@ -212,11 +213,12 @@ A_OBJECT A_concat( A_OBJECT A1, A_OBJECT A2 )
     A_conform( A1, A2 );
     A1 = A_open( A1 );
     base = A1-> A_nQ - 1;
-    for( p = A1-> A_t + A1-> A_nrows; --p >= A1-> A_t; )
+    for( p = A1-> A_t + A1-> A_nrows; --p >= A1-> A_t; ) {
         if ( p-> A_b == 1 && p-> A_c == FINAL ) {
             p-> A_b = 0;
             p-> A_c = base + 1;
         }
+    }
     A1-> A_nQ = base + 2;
     for( p = A2-> A_t + A2-> A_nrows; --p >= A2-> A_t; ) {
         if ( (a = p-> A_a) > FINAL ) a += base;
@@ -265,8 +267,7 @@ A_OBJECT A_intersect( A_OBJECT A1, A_OBJECT A2 )
             else if ( p1-> A_b > p2-> A_b ) ++p2;
             else {
                 A = A_add( A, current, (int)p1-> A_b,
-                           R_insert( R, (int)p1-> A_c,
-                                     (int)p2-> A_c ) );
+                    R_insert( R, (int)p1-> A_c, (int)p2-> A_c ) );
                 ++p1;
                 ++p2;
             }
@@ -316,24 +317,24 @@ A_OBJECT A_differ( A_OBJECT A1, A_OBJECT A2 )
             while( p1 < p1z ) {
                 if ( p2 == p2z || p1-> A_b < p2-> A_b ) {
                     A = A_add( A, current, (int)p1-> A_b,
-                               R_insert( R, (int)p1-> A_c,
-                                         dead ) );
+                        R_insert( R, (int)p1-> A_c, dead ) );
                     ++p1;
                 }
                 else if ( p2-> A_b < p1-> A_b ) ++p2;
                 else {
                     A = A_add( A, current, (int)p1-> A_b,
-                               R_insert( R, (int)p1-> A_c,
-                                         (int) p2-> A_c ) );
+                        R_insert( R, (int)p1-> A_c, (int) p2-> A_c ) );
                     ++p1;
                     ++p2;
                 }
             }
-        } else while( p1 < p1z ) {
+        } else {
+            while( p1 < p1z ) {
                 A = A_add( A, current, (int)p1-> A_b,
-                           R_insert( R, (int)p1-> A_c, dead ) );
+                    R_insert( R, (int)p1-> A_c, dead ) );
                 ++p1;
             }
+        }
     }
     A_destroy( A1 );
     A_destroy( A2 );
@@ -379,36 +380,31 @@ A_OBJECT A_xor( A_OBJECT A1, A_OBJECT A2 )
                     if ( p2 == p2z
                             || ( p1 < p1z && p1-> A_b < p2-> A_b ) ) {
                         A = A_add( A, current,
-                                   (int)p1-> A_b,
-                                   R_insert( R,
-                                             (p1-> A_c == FINAL) ?
-                                             dead : (int)p1-> A_c,
-                                             dead ) );
+                            (int)p1-> A_b,
+                            R_insert( R,
+                                ((p1-> A_c == FINAL) ? dead : (int)p1-> A_c),
+                                dead ) );
                         ++p1;
                     } else if ( p1 == p1z
                                 || ( p2 < p2z && p2-> A_b < p1-> A_b ) ) {
                         A = A_add( A, current,
-                                   (int)p2-> A_b,
-                                   R_insert( R, dead,
-                                             (p2-> A_c == FINAL) ?
-                                             dead : (int)p2-> A_c
-                                           ) );
+                            (int)p2-> A_b,
+                            R_insert( R, dead,
+                                ((p2-> A_c == FINAL) ? dead : (int)p2-> A_c)));
                         ++p2;
                     } else {
                         A = A_add( A, current,
-                                   (int)p1-> A_b,
-                                   R_insert( R,
-                                             (int)p1-> A_c,
-                                             (int)p2-> A_c ) );
+                            (int)p1-> A_b,
+                            R_insert( R, (int)p1-> A_c, (int)p2-> A_c ) );
                         ++p1;
                         ++p2;
                     }
                 }
             } else while( p1 < p1z ) {
                     A = A_add( A, current, (int)p1-> A_b,
-                               R_insert( R,
-                                         (p1-> A_c == FINAL) ?
-                                         dead : (int)p1-> A_c, dead ) );
+                        R_insert( R,
+                            ((p1-> A_c == FINAL) ? dead : (int)p1-> A_c),
+                            dead ) );
                     ++p1;
                 }
         } else if ( cur_st-> R_b != dead ) {
@@ -416,9 +412,8 @@ A_OBJECT A_xor( A_OBJECT A1, A_OBJECT A2 )
             p2z = A2-> A_p[ cur_st-> R_b + 1 ];
             while( p2 < p2z ) {
                 A = A_add( A, current, (int)p2-> A_b,
-                           R_insert( R, dead,
-                                     (p2-> A_c == FINAL) ?
-                                     dead : (int)p2-> A_c ) );
+                    R_insert( R, dead,
+                        ((p2-> A_c == FINAL) ? dead : (int)p2-> A_c ) ) );
                 ++p2;
             }
         }
@@ -438,7 +433,7 @@ A_OBJECT A_alph( A_OBJECT A )
 
     if ( A-> A_ems ) A = A_deems( A );
     A = A_open( A_trim( A ) );
-    for( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; )
+    for( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; ) {
         if ( p-> A_b == 1 ) {
             p-> A_a = 2;
             p-> A_c = FINAL;
@@ -450,6 +445,7 @@ A_OBJECT A_alph( A_OBJECT A )
             p-> A_c = 2;
             p-> A_b /= A-> A_nT;
         }
+    }
     A-> A_nT = 1;
     A-> A_nQ = 4;
     return( A_trim( A ) );
