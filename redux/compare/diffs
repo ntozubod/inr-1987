@@ -1416,57 +1416,43 @@ diff -r -w aa/S.c bb/S.c
 < void Error ( ) ;
 ---
 > #include "O.h"
-51,52c51,52
+51,52c51,53
 < #define S_m             26
 < // S_m = 26 allows objects of up to 1 gigabyte
 ---
 > #define S_m             28
-> /* S_m = 26 allows objects of up to 1 gigabyte */
-55,56c55,58
-< long LINUXmem = 0 ;
+> /* S_m = 26 allows objects of up to 2 gigabytes 2^(5+26)*/
+> /* S_m = 28 allows objects of up to 8 gigabytes 2^(5+28)*/
+56c57,59
 < //     Copy a block of memory
 ---
-> int LINUXmem = 0 ;
 > /*
 >  *     Copy a block of memory
 >  */
-84c86,88
+84c87,89
 < //     Binary Buddy system storage allocator as in Knuth vol. 1
 ---
 > /*
 >  *     Binary Buddy system storage allocator as in Knuth vol. 1
 >  */
-91c95
-<     long mem ;
----
->     int mem ;
-163c167
-<   long a, b ;
----
->   int a, b ;
-176,178c180
+176,178c181
 <           ++ k ) {
 <       ;
 <     }
 ---
 >           ++ k ) ;
-202,204c204
+202,204c205
 <           ++ j ) {
 <       ;
 <     }
 ---
 >           ++ j ) ;
-293,294c293
-<   int i, cnt ;
-<   long grand, gran2, size ;
----
->   int grand, gran2, i, size, cnt ;
-310,311c309
+310,311c311
 <       if ( p != q ) {
 <         for ( cnt = 1 ;
 ---
 >       if ( p != q ) for ( cnt = 1 ;
-313,317c311
+313,317c313
 <               ++ cnt ) {
 <           ;
 <         }
@@ -1474,108 +1460,13 @@ diff -r -w aa/S.c bb/S.c
 <         ;
 ---
 >                             ++ cnt ) ;
-319c313
+319c315
 <       } else {
 ---
 >       else {
-324c318
-<         fprintf ( fpout, "%4ld ", size ) ;
----
->         fprintf ( fpout, "%4d ", size ) ;
-327c321
-<         fprintf ( fpout, "%4ldK", size / 1024 ) ;
----
->         fprintf ( fpout, "%4dK", size / 1024 ) ;
-330c324
-<         fprintf ( fpout, "%4ldM", size / 1024 / 1024 ) ;
----
->         fprintf ( fpout, "%4dM", size / 1024 / 1024 ) ;
-334c328
-<       fprintf ( fpout, "%5ldM", ( cnt * size + 1023 ) / 1024 / 1024 ) ;
----
->       fprintf ( fpout, "%5dM", ( cnt * size + 1023 ) / 1024 / 1024 ) ;
-336c330
-<       fprintf ( fpout, "%5ldM\n", ( S_alld_cnt [ i ] * size + 1023 ) / 1024 / 1024 ) ;
----
->       fprintf ( fpout, "%5dM\n", ( S_alld_cnt [ i ] * size + 1023 ) / 1024 / 1024 ) ;
-342,343c336,337
-<   fprintf ( fpout, "            %5ldM", ( grand + 1023 ) / 1024 / 1024 ) ;
-<   fprintf ( fpout, "       %5ldM\n", ( gran2 + 1023 ) / 1024 / 1024 ) ;
----
->   fprintf ( fpout, "            %5dM", ( grand + 1023 ) / 1024 / 1024 ) ;
->   fprintf ( fpout, "       %5dM\n", ( gran2 + 1023 ) / 1024 / 1024 ) ;
-345c339
-<   fprintf ( fpout, "Memory Size %5ldM\n", size / 1024 / 1024 ) ;
----
->   fprintf ( fpout, "Memory Size %5dM\n", size / 1024 / 1024 ) ;
-348,349c342
-<     fprintf ( fpout, "Excess %ld bytes\n", size % 1024 ) ;
-<   }
----
->     fprintf ( fpout, "Excess %d bytes\n", size % 1024 ) ;
-351,367d343
-< // Find the block that contains the provided address
-< S_ft * S_find ( char * p )
-< {
-<   if ( p < ( char * ) S_lo || p >= ( char * ) S_hi ) {
-<     Error ( "S_find: BOTCH 1" ) ;
-<   }
-< 
-<   S_ft * l = S_lo ;
-<   long incr = ( p - ( char * ) S_lo ) / sizeof ( S_ft ) ;
-<   long offset = ( p - ( char * ) S_lo ) % sizeof ( S_ft ) ;
-< 
-<   if ( ( char * ) & l [ incr ] + offset != p ) {
-<     Error ( "S_find: BOTCH 2" ) ;
-<   }
-< 
-<   if ( offset < 0 || offset >= sizeof ( S_ft ) ) {
-<     Error ( "S_find: BOTCH 3" ) ;
-369,414c345,348
-< 
-<   long base = 0 ;
-<   int base_k = kval ( & l [ base ] ) ;
-<   long right = S_hi - S_lo ;
-<   int k ;
-< 
-<   for ( k = 0 ;
-<         ( incr >> k ) ;
-<         ++ k ) {
-<     ;
-<   }
-< 
-<   -- k ;
-<   right = ( 1 << k ) ;
-< 
-< // printf( "\n" );
-< // printf( "base %ld\n", base );
-< // printf( "incr %ld\n", incr );
-< // printf( "k %d\n", k );
-< // printf( "base_k %d\n", base_k );
-< // printf( "right %ld\n", right );
-<   while ( base_k <= k ) {
-<     base += right ;
-<     incr -= right ;
-<     base_k = kval ( & l [ base ] ) ;
-< 
-<     for ( k = 0 ;
-<           ( incr >> k ) ;
-<           ++ k ) {
-<       ;
-<     }
-< 
-<     -- k ;
-<     right = ( 1 << k ) ;
-< // printf( "\n" );
-< // printf( "base %ld\n", base );
-< // printf( "incr %ld\n", incr );
-< // printf( "k %d\n", k );
-< // printf( "base_k %d\n", base_k );
-< // printf( "right %ld\n", right );
-<   }
-< 
-<   return ( & l [ base ] ) ;
-< }
+350a347
+> // Check this out !!!!! JHJ
+413,414c410,413
 < //     Interface to provide allocator for INR.
 < //     The length code and an audit flag are stored in allocated blocks
 ---
@@ -1583,38 +1474,30 @@ diff -r -w aa/S.c bb/S.c
 >  *     Interface to provide allocator for INR.
 >  *     The length code and an audit flag are stored in allocated blocks
 >  */
-429,431c363
+429,431c428
 <         ++ k ) {
 <     ;
 <   }
 ---
 >         ++ k ) ;
-468,470c400
+468,470c465
 <         ++ k ) {
 <     ;
 <   }
 ---
 >         ++ k ) ;
-491,494d420
+491,494d485
 < char * Sfind ( char * p )
 < {
 <   return ( ( ( char * ) S_find ( p ) ) + 4 ) ;
 < }
-525c451
-<         printf ( "Audit anomaly in busy block at %lx:\n", U ( p ) ) ;
----
->         printf ( "Audit anomoly in busy block at %lx:\n", U ( p ) ) ;
-544c470
-<         printf ( "Audit anomaly in free block at %lx:\n", U ( p ) ) ;
----
->         printf ( "Audit anomoly in free block at %lx:\n", U ( p ) ) ;
 diff -r -w aa/stamp.c bb/stamp.c
 28,29c28,29
 < char Version [ ] = "2.0.4a" ;
 < char Date [ ] = "August 15, 2018" ;
 ---
-> char Version [ ] = "2.0.3f" ;
-> char Date [ ] = "Jan 14 2022" ;
+> char Version [ ] = "2.0.3g" ;
+> char Date [ ] = "Jan 16 2022" ;
 diff -r -w aa/U.c bb/U.c
 59c59
 <   p = U -> U_hash + ( ( ( ( 16807 * ( ( 16807 * reca + recb ) & 017777777777 ) + recc ) & 017777777777 ) * 16807 ) & 017777777777 ) % U -> U_lhash ;
