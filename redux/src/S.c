@@ -26,9 +26,43 @@
 #include <strings.h>
 #include "O.h"
 
-#define USE_BB true
+/*
+ *     Copy a block of memory
+ */
 
-#ifdef USE_BB
+void copymem( long n, char *from, char *to )
+{
+    if ( from + n <= to || to + n <= from ) {
+        bcopy( from, to, n );
+        return;
+    }
+    if ( from >= to ) {
+        while ( --n >= 0 ) {
+            *to++ = *from++;
+        }
+    } else {
+        from += n;
+        to += n;
+        while ( --n >= 0 ) *--to = *--from;
+    }
+}
+
+void scribble( char *p, char *q )
+{
+    while( p < q ) *p++ = 0x55;
+}
+
+/*
+ ========== CONDITIONAL COMPILE ==========
+ Use the Binary Buddy System Allocation implementation that was developed
+ with INR. 
+*/
+
+#ifndef USE_MALLOC_ALLOCATOR
+
+/*
+ *     Binary Buddy system storage allocator as in Knuth vol. 1
+ */
 
 typedef struct S_f {
     unsigned char fill_1;
@@ -64,40 +98,6 @@ static S_ft *S_lo = 0,
 static int   S_alld_cnt[S_m];
 
 long   LINUXmem = 0;
-
-#endif
-
-/*
- *     Copy a block of memory
- */
-
-void copymem( long n, char *from, char *to )
-{
-    if ( from + n <= to || to + n <= from ) {
-        bcopy( from, to, n );
-        return;
-    }
-    if ( from >= to ) {
-        while ( --n >= 0 ) {
-            *to++ = *from++;
-        }
-    } else {
-        from += n;
-        to += n;
-        while ( --n >= 0 ) *--to = *--from;
-    }
-}
-
-void scribble( char *p, char *q )
-{
-    while( p < q ) *p++ = 0x55;
-}
-
-#ifdef USE_BB
-
-/*
- *     Binary Buddy system storage allocator as in Knuth vol. 1
- */
 
 void S_init()
 {
@@ -480,6 +480,13 @@ void Saudit()
         p = p + (1 << kval(p));
     }
 }
+
+
+/*
+ ========== CONDITIONAL COMPILE ==========
+ Replace the Binary Buddy System Allocation implementation with an
+ alternative which directly calls malloc/free.
+*/
 
 #else
 

@@ -205,21 +205,22 @@ diff -r -w aa/Makefile bb/Makefile
 < compcms.exec cwinr.exec comphw.exec
 ---
 > SOURCE 	= Makefile $(HFILES) $(CFILES) Parse.y
-14c13,14
+14c13,15
 < 	gcc -ansi -Wall -O -c $*.c
 ---
 > 	gcc -Wall -O0 -g -c $*.c
+> #	gcc -DUSE_MALLOC_ALLOCATOR -Wall -O0 -g -c $*.c
 > #	gcc -ansi -Wall -O -c $*.c
-17c17,18
+17c18,19
 < 	gcc -ansi -Wall -O $(OFILES) -o ginr
 ---
 > 	gcc -Wall -O0 -g $(OFILES) -o ginr
 > #	gcc -ansi -Wall -O $(OFILES) -o ginr
-26c27
+26c28
 < 	cp -p ginr ~/bin/ninr
 ---
 > 	cp -p ginr ~/bin/ginr
-39c40
+39c41
 < 	rm -f $(OFILES) y.tab.h y.tab.c
 ---
 > 	rm -f $(OFILES) y.tab.h y.tab.c *.orig
@@ -254,74 +255,129 @@ diff -r -w aa/S.c bb/S.c
 25,26d24
 < #include "O.h"
 < /* for bcopy */
-27a26
-> #include "O.h"
-35a35
->   struct S_f * fill_4 ;
-50c50,51
+28,54c26
+< #define USE_BB true
+< #ifdef USE_BB
+< typedef struct S_f {
+<   unsigned char fill_1 ;
+<   unsigned char fill_2 ;
+<   unsigned char S_kval ;
+<   unsigned char S_tag ;
+<   unsigned fill_3 ;
+<   struct S_f * S_linkf ;
+<   struct S_f * S_linkb ;
+< }
+< S_ft ;
+< #define tag(p)          ((p)-> S_tag)
+< #define kval(p)         ((p)-> S_kval)
+< #define linkf(p)        ((p)-> S_linkf)
+< #define linkb(p)        ((p)-> S_linkb)
+< #define set_tag(p,t)    (p)-> S_tag = t
+< #define set_kval(p,k)   (p)-> S_kval = k
+< #define set_linkf(p,q)  (p)-> S_linkf = q
+< #define set_linkb(p,q)  (p)-> S_linkb = q
+< #define U(p)            ((unsigned long)(p))
+< #define S_m             28
 < /* S_m = 26 allows objects of up to 1 gigabyte */
----
-> /* S_m = 26 allows objects of up to 2 gigabytes 2^(5+26)*/
-> /* S_m = 28 allows objects of up to 8 gigabytes 2^(5+28)*/
-53c54
+< static S_ft * S_lo = 0, * S_hi = 0, S_avail [ S_m + 1 ] ;
+< static int S_alld_cnt [ S_m ] ;
 < int LINUXmem = 0 ;
+< #endif
 ---
-> long LINUXmem = 0 ;
-58c59
+> #include "O.h"
+58c30
 < void copymem ( int n, char * from, char * to )
 ---
 > void copymem ( long n, char * from, char * to )
-95c96
+85c57,62
+< #ifdef USE_BB
+---
+> /*
+>  ========== CONDITIONAL COMPILE ==========
+>  Use the Binary Buddy System Allocation implementation that was developed
+>  with INR.
+> */
+> #ifndef USE_MALLOC_ALLOCATOR
+88a66,91
+> typedef struct S_f {
+>   unsigned char fill_1 ;
+>   unsigned char fill_2 ;
+>   unsigned char S_kval ;
+>   unsigned char S_tag ;
+>   unsigned fill_3 ;
+>   struct S_f * fill_4 ;
+>   struct S_f * S_linkf ;
+>   struct S_f * S_linkb ;
+> }
+> S_ft ;
+> #define tag(p)          ((p)-> S_tag)
+> #define kval(p)         ((p)-> S_kval)
+> #define linkf(p)        ((p)-> S_linkf)
+> #define linkb(p)        ((p)-> S_linkb)
+> #define set_tag(p,t)    (p)-> S_tag = t
+> #define set_kval(p,k)   (p)-> S_kval = k
+> #define set_linkf(p,q)  (p)-> S_linkf = q
+> #define set_linkb(p,q)  (p)-> S_linkb = q
+> #define U(p)            ((unsigned long)(p))
+> #define S_m             28
+> /* S_m = 26 allows objects of up to 2 gigabytes 2^(5+26)*/
+> /* S_m = 28 allows objects of up to 8 gigabytes 2^(5+28)*/
+> static S_ft * S_lo = 0, * S_hi = 0, S_avail [ S_m + 1 ] ;
+> static int S_alld_cnt [ S_m ] ;
+> long LINUXmem = 0 ;
+95c98
 <     int mem ;
 ---
 >     long mem ;
-167c168
+167c170
 <   int a, b ;
 ---
 >   long a, b ;
-293c294,295
+293c296,297
 <   int grand, gran2, i, size, cnt ;
 ---
 >   int i, cnt ;
 >   long grand, gran2, size ;
-318c320
+318c322
 <         fprintf ( fpout, "%4d ", size ) ;
 ---
 >         fprintf ( fpout, "%4ld ", size ) ;
-321c323
+321c325
 <         fprintf ( fpout, "%4dK", size / 1024 ) ;
 ---
 >         fprintf ( fpout, "%4ldK", size / 1024 ) ;
-324c326
+324c328
 <         fprintf ( fpout, "%4dM", size / 1024 / 1024 ) ;
 ---
 >         fprintf ( fpout, "%4ldM", size / 1024 / 1024 ) ;
-328c330
+328c332
 <       fprintf ( fpout, "%5dM", ( cnt * size + 1023 ) / 1024 / 1024 ) ;
 ---
 >       fprintf ( fpout, "%5ldM", ( cnt * size + 1023 ) / 1024 / 1024 ) ;
-330c332
+330c334
 <       fprintf ( fpout, "%5dM\n", ( S_alld_cnt [ i ] * size + 1023 ) / 1024 / 1024 ) ;
 ---
 >       fprintf ( fpout, "%5ldM\n", ( S_alld_cnt [ i ] * size + 1023 ) / 1024 / 1024 ) ;
-336,337c338,339
+336,337c340,341
 <   fprintf ( fpout, "            %5dM", ( grand + 1023 ) / 1024 / 1024 ) ;
 <   fprintf ( fpout, "       %5dM\n", ( gran2 + 1023 ) / 1024 / 1024 ) ;
 ---
 >   fprintf ( fpout, "            %5ldM", ( grand + 1023 ) / 1024 / 1024 ) ;
 >   fprintf ( fpout, "       %5ldM\n", ( gran2 + 1023 ) / 1024 / 1024 ) ;
-339c341
+339c343
 <   fprintf ( fpout, "Memory Size %5dM\n", size / 1024 / 1024 ) ;
 ---
 >   fprintf ( fpout, "Memory Size %5ldM\n", size / 1024 / 1024 ) ;
-342c344,364
+342c346,413
 <     fprintf ( fpout, "Excess %d bytes\n", size % 1024 ) ;
 ---
 >     fprintf ( fpout, "Excess %ld bytes\n", size % 1024 ) ;
 >   }
 > }
-> // Check this out !!!!! JHJ
-> // Find the block that contains the provided address
+> /*
+>  * Check this out !!!!! JHJ
+>  * Find the block that contains the provided address
+>  */
 > S_ft * S_find ( char * p )
 > {
 >   if ( p < ( char * ) S_lo || p >= ( char * ) S_hi ) {
@@ -338,7 +394,7 @@ diff -r -w aa/S.c bb/S.c
 > 
 >   if ( offset < 0 || offset >= sizeof ( S_ft ) ) {
 >     Error ( "S_find: BOTCH 3" ) ;
-343a366,408
+>   }
 > 
 >   long base = 0 ;
 >   int base_k = kval ( & l [ base ] ) ;
@@ -354,12 +410,14 @@ diff -r -w aa/S.c bb/S.c
 >   -- k ;
 >   right = ( 1 << k ) ;
 > 
-> // printf( "\n" );
-> // printf( "base %ld\n", base );
-> // printf( "incr %ld\n", incr );
-> // printf( "k %d\n", k );
-> // printf( "base_k %d\n", base_k );
-> // printf( "right %ld\n", right );
+>   /*
+>       printf( "\n" );
+>       printf( "base %ld\n", base );
+>       printf( "incr %ld\n", incr );
+>       printf( "k %d\n", k );
+>       printf( "base_k %d\n", base_k );
+>       printf( "right %ld\n", right );
+>    */
 >   while ( base_k <= k ) {
 >     base += right ;
 >     incr -= right ;
@@ -373,74 +431,82 @@ diff -r -w aa/S.c bb/S.c
 > 
 >     -- k ;
 >     right = ( 1 << k ) ;
-> // printf( "\n" );
-> // printf( "base %ld\n", base );
-> // printf( "incr %ld\n", incr );
-> // printf( "k %d\n", k );
-> // printf( "base_k %d\n", base_k );
-> // printf( "right %ld\n", right );
->   }
+>     /*
+>         printf( "\n" );
+>         printf( "base %ld\n", base );
+>         printf( "incr %ld\n", incr );
+>         printf( "k %d\n", k );
+>         printf( "base_k %d\n", base_k );
+>         printf( "right %ld\n", right );
+>      */
+343a415,416
 > 
 >   return ( & l [ base ] ) ;
-349c414
+349c422
 < char * Salloc ( int n )
 ---
 > char * Salloc ( long n )
-384c449
+384c457
 < char * Srealloc ( char * p, int n )
 ---
 > char * Srealloc ( char * p, long n )
-417c482
+417c490
 < int Ssize ( char * p )
 ---
 > long Ssize ( char * p )
-451c516
+451c524
 <         printf ( "Audit anomoly in busy block at %lx:\n", U ( p ) ) ;
 ---
 >         printf ( "Audit anomaly in busy block at %lx:\n", U ( p ) ) ;
-469,470c534,535
+469,470c542,543
 <       if ( k >= 20 || ( ( linkf ( p ) < S_lo || linkf ( p ) >= S_hi ) && ( linkf ( p ) < S_avail || linkf ( p ) >= S_avail + S_m ) ) || ( ( linkb ( p ) < S_lo || linkb ( p ) >= S_hi ) && ( linkb ( p ) < S_avail || linkb ( p ) >= S_avail + S_m ) ) || linkb ( linkf ( p ) ) != p || linkf ( linkb ( p ) ) != p ) {
 <         printf ( "Audit anomoly in free block at %lx:\n", U ( p ) ) ;
 ---
 >       if ( k >= 30 || ( ( linkf ( p ) < S_lo || linkf ( p ) >= S_hi ) && ( linkf ( p ) < S_avail || linkf ( p ) >= S_avail + S_m ) ) || ( ( linkb ( p ) < S_lo || linkb ( p ) >= S_hi ) && ( linkb ( p ) < S_avail || linkb ( p ) >= S_avail + S_m ) ) || linkb ( linkf ( p ) ) != p || linkf ( linkb ( p ) ) != p ) {
 >         printf ( "Audit anomaly in free block at %lx:\n", U ( p ) ) ;
-511c576
+506a580,584
+> /*
+>  ========== CONDITIONAL COMPILE ==========
+>  Replace the Binary Buddy System Allocation implementation with an
+>  alternative which directly calls malloc/free.
+> */
+511c589
 < char * Salloc ( int n )
 ---
 > char * Salloc ( long n )
-514c579
+514c592
 <   int * pi ;
 ---
 >   long * pi ;
-521c586
+521c599
 <   pi = ( int * ) p ;
 ---
 >   pi = ( long * ) p ;
-533c598
+533c611
 < char * Srealloc ( char * p, int n )
 ---
 > char * Srealloc ( char * p, long n )
-536c601
+536c614
 <   int * qi ;
 ---
 >   long * qi ;
-540c605
+540c618
 <     qi = ( int * ) q ;
 ---
 >     qi = ( long * ) q ;
-548c613
+548c626
 < int Ssize ( char * p )
 ---
 > long Ssize ( char * p )
-551c616
+551c629
 <   int * qi ;
 ---
 >   long * qi ;
-553c618
+553c631
 <   qi = ( int * ) q ;
 ---
 >   qi = ( long * ) q ;
-558c623
+558c636
 <   int n ;
 ---
 >   long n ;

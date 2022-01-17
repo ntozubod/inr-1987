@@ -11,6 +11,7 @@ SOURCE 	= Makefile $(HFILES) $(CFILES) Parse.y
 
 .c.o:
 	gcc -Wall -O0 -g -c $*.c
+#	gcc -DUSE_MALLOC_ALLOCATOR -Wall -O0 -g -c $*.c
 #	gcc -ansi -Wall -O -c $*.c
 
 ginr:	$(OFILES)
