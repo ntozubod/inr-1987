@@ -11,9 +11,11 @@ SOURCE 	= Makefile $(HFILES) $(CFILES) Parse.y
 
 .c.o:
 	gcc -Wall -O0 -g -c $*.c
+#	gcc -ansi -Wall -O -c $*.c
 
 ginr:	$(OFILES)
 	gcc -Wall -O0 -g $(OFILES) -o ginr
+#	gcc -ansi -Wall -O $(OFILES) -o ginr
 
 inrx.a:
 	echo hi >inrx.a

@@ -22,12 +22,10 @@
  *   You should have received a copy of the GNU General Public License
  *   along with INR.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <stdio.h>
-#include <stdlib.h>
 #include <strings.h>
-#include "local.h"
 #include "O.h"
-extern FILE * fpout ;
+#define USE_BB true
+#ifdef USE_BB
 typedef struct S_f {
   unsigned char fill_1 ;
   unsigned char fill_2 ;
@@ -54,6 +52,7 @@ S_ft ;
 static S_ft * S_lo = 0, * S_hi = 0, S_avail [ S_m + 1 ] ;
 static int S_alld_cnt [ S_m ] ;
 long LINUXmem = 0 ;
+#endif
 /*
  *     Copy a block of memory
  */
@@ -84,6 +83,7 @@ void scribble ( char * p, char * q )
     * p ++ = 0x55 ;
   }
 }
+#ifdef USE_BB
 /*
  *     Binary Buddy system storage allocator as in Knuth vol. 1
  */
@@ -569,3 +569,70 @@ void Saudit ( )
     p = p + ( 1 << kval ( p ) ) ;
   }
 }
+#else
+#define SPACE_BEFORE    8
+#define SPACE_AFTER    0
+#define MINSIZE    8
+char * Salloc ( long n )
+{
+  char * p ;
+  long * pi ;
+
+  if ( n < MINSIZE ) {
+    n = MINSIZE ;
+  }
+
+  p = malloc ( n + SPACE_BEFORE + SPACE_AFTER ) ;
+  pi = ( long * ) p ;
+  * pi = n ;
+  return ( p + SPACE_BEFORE ) ;
+}
+void Sfree ( char * p )
+{
+  if ( p == 0 ) {
+    return ;
+  }
+
+  free ( p - SPACE_BEFORE ) ;
+}
+char * Srealloc ( char * p, long n )
+{
+  char * q ;
+  long * qi ;
+
+  if ( p ) {
+    q = realloc ( p - SPACE_BEFORE, n + SPACE_BEFORE + SPACE_AFTER ) ;
+    qi = ( long * ) q ;
+    * qi = n ;
+    return ( q + SPACE_BEFORE ) ;
+
+  } else {
+    return Salloc ( n ) ;
+  }
+}
+long Ssize ( char * p )
+{
+  char * q ;
+  long * qi ;
+  q = p - SPACE_BEFORE ;
+  qi = ( long * ) q ;
+  return ( * qi ) ;
+}
+char * Scopy ( char * p )
+{
+  long n ;
+  char * q ;
+  n = Ssize ( p ) ;
+  q = Salloc ( n ) ;
+  copymem ( n, p, q ) ;
+  return ( q ) ;
+}
+void Sarena ( )
+{
+  /* do nothing */
+}
+void Saudit ( )
+{
+  /* do nothing */
+}
+#endif

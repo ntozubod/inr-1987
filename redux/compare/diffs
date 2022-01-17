@@ -1,58 +1,28 @@
-diff -r -w aa/Abasic.c bb/Abasic.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
-diff -r -w aa/Aclos.c bb/Aclos.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
-diff -r -w aa/Aclsseq.c bb/Aclsseq.c
-24a25
-> #include <stdio.h>
-diff -r -w aa/Acompose.c bb/Acompose.c
-24a25
-> #include <stdio.h>
 diff -r -w aa/Acrea.c bb/Acrea.c
-24a25
-> #include <stdio.h>
-27a29
-> extern FILE * fpout ;
-116c118
+116c116
 <   fprintf ( fpout, " Strg: %d K", ( Ssize ( ( char * ) A ) + ( A -> A_mode == OPEN ? 0 : Ssize ( ( char * ) A -> A_p ) ) + Ssize ( ( char * ) A -> A_t ) + 1023 ) / 1024 ) ;
 ---
 >   fprintf ( fpout, " Strg: %ld K", ( Ssize ( ( char * ) A ) + ( A -> A_mode == OPEN ? 0 : Ssize ( ( char * ) A -> A_p ) ) + Ssize ( ( char * ) A -> A_t ) + 1023 ) / 1024 ) ;
-221c223,224
+221c221,222
 <       ) if ( p -> A_b > 1 && p -> A_b <= lst_em ) {
 ---
 >       ) {
 >     if ( p -> A_b > 1 && p -> A_b <= lst_em ) {
-223a227
+223a225
 >   }
-261c265,266
+261c263,264
 <       ) if ( p -> A_b == 1 ) {
 ---
 >       ) {
 >     if ( p -> A_b == 1 ) {
-264a270
+264a268
 >   }
-276c282
+276c280
 <   return A ;
 ---
 >   return ( A ) ;
-diff -r -w aa/Aenum.c bb/Aenum.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
 diff -r -w aa/AGMsseq.c bb/AGMsseq.c
-26a27,28
-> extern FILE * fpout ;
-> extern T_OBJECT TT ;
-534c536,537
-<               /* if ( j > vlen )
----
-> // if ( j > vlen )
->               /*
-541,545c544,545
+541,545c541,542
 <                           for( tt = 0;
 <                                to_coeff[j1][tt] != MAXSHORT;
 <                                tt++ )
@@ -61,75 +31,39 @@ diff -r -w aa/AGMsseq.c bb/AGMsseq.c
 ---
 >                               for( tt = 0; to_coeff[j1][tt] != MAXSHORT; tt++ )
 >                               printf( "%s ", T_name( TT, to_coeff[j1][tt] ) );
-diff -r -w aa/Ajoin.c bb/Ajoin.c
-24a25
-> #include <stdio.h>
-diff -r -w aa/Alamcm.c bb/Alamcm.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
-diff -r -w aa/Alameq.c bb/Alameq.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
-diff -r -w aa/Alenmin.c bb/Alenmin.c
-24a25
-> #include <stdio.h>
-diff -r -w aa/ALMsseq.c bb/ALMsseq.c
-26a27,28
-> extern FILE * fpout ;
-> extern T_OBJECT TT ;
 diff -r -w aa/Aload.c bb/Aload.c
-24a25,26
-> #include <stdio.h>
-> #include <string.h>
-27,29d28
+27,29d26
 < #define cnvrtn(name) name
 < FILE * fpin ;
 < FILE * fpout ;
-30a30,31
+30a28
 > FILE * fpin, * fpout ;
-> extern FILE * fopen ( ) ;
-136c137
+136c134
 <     fp = fopen ( cnvrtn ( file ), "r" ) ;
 ---
 >     fp = fopen ( file, "r" ) ;
-337c338
+337c335
 <       fp = fopen ( cnvrtn ( file ), "w" ) ;
 ---
 >       fp = fopen ( file, "w" ) ;
-410c411
+410c408
 <       fp = fopen ( cnvrtn ( file ), "w" ) ;
 ---
 >       fp = fopen ( file, "w" ) ;
-470c471
+470c468
 <     fp = fopen ( cnvrtn ( file ), "r" ) ;
 ---
 >     fp = fopen ( file, "r" ) ;
-564c565
+564c562
 <       fp = fopen ( cnvrtn ( file ), "w" ) ;
 ---
 >       fp = fopen ( file, "w" ) ;
-diff -r -w aa/Amin.c bb/Amin.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
-193a196,198
->       /*-------------------------------------------------------------------------*/
->       /**/
->       /**/
-310a316,318
->       /**/
->       /**/
->       /*-------------------------------------------------------------------------*/
 diff -r -w aa/Aopen.c bb/Aopen.c
 1d0
 < extern int S_flag ;
-25a25,27
-> #include <stdio.h>
+25a25
 > #include <assert.h>
-> extern FILE * fpout ;
-32,47c34,37
+32,47c32,35
 < 
 <   if ( A == NULL ) {
 <     Error ( "A_add: No OBJECT" ) ;
@@ -151,70 +85,70 @@ diff -r -w aa/Aopen.c bb/Aopen.c
 >   assert ( A -> A_mode == OPEN ) ;
 >   assert ( a >= 0 && b >= 0 && c >= 0 ) ;
 >   assert ( a < MAXSHORT && b < MAXSHORT && c < MAXSHORT ) ;
-75,78c65
+75,78c63
 <   if ( A == NULL ) {
 <     Error ( "A_open: No OBJECT" ) ;
 <   }
 < 
 ---
 >   assert ( A != NULL ) ;
-92,95c79
+92,95c77
 < 
 <   if ( A == NULL ) {
 <     Error ( "A_close: No OBJECT" ) ;
 <   }
 ---
 >   assert ( A != NULL ) ;
-118a103
+118a101
 >   assert ( N > 0 ) ;
-134a120
+134a118
 >     assert ( p -> A_c < N ) ;
-147a134,135
+147a132,133
 >   assert ( p == t2 ) ;
 > 
-151c139
+151c137
 <     q = -- ptr [ i = p -> A_c ] ;
 ---
 >     q = -- ptr [ p -> A_c ] ;
-152a141
+152a139
 >     assert ( p -> A_b < N ) ;
-154c143
+154c141
 <     q -> A_c = i ;
 ---
 >     q -> A_c = p -> A_c ;
-166a156,157
+166a154,155
 >   assert ( p == t1 ) ;
 > 
-170c161,162
+170c159,160
 <     q = -- ptr [ i = p -> A_b ] ;
 ---
 >     q = -- ptr [ p -> A_b ] ;
 >     assert ( p -> A_a < N ) ;
-172c164
+172c162
 <     q -> A_b = i ;
 ---
 >     q -> A_b = p -> A_b ;
-185a178,179
+185a176,177
 >   assert ( p == t2 ) ;
 > 
-189,190c183,184
+189,190c181,182
 <     q = -- ptr [ i = p -> A_a ] ;
 <     q -> A_a = i ;
 ---
 >     q = -- ptr [ p -> A_a ] ;
 >     q -> A_a = p -> A_a ;
-200c194
+200c192
 <   ( t2z + 1 ) -> A_a = MAXSHORT ;
 ---
 >   ( t2z + 1 ) -> A_c = MAXSHORT ;
-218c212,215
+218c210,213
 <     while ( ( ++ t1 ) -> A_c == ( ++ t2 ) -> A_c && t1 -> A_b == t2 -> A_b && t1 -> A_a == t2 -> A_a ) ;
 ---
 >     while ( ( ++ t1 ) -> A_c == ( ++ t2 ) -> A_c && t1 -> A_b == t2 -> A_b && t1 -> A_a == t2 -> A_a ) {
 >       /* empty */
 >       ;
 >     }
-246,250c243
+246,250c241
 < 
 <   if ( A == NULL ) {
 <     Error ( "A_rename: No OBJECT" ) ;
@@ -222,14 +156,14 @@ diff -r -w aa/Aopen.c bb/Aopen.c
 < 
 ---
 >   assert ( A != NULL ) ;
-293c286,287
+293c284,285
 <       ) if ( ( p -> A_c = trena [ p -> A_c ] ) == MAXSHORT || ( p -> A_a == p -> A_c && p -> A_b == 0 ) ) {
 ---
 >       ) {
 >     if ( ( p -> A_c = trena [ p -> A_c ] ) == MAXSHORT || ( p -> A_a == p -> A_c && p -> A_b == 0 ) ) {
-298a293
+298a291
 >   }
-333,337c328
+333,337c326
 < 
 <   if ( A == NULL ) {
 <     Error ( "A_rename: No OBJECT" ) ;
@@ -237,62 +171,15 @@ diff -r -w aa/Aopen.c bb/Aopen.c
 < 
 ---
 >   assert ( A != NULL ) ;
-diff -r -w aa/Aretape.c bb/Aretape.c
-24a25
-> #include <stdio.h>
-diff -r -w aa/Asseq.c bb/Asseq.c
-24a25
-> #include <stdio.h>
-25a27,28
-> extern FILE * fpout ;
-> extern T_OBJECT TT ;
-diff -r -w aa/Astems.c bb/Astems.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
-25a28,29
-> extern SHORT * s_rena ;
-> extern int f_rena ;
-diff -r -w aa/Asubs.c bb/Asubs.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
-diff -r -w aa/Atrim.c bb/Atrim.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
 diff -r -w aa/Colon.c bb/Colon.c
-24a25,27
-> #include <stdio.h>
-> #include <ctype.h>
-> #include <string.h>
-25a29,34
-> extern FILE * fpout ;
-> extern A_OBJECT Atemp ;
-> extern T_OBJECT TAlist ;
-> extern A_OBJECT Alist [ 100 ] ;
-> extern T_OBJECT TT ;
-> extern char * pad20 ( ) ;
-45a55
+45a46
 >     ( void ) Saudit ( ) ;
 Only in aa: ginr
 Only in aa: ISSUES_LIMITS
 Only in aa: ISSUES_OTHER
 Only in aa: ISSUES_STACK
 diff -r -w aa/Lex.c bb/Lex.c
-24a25,29
-> #include <stdio.h>
-> #include <ctype.h>
-> #include <string.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-26a32,33
-> FILE * fopen ( ) ;
-> extern FILE * fpin, * fpout ;
-407a415,416
-> extern char Version [ ] ;
-> extern char Date [ ] ;
-500c509,513
+500c500,504
 <   PROMT ( void ) yyparse ( ) ;
 ---
 > 
@@ -318,332 +205,72 @@ diff -r -w aa/Makefile bb/Makefile
 < compcms.exec cwinr.exec comphw.exec
 ---
 > SOURCE 	= Makefile $(HFILES) $(CFILES) Parse.y
-14c13
+14c13,14
 < 	gcc -ansi -Wall -O -c $*.c
 ---
 > 	gcc -Wall -O0 -g -c $*.c
-17c16
+> #	gcc -ansi -Wall -O -c $*.c
+17c17,18
 < 	gcc -ansi -Wall -O $(OFILES) -o ginr
 ---
 > 	gcc -Wall -O0 -g $(OFILES) -o ginr
-26c25
+> #	gcc -ansi -Wall -O $(OFILES) -o ginr
+26c27
 < 	cp -p ginr ~/bin/ninr
 ---
 > 	cp -p ginr ~/bin/ginr
-39c38
+39c40
 < 	rm -f $(OFILES) y.tab.h y.tab.c
 ---
 > 	rm -f $(OFILES) y.tab.h y.tab.c *.orig
 diff -r -w aa/O.h bb/O.h
-26,33d25
-< #include <stdio.h>
-< #include <stdlib.h>
-< #include <ctype.h>
-< #include <string.h>
-< #include <unistd.h>
-< /* these seem to be needed with the -ansi option to suppress warnings */
-< int fileno ( FILE * ) ;
+33c33
 < int isascii ( int ) ;
-113,168c105
-< extern FILE * fpin ;
-< extern FILE * fpout ;
-< /* S.c */
+---
+> /* int isascii( int ); */
+116,117c116,117
 < void copymem ( int, char *, char * ) ;
 < char * Salloc ( int ) ;
-< void Sfree ( char * ) ;
-< char * Srealloc ( char *, int ) ;
-< char * Scopy ( char * ) ;
-< int Ssize ( char * ) ;
-< void Sarena ( ) ;
-< void Saudit ( ) ;
-< /* stamp.c */
-< extern char Version [ ] ;
-< extern char Date [ ] ;
-< /* util.c */
-< void Warning ( char * ) ;
-< void Error ( char * ) ;
-< SHORT * s_alloc ( int ) ;
-< int * i_alloc ( int ) ;
-< void pr_time_diff ( ) ;
-< /* T.c */
-< T_OBJECT T_create ( ) ;
-< void T_destroy ( T_OBJECT ) ;
-< int T_member ( T_OBJECT, char * ) ;
-< T_OBJECT T_grow ( T_OBJECT, int ) ;
-< int T_insert ( T_OBJECT, char * ) ;
-< char * T_name ( T_OBJECT, int ) ;
-< void T_stats ( ) ;
-< /* V.c */
-< SHORT * veccpy ( SHORT *, SHORT * ) ;
-< int veccmp ( SHORT *, SHORT * ) ;
-< int veclen ( SHORT * ) ;
-< V_OBJECT V_create ( ) ;
-< void V_destroy ( V_OBJECT ) ;
-< int V_member ( V_OBJECT, SHORT * ) ;
-< V_OBJECT V_grow ( V_OBJECT, int ) ;
-< int V_insert ( V_OBJECT, SHORT * ) ;
-< SHORT * V_vec ( V_OBJECT, int ) ;
-< void V_stats ( ) ;
-< /* R.c */
-< R_OBJECT R_create ( ) ;
-< void R_destroy ( R_OBJECT ) ;
-< int R_member ( R_OBJECT, int, int ) ;
-< R_OBJECT R_grow ( R_OBJECT, int ) ;
-< int R_insert ( R_OBJECT, int, int ) ;
-< R_row * R_rec ( R_OBJECT, int ) ;
-< void R_stats ( ) ;
-< /* U.c */
-< U_OBJECT U_create ( ) ;
-< void U_destroy ( U_OBJECT ) ;
-< int U_member ( U_OBJECT, int, int, int ) ;
-< U_OBJECT U_grow ( U_OBJECT, int ) ;
-< int U_insert ( U_OBJECT, int, int, int ) ;
-< A_row * U_rec ( U_OBJECT, int ) ;
-< void U_stats ( ) ;
-< /* Acrea.c */
 ---
-> // Acrea.c
-177,179c114
-< /* Aopen.c */
-< extern SHORT * s_rena ;
-< extern int f_rena ;
----
-> // Aopen.c
-185c120,123
-< /* Aload.c */
----
-> // Aload.c
-> char * get_name ( ) ;
-> void put_name ( char * ) ;
-> int get_nl ( ) ;
-191c129,130
-< /* Atrim.c */
----
-> // Atrim.c
-> SHORT A_tr_DFS ( SHORT ) ;
-193c132,133
-< /* Alameq.c */
----
-> // Alameq.c
-> int A_la_DFS ( int ) ;
-195c135,136
-< /* Alamcm.c */
----
-> // Alamcm.c
-> int A_cm_DFS ( int ) ;
-197c138,139
-< /* Aclos.c */
----
-> // Aclos.c
-> void A_cl_DFS ( int ) ;
-199c141
-< /* Asubs.c */
----
-> // Asubs.c
-201c143
-< /* Amin.c */
----
-> // Amin.c
-203c145
-< /* Abasic.c */
----
-> // Abasic.c
-221c163,164
-< /* Aenum.c */
----
-> // Aenum.c
-> int A_en_DFS ( SHORT ) ;
-222a166
-> int A_cd_DFS ( SHORT ) ;
-226c170
-< /* Acompose.c */
----
-> // Acompose.c
-228c172
-< /* Ajoin.c */
----
-> // Ajoin.c
-230c174
-< /* Aretape.c */
----
-> // Aretape.c
-233c177
-< /* Apowers.c */
----
-> // Apowers.c
-237c181
-< /* Alenmin.c */
----
-> // Alenmin.c
-240,244c184
-< /* Astems.c */
-< void A_st_free ( ) ;
-< SHORT ** A_stems ( A_OBJECT, int ) ;
-< void A_prstems ( A_OBJECT, T_OBJECT, int ) ;
-< /* Asseq.c */
----
-> // Asseq.c
-246,248c186,187
-< /* ALMsseq.c */
-< A_OBJECT A_LMsseq ( A_OBJECT ) ;
-< /* AGMsseq.c */
----
-> // AGMsseq.c
-> int GMcmp ( SHORT *, SHORT * ) ;
-250c189,191
-< /* Aclsseq.c */
----
-> // ALMsseq.c
-> A_OBJECT A_LMsseq ( A_OBJECT ) ;
-> // Aclsseq.c
-252,264c193,249
-< /* Colon.c */
-< extern int disp_flag ;
-< int do_n_i ( char * ) ;
-< A_OBJECT do_an_a ( A_OBJECT, char * ) ;
-< A_OBJECT do_ann_a ( A_OBJECT, char *, char * ) ;
-< A_OBJECT do_nn_a ( char *, char * ) ;
-< /* Lex.c */
-< extern A_OBJECT A ;
-< extern A_OBJECT Atemp ;
-< extern A_OBJECT Alist [ 100 ] ;
-< extern T_OBJECT TAlist ;
-< extern T_OBJECT TT ;
-< extern char Notice [ ] ;
----
-> // Astems.c
-> void A_st_free ( ) ;
-> int A_st_DFS ( int, int ) ;
-> SHORT ** A_stems ( A_OBJECT, int ) ;
-> void A_prstems ( A_OBJECT, T_OBJECT, int ) ;
-> // T.c
-> T_OBJECT T_create ( ) ;
-> void T_destroy ( T_OBJECT ) ;
-> int T_member ( T_OBJECT, char * ) ;
-> T_OBJECT T_grow ( T_OBJECT, int ) ;
-> int T_insert ( T_OBJECT, char * ) ;
-> char * T_name ( T_OBJECT, int ) ;
-> void T_stats ( ) ;
-> // V.c
-> SHORT * veccpy ( SHORT *, SHORT * ) ;
-> int veccmp ( SHORT *, SHORT * ) ;
-> int veclen ( SHORT * ) ;
-> V_OBJECT V_create ( ) ;
-> void V_destroy ( V_OBJECT ) ;
-> int V_member ( V_OBJECT, SHORT * ) ;
-> V_OBJECT V_grow ( V_OBJECT, int ) ;
-> int V_insert ( V_OBJECT, SHORT * ) ;
-> SHORT * V_vec ( V_OBJECT, int ) ;
-> void V_stats ( ) ;
-> // R.c
-> R_OBJECT R_create ( ) ;
-> void R_destroy ( R_OBJECT ) ;
-> int R_member ( R_OBJECT, int, int ) ;
-> R_OBJECT R_grow ( R_OBJECT, int ) ;
-> int R_insert ( R_OBJECT, int, int ) ;
-> R_row * R_rec ( R_OBJECT, int ) ;
-> void R_stats ( ) ;
-> // U.c
-> U_OBJECT U_create ( ) ;
-> void U_destroy ( U_OBJECT ) ;
-> int U_member ( U_OBJECT, int, int, int ) ;
-> U_OBJECT U_grow ( U_OBJECT, int ) ;
-> int U_insert ( U_OBJECT, int, int, int ) ;
-> A_row * U_rec ( U_OBJECT, int ) ;
-> void U_stats ( ) ;
-> // S.c
 > void copymem ( long, char *, char * ) ;
 > char * Salloc ( long ) ;
-> void Sfree ( char * ) ;
+119c119
+< char * Srealloc ( char *, int ) ;
+---
 > char * Srealloc ( char *, long ) ;
-> char * Scopy ( char * ) ;
+121c121,122
+< int Ssize ( char * ) ;
+---
 > long Ssize ( char * ) ;
 > char * Sfind ( char * ) ;
-> void Sarena ( ) ;
-> void Saudit ( ) ;
-> // util.c
-> void Warning ( char * ) ;
-> void Error ( char * ) ;
-> SHORT * s_alloc ( int ) ;
-> int * i_alloc ( int ) ;
-> void pr_time_diff ( ) ;
-> // Lex.c
-265a251
-> char * copyof ( char * ) ;
-269c255,260
-< /* Parse.y */
----
-> // Colon.c
-> int do_n_i ( char * ) ;
-> A_OBJECT do_an_a ( A_OBJECT, char * ) ;
-> A_OBJECT do_ann_a ( A_OBJECT, char *, char * ) ;
-> A_OBJECT do_nn_a ( char *, char * ) ;
-> // Parse.y
 diff -r -w aa/Parse.y bb/Parse.y
-25a26,29
-> #include <stdio.h>
-> #include <ctype.h>
-> #include <unistd.h>
-> #include <string.h>
-26a31,44
->   int yylex ( ) ;
->   int yyparse ( void ) ;
->   void yyerror ( char * ) ;
->   FILE * fopen ( ) ;
->   extern FILE * fpin, * fpout ;
->   extern A_OBJECT A, Atemp ;
->   extern T_OBJECT TAlist ;
->   extern A_OBJECT Alist [ 100 ] ;
->   extern T_OBJECT TT ;
->   extern int disp_flag ;
->   extern int do_n_i ( ) ;
->   extern A_OBJECT do_an_a ( ) ;
->   extern A_OBJECT do_ann_a ( ) ;
->   extern A_OBJECT do_nn_a ( ) ;
-28a47
->   extern char * pad20 ( ) ;
-159c178
+159c159
 <     return 1 ;
 ---
 >     return ( 0 ) ;
-162d180
+162d161
 <   /* to suppress warning JHJ */
-diff -r -w aa/R.c bb/R.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
 diff -r -w aa/S.c bb/S.c
-25,26c25,26
+25,26d24
 < #include "O.h"
 < /* for bcopy */
----
-> #include <stdio.h>
-> #include <stdlib.h>
-28,29c28,30
-< #define USE_BB true
-< #ifdef USE_BB
----
-> #include "local.h"
+27a26
 > #include "O.h"
-> extern FILE * fpout ;
-35a37
+35a35
 >   struct S_f * fill_4 ;
-50c52,53
+50c50,51
 < /* S_m = 26 allows objects of up to 1 gigabyte */
 ---
 > /* S_m = 26 allows objects of up to 2 gigabytes 2^(5+26)*/
 > /* S_m = 28 allows objects of up to 8 gigabytes 2^(5+28)*/
-53,54c56
+53c54
 < int LINUXmem = 0 ;
-< #endif
 ---
 > long LINUXmem = 0 ;
-58c60
+58c59
 < void copymem ( int n, char * from, char * to )
 ---
 > void copymem ( long n, char * from, char * to )
-85d86
-< #ifdef USE_BB
 95c96
 <     int mem ;
 ---
@@ -687,7 +314,7 @@ diff -r -w aa/S.c bb/S.c
 <   fprintf ( fpout, "Memory Size %5dM\n", size / 1024 / 1024 ) ;
 ---
 >   fprintf ( fpout, "Memory Size %5ldM\n", size / 1024 / 1024 ) ;
-342c344,395
+342c344,364
 <     fprintf ( fpout, "Excess %d bytes\n", size % 1024 ) ;
 ---
 >     fprintf ( fpout, "Excess %ld bytes\n", size % 1024 ) ;
@@ -711,7 +338,7 @@ diff -r -w aa/S.c bb/S.c
 > 
 >   if ( offset < 0 || offset >= sizeof ( S_ft ) ) {
 >     Error ( "S_find: BOTCH 3" ) ;
->   }
+343a366,408
 > 
 >   long base = 0 ;
 >   int base_k = kval ( & l [ base ] ) ;
@@ -742,7 +369,7 @@ diff -r -w aa/S.c bb/S.c
 >           ( incr >> k ) ;
 >           ++ k ) {
 >       ;
-343a397,408
+>     }
 > 
 >     -- k ;
 >     right = ( 1 << k ) ;
@@ -777,74 +404,46 @@ diff -r -w aa/S.c bb/S.c
 ---
 >       if ( k >= 30 || ( ( linkf ( p ) < S_lo || linkf ( p ) >= S_hi ) && ( linkf ( p ) < S_avail || linkf ( p ) >= S_avail + S_m ) ) || ( ( linkb ( p ) < S_lo || linkb ( p ) >= S_hi ) && ( linkb ( p ) < S_avail || linkb ( p ) >= S_avail + S_m ) ) || linkb ( linkf ( p ) ) != p || linkf ( linkb ( p ) ) != p ) {
 >         printf ( "Audit anomaly in free block at %lx:\n", U ( p ) ) ;
-507,573d571
-< #else
-< #define SPACE_BEFORE    8
-< #define SPACE_AFTER    0
-< #define MINSIZE    8
+511c576
 < char * Salloc ( int n )
-< {
-<   char * p ;
+---
+> char * Salloc ( long n )
+514c579
 <   int * pi ;
-< 
-<   if ( n < MINSIZE ) {
-<     n = MINSIZE ;
-<   }
-< 
-<   p = malloc ( n + SPACE_BEFORE + SPACE_AFTER ) ;
+---
+>   long * pi ;
+521c586
 <   pi = ( int * ) p ;
-<   * pi = n ;
-<   return ( p + SPACE_BEFORE ) ;
-< }
-< void Sfree ( char * p )
-< {
-<   if ( p == 0 ) {
-<     return ;
-<   }
-< 
-<   free ( p - SPACE_BEFORE ) ;
-< }
+---
+>   pi = ( long * ) p ;
+533c598
 < char * Srealloc ( char * p, int n )
-< {
-<   char * q ;
+---
+> char * Srealloc ( char * p, long n )
+536c601
 <   int * qi ;
-< 
-<   if ( p ) {
-<     q = realloc ( p - SPACE_BEFORE, n + SPACE_BEFORE + SPACE_AFTER ) ;
+---
+>   long * qi ;
+540c605
 <     qi = ( int * ) q ;
-<     * qi = n ;
-<     return ( q + SPACE_BEFORE ) ;
-< 
-<   } else {
-<     return Salloc ( n ) ;
-<   }
-< }
+---
+>     qi = ( long * ) q ;
+548c613
 < int Ssize ( char * p )
-< {
-<   char * q ;
+---
+> long Ssize ( char * p )
+551c616
 <   int * qi ;
-<   q = p - SPACE_BEFORE ;
+---
+>   long * qi ;
+553c618
 <   qi = ( int * ) q ;
-<   return ( * qi ) ;
-< }
-< char * Scopy ( char * p )
-< {
+---
+>   qi = ( long * ) q ;
+558c623
 <   int n ;
-<   char * q ;
-<   n = Ssize ( p ) ;
-<   q = Salloc ( n ) ;
-<   copymem ( n, p, q ) ;
-<   return ( q ) ;
-< }
-< void Sarena ( )
-< {
-<   /* do nothing */
-< }
-< void Saudit ( )
-< {
-<   /* do nothing */
-< }
-< #endif
+---
+>   long n ;
 diff -r -w aa/stamp.c bb/stamp.c
 28,29c28,29
 < char Version [ ] = "2.0.4a" ;
@@ -852,23 +451,5 @@ diff -r -w aa/stamp.c bb/stamp.c
 ---
 > char Version [ ] = "2.0.3h" ;
 > char Date [ ] = "Jan 17 2022" ;
-diff -r -w aa/T.c bb/T.c
-24a25,27
-> #include <stdio.h>
-> #include <string.h>
-> extern FILE * fpout ;
 Only in aa: TODO_FOR_C89
-diff -r -w aa/U.c bb/U.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
-diff -r -w aa/util.c bb/util.c
-25a26,28
-> #include <stdio.h>
-> #include <stdlib.h>
-> extern FILE * fpout ;
-diff -r -w aa/V.c bb/V.c
-24a25,26
-> #include <stdio.h>
-> extern FILE * fpout ;
 Only in aa: VERSION
