@@ -633,7 +633,7 @@ A_OBJECT A_prsseq ( A_OBJECT A, char * file, T_OBJECT T_Sigma )
           t = A -> A_p [ t ] -> A_c ;
         }
 
-        fprintf ( fp, " ]  " ) ;
+        fprintf ( fp, " ]  \t" ) ;
 
         if ( t == START ) {
           fprintf ( fp, "(START)\n" ) ;

@@ -382,7 +382,7 @@ fprintf( fpout, "\n" );
             || T_insert( TT, "-|" ) != 1 ) Error( "main: Initializing TT" );
     tstr[1] = 0;
     for( ti = 1; ti <= 255; ti++ )
-        if ( ( isascii(ti) && isprint(ti) ) || ti == '\t' || ti == '\n' ) {
+        if ( isprint(ti) || ti == '\t' || ti == '\n' ) {
             tstr[0] = ti;
             (void) T_insert( TT, tstr );
         }

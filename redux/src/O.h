@@ -30,9 +30,8 @@
 #include <string.h>
 #include <unistd.h>
 
-/* these seem to be needed with the -ansi option to suppress warnings */
+/* this seems to be needed with the -ansi option to suppress warnings */
 int fileno( FILE * );
-/* int isascii( int ); */
 
 #define T_Object        1
 #define V_Object        2

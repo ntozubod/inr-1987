@@ -58,6 +58,10 @@ diff -r -w aa/Aload.c bb/Aload.c
 <       fp = fopen ( cnvrtn ( file ), "w" ) ;
 ---
 >       fp = fopen ( file, "w" ) ;
+638c636
+<         fprintf ( fp, " ]  " ) ;
+---
+>         fprintf ( fp, " ]  \t" ) ;
 diff -r -w aa/Aopen.c bb/Aopen.c
 1d0
 < extern int S_flag ;
@@ -179,6 +183,10 @@ Only in aa: ISSUES_LIMITS
 Only in aa: ISSUES_OTHER
 Only in aa: ISSUES_STACK
 diff -r -w aa/Lex.c bb/Lex.c
+487c487
+<         ti ++ ) if ( ( isascii ( ti ) && isprint ( ti ) ) || ti == '\t' || ti == '\n' ) {
+---
+>         ti ++ ) if ( isprint ( ti ) || ti == '\t' || ti == '\n' ) {
 500c500,504
 <   PROMT ( void ) yyparse ( ) ;
 ---
@@ -205,41 +213,41 @@ diff -r -w aa/Makefile bb/Makefile
 < compcms.exec cwinr.exec comphw.exec
 ---
 > SOURCE 	= Makefile $(HFILES) $(CFILES) Parse.y
-14c13,15
+14c13,14
 < 	gcc -ansi -Wall -O -c $*.c
 ---
-> 	gcc -Wall -O0 -g -c $*.c
-> #	gcc -DUSE_MALLOC_ALLOCATOR -Wall -O0 -g -c $*.c
-> #	gcc -ansi -Wall -O -c $*.c
-17c18,19
+> 	gcc -ansi -Wall -O0 -g -c $*.c
+> #	gcc -DUSE_MALLOC_ALLOCATOR -ansi -Wall -O0 -g -c $*.c
+17c17
 < 	gcc -ansi -Wall -O $(OFILES) -o ginr
 ---
-> 	gcc -Wall -O0 -g $(OFILES) -o ginr
-> #	gcc -ansi -Wall -O $(OFILES) -o ginr
-26c28
+> 	gcc -ansi -Wall -O0 -g $(OFILES) -o ginr
+26c26
 < 	cp -p ginr ~/bin/ninr
 ---
 > 	cp -p ginr ~/bin/ginr
-39c41
+39c39
 < 	rm -f $(OFILES) y.tab.h y.tab.c
 ---
 > 	rm -f $(OFILES) y.tab.h y.tab.c *.orig
 diff -r -w aa/O.h bb/O.h
-33c33
-< int isascii ( int ) ;
+31c31
+< /* these seem to be needed with the -ansi option to suppress warnings */
 ---
-> /* int isascii( int ); */
-116,117c116,117
+> /* this seems to be needed with the -ansi option to suppress warnings */
+33d32
+< int isascii ( int ) ;
+116,117c115,116
 < void copymem ( int, char *, char * ) ;
 < char * Salloc ( int ) ;
 ---
 > void copymem ( long, char *, char * ) ;
 > char * Salloc ( long ) ;
-119c119
+119c118
 < char * Srealloc ( char *, int ) ;
 ---
 > char * Srealloc ( char *, long ) ;
-121c121,122
+121c120,121
 < int Ssize ( char * ) ;
 ---
 > long Ssize ( char * ) ;

@@ -484,7 +484,7 @@ int main ( int argc, char * argv [ ] )
 
   for ( ti = 1 ;
         ti <= 255 ;
-        ti ++ ) if ( ( isascii ( ti ) && isprint ( ti ) ) || ti == '\t' || ti == '\n' ) {
+        ti ++ ) if ( isprint ( ti ) || ti == '\t' || ti == '\n' ) {
       tstr [ 0 ] = ti ;
       ( void ) T_insert ( TT, tstr ) ;
     }

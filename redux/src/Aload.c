@@ -435,7 +435,7 @@ A_OBJECT A_prsseq( A_OBJECT A, char *file, T_OBJECT T_Sigma )
                     }
                     t = A-> A_p[t]-> A_c;
                 }
-                fprintf( fp, " ]  " );
+                fprintf( fp, " ]  \t" );
                 if ( t == START )               fprintf( fp, "(START)\n" );
                 else if ( t == FINAL )          fprintf( fp, "(FINAL)\n" );
                 else                            fprintf( fp, "%d\n", t );
