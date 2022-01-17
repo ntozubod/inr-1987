@@ -3,18 +3,16 @@ Introduction
 
 INR is a program that constructs finite state automata and transducers
 from generalized rational expressions. Although originally developed
-with to support research into approximate string matching [@Johnson83]
-it has proved useful for a number of other purposes.
+with to support research into approximate string matching, it has proved
+useful for a number of other purposes.
 
 The program operates in a traditional read/evaluate/print mode, that is,
 it repeatedly reads an expression from the input stream, computes the
 automaton required, and displays a result. For example, if we wish to
 find the minimized automaton over the alphabet $\{a,b\}$ that recognizes
-words that contain at least one "$a$"
-and at least one "$b$". This can
+words that contain at least one "$a$" and at least one "$b$". This can
 be described using the extended regular expression indicating the
-intersection of words containing $a$
-and words containing $b$:
+intersection of words containing $a$ and words containing $b$:
 
 >     $$\{a,b\}^*a\{a,b\}^* \wedge \{a,b\}^*b\{a,b\}^*.$$
 
@@ -41,7 +39,7 @@ been computed with 5 states and 9 transitions. It requires 1 Kbyte (1024
 bytes) of memory in the representation used by INR. After this the
 transitions of the automaton are presented in the form
 
-> *source-state label target-state*
+>     *source-state label target-state*
 
 so that
 
@@ -86,11 +84,11 @@ terminating when it reaches a preset limit.
 
 Another interactive use for INR involves testing whether two regular
 sets are the same. For example consider the set of all words over the
-alphabet $\{a,b\}^*$
-that are not either all $a$'s
+alphabet $\{a,b\}^*$ that are not either all $a$'s
 or all $b$'s. This can be denoted using the extended regular expression
 
 >     $$\{a,b\}^* - ( \{a\}^* \cup \{b\}^* ).$$
+
 This can be indicated to INR as:
 
      {a,b}* - ( a* | b* );
@@ -157,7 +155,7 @@ back-quotes they can be escaped with a preceding backslash.
 
 The following characters are recognized as delimiters:
 
->     ! " $ % & ( ) * + , - / : ; < = > ? @ [ \ ] ^ { | } ~
+>      ! " $ % & ( ) * + , - / : ; < = > ? @ [ \ ] ^ { | } ~
 
 All of these characters except `" % < > ~` indicate operations or are
 used in the specification of operations on automata.
@@ -787,6 +785,9 @@ Token
 To indicate that a token is associated with a particular tape, precede
 it by the tape number and a period.
 
+`1.abc;`\
+or `` `1.abc`;``
+
     (START) 1.abc 2
     2 -| (FINAL)
 
@@ -807,12 +808,34 @@ Strings are as for regular languages except for the need to shift them
 from tape zero to some other tape. To define a string on tape 1, there
 are four basic techniques depending on the situation.
 
+1. Build the string from tokens which specify the tape. Then `'abc'` on
+tape 1 become `1.a 1.b 1.c`.
+
+2. Use (parenthesis/comma) tuple notation. Then `'abc'` on tape 1 becomes
+`( ^, 'abc' )` or simply `(,'abc')`.
+
+3. Use the tape shifting operator `[]`. Then `'abc'` on tape 1 becomes
+`['abc']`.
+
+4. Use the tape renumbering operator `$`. Then `'abc'` on tape 1 is
+`( 'abc' $ 1 )`.
+
+`1.a 1.b 1.c;`\
+or `(,'abc');`\
+or `['abc'];`\
+or `('abc' $1);`
+
     (START) 1.a 2
     2 1.b 3
     3 1.c 4
     4 -| (FINAL)
 
 To indicate a string on tape 2 a similar technique can be used:
+
+`2.a 2.b 2.c;`\
+or `(,,'abc');`\
+or `[['abc']];`\
+or `('abc' $2);`
 
     (START) 2.a 2
     2 2.b 3
@@ -851,6 +874,9 @@ finaly concatenates the two machines together in the indicated order.
 Thus, as far as the characterizing languages are concerned, the comma
 operator functions as a concatenation following a tape shift.
 
+`( a*, b* );`\
+or `0.a* 1.b*;`
+
     (START) -| (FINAL)
     (START) 0.a (START)
     (START) 1.b 2
@@ -863,12 +889,22 @@ Tape Shifting
 The operator `[]` can be used to cause all of the tapes to be
 incremented by one.
 
+`a* [b*];`\
+or `( a*, b* );`\
+or `0.a* 1.b*;`
+
+    (START) -| (FINAL)
     (START) -| (FINAL)
     (START) 0.a (START)
     (START) 1.b 2
     2 -| (FINAL)
     2 1.b 2
 
+`[b*] a*;`\
+or `(, b* ) a*;`\
+or `1.b* 0.a*;`
+
+    (START) -| (FINAL)
     (START) -| (FINAL)
     (START) 1.b (START)
     (START) 0.a 2
@@ -1138,33 +1174,19 @@ deterministic automata and produces as a result a not necessarily
 minimized deterministic automaton. For debugging and education purposes,
 the coercing operator can be explicitly used:
 
-> :nfa
->
-> :   Sort and unduplicate transitions.
->
-> :trim
->
-> :   Remove states that are unreachable. (Reduce)
->
-> :lameq
->
-> :   Remove lambda equivalent states.
->
-> :lamcm
->
-> :   Combine lambda implied states.
->
-> :closed
->
-> :   Form lambda closure.
->
-> :dfa
->
-> :   Form deterministic machine. (Subsets Construction)
->
-> :min
->
-> :   Minimize the DFA.
+> `:nfa` Sort and unduplicate transitions.
+
+> `:trim` Remove states that are unreachable. (Reduce)
+
+> `:lameq` Remove lambda equivalent states.
+
+> `:lamcm` Combine lambda implied states.
+
+> `:closed` Form lambda closure.
+
+> `:dfa` Form deterministic machine. (Subsets Construction)
+
+> `:min` Minimize the DFA.
 
 Thus `<expression> :trim;` will print the trim (reduced) automaton
 corresponding to the expression. Note that coercing is one way and that
@@ -1175,29 +1197,17 @@ Displaying Operators
 
 The following operators cause some form of printing:
 
-> :pr
->
-> :   Print in readable format.
->
-> :save
->
-> :   Save in condensed format.
->
-> :report
->
-> :   Write a one line report.
->
-> :enum
->
-> :   Enumerate words.
->
-> :card
->
-> :   Count number of words and print.
->
-> :length
->
-> :   Print length of shortest word.
+> `:pr` Print in readable format.
+
+> `:save` Save in condensed format.
+
+> `:report` Write a one line report.
+
+> `:enum` Enumerate words.
+
+> `:card` Count number of words and print.
+
+> `:length` Print length of shortest word.
 
 The operation `:pr` may be followed by a filename in which case the
 automaton is printed into that file. The operation `:save` must be
@@ -1257,41 +1267,23 @@ Command Statement
 A number of commands that cause certain actions to be performed are
 provided.
 
-> :alph;
->
-> :   Display token symbol table.
->
-> :free;
->
-> :   Display status of free lists.
->
-> :list;
->
-> :   Display variable symbol table.
->
-> :noreport;
->
-> :   Turn off (verbose) debug tracing.
->
-> :pr;
->
-> :   Save all variables in files with the same names.
->
-> :quit;
->
-> :   Terminate session.
->
-> :report;
->
-> :   Turn on (verbose) debug tracing.
->
-> :save;
->
-> :   Save all variables in files (condensed) with the same names.
->
-> :time;
->
-> :   Display time since last :time call (VAX only).
+> `:alph;` Display token symbol table.
+
+> `:free;` Display status of free lists.
+
+> `:list;` Display variable symbol table.
+
+> `:noreport;` Turn off (verbose) debug tracing.
+
+> `:pr;` Save all variables in files with the same names.
+
+> `:quit;` Terminate session.
+
+> `:report;` Turn on (verbose) debug tracing.
+
+> `:save;` Save all variables in files (condensed) with the same names.
+
+> `:time;` Display time since last :time call (VAX only).
 
 Internals
 =========
@@ -1318,6 +1310,3 @@ and `(FINAL)` and special transitions `^^` and `-|` simplify the
 processing. The abstract data type also contains a mode indicator that
 indicates the coercing level. This allows the lazy evaluation mechanism
 to work and avoids a lot of redundant computation.
-
-[^1]: This work was supported by the Natural Sciences and Engineering
-    Research Council of Canada, Grant No. A0237.
