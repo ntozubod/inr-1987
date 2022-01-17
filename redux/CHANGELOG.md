@@ -1,5 +1,21 @@
 # INR redux Changelog
 
+## 2.0.3h redux (2022-01-17)
+
+In early December 2021, I was attempting a cleanup of INR souce and managed
+a number of improvements before starting the redux branch.
+These will be added in to the main 'redux' and 'remaster' branches:
+
+1. Re-ordered the declarations of O.h to a more sensible one.
+
+2. Rationalized the #include calls across the source tree.
+
+3. Added an alternative implementation of S.c that directly calls malloc
+instead of using the binary buddy system of the original INR.
+This is selectable by a compile time macro.
+
+4. Compiled with the -ansi option to force additional warnings.
+
 ## 2.0.3g redux (2022-01-16)
 
 The tryaug branch was an attempt in August 2018 to extend and improve INR.

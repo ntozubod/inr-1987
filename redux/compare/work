@@ -1,17 +1,22 @@
+======================================================================
 diff -r -w aa/Abasic.c bb/Abasic.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/Aclos.c bb/Aclos.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/Aclsseq.c bb/Aclsseq.c
 24a25
 > #include <stdio.h>
+======================================================================
 diff -r -w aa/Acompose.c bb/Acompose.c
 24a25
 > #include <stdio.h>
+======================================================================
 diff -r -w aa/Acrea.c bb/Acrea.c
 24a25
 > #include <stdio.h>
@@ -39,10 +44,12 @@ diff -r -w aa/Acrea.c bb/Acrea.c
 <   return A ;
 ---
 >   return ( A ) ;
+======================================================================
 diff -r -w aa/Aenum.c bb/Aenum.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/AGMsseq.c bb/AGMsseq.c
 26a27,28
 > extern FILE * fpout ;
@@ -61,24 +68,30 @@ diff -r -w aa/AGMsseq.c bb/AGMsseq.c
 ---
 >                               for( tt = 0; to_coeff[j1][tt] != MAXSHORT; tt++ )
 >                               printf( "%s ", T_name( TT, to_coeff[j1][tt] ) );
+======================================================================
 diff -r -w aa/Ajoin.c bb/Ajoin.c
 24a25
 > #include <stdio.h>
+======================================================================
 diff -r -w aa/Alamcm.c bb/Alamcm.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/Alameq.c bb/Alameq.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/Alenmin.c bb/Alenmin.c
 24a25
 > #include <stdio.h>
+======================================================================
 diff -r -w aa/ALMsseq.c bb/ALMsseq.c
 26a27,28
 > extern FILE * fpout ;
 > extern T_OBJECT TT ;
+======================================================================
 diff -r -w aa/Aload.c bb/Aload.c
 24a25,26
 > #include <stdio.h>
@@ -110,6 +123,7 @@ diff -r -w aa/Aload.c bb/Aload.c
 <       fp = fopen ( cnvrtn ( file ), "w" ) ;
 ---
 >       fp = fopen ( file, "w" ) ;
+======================================================================
 diff -r -w aa/Amin.c bb/Amin.c
 24a25,26
 > #include <stdio.h>
@@ -122,6 +136,7 @@ diff -r -w aa/Amin.c bb/Amin.c
 >       /**/
 >       /**/
 >       /*-------------------------------------------------------------------------*/
+======================================================================
 diff -r -w aa/Aopen.c bb/Aopen.c
 1d0
 < extern int S_flag ;
@@ -237,15 +252,18 @@ diff -r -w aa/Aopen.c bb/Aopen.c
 < 
 ---
 >   assert ( A != NULL ) ;
+======================================================================
 diff -r -w aa/Aretape.c bb/Aretape.c
 24a25
 > #include <stdio.h>
+======================================================================
 diff -r -w aa/Asseq.c bb/Asseq.c
 24a25
 > #include <stdio.h>
 25a27,28
 > extern FILE * fpout ;
 > extern T_OBJECT TT ;
+======================================================================
 diff -r -w aa/Astems.c bb/Astems.c
 24a25,26
 > #include <stdio.h>
@@ -253,14 +271,17 @@ diff -r -w aa/Astems.c bb/Astems.c
 25a28,29
 > extern SHORT * s_rena ;
 > extern int f_rena ;
+======================================================================
 diff -r -w aa/Asubs.c bb/Asubs.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/Atrim.c bb/Atrim.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/Colon.c bb/Colon.c
 24a25,27
 > #include <stdio.h>
@@ -279,6 +300,7 @@ Only in aa: ginr
 Only in aa: ISSUES_LIMITS
 Only in aa: ISSUES_OTHER
 Only in aa: ISSUES_STACK
+======================================================================
 diff -r -w aa/Lex.c bb/Lex.c
 24a25,29
 > #include <stdio.h>
@@ -300,6 +322,7 @@ diff -r -w aa/Lex.c bb/Lex.c
 >     Error ( "yyparse returned unexpectedly" ) ;
 >   }
 > 
+======================================================================
 diff -r -w aa/Makefile bb/Makefile
 3,4c3,4
 < Asubs.c Amin.c Abasic.c Aenum.c Acompose.c Ajoin.c Apowers.c Aretape.c \
@@ -334,6 +357,7 @@ diff -r -w aa/Makefile bb/Makefile
 < 	rm -f $(OFILES) y.tab.h y.tab.c
 ---
 > 	rm -f $(OFILES) y.tab.h y.tab.c *.orig
+======================================================================
 diff -r -w aa/O.h bb/O.h
 26,33d25
 < #include <stdio.h>
@@ -579,6 +603,7 @@ diff -r -w aa/O.h bb/O.h
 > A_OBJECT do_ann_a ( A_OBJECT, char *, char * ) ;
 > A_OBJECT do_nn_a ( char *, char * ) ;
 > // Parse.y
+======================================================================
 diff -r -w aa/Parse.y bb/Parse.y
 25a26,29
 > #include <stdio.h>
@@ -608,10 +633,12 @@ diff -r -w aa/Parse.y bb/Parse.y
 >     return ( 0 ) ;
 162d180
 <   /* to suppress warning JHJ */
+======================================================================
 diff -r -w aa/R.c bb/R.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/S.c bb/S.c
 25,26c25,26
 < #include "O.h"
@@ -845,28 +872,25 @@ diff -r -w aa/S.c bb/S.c
 <   /* do nothing */
 < }
 < #endif
-diff -r -w aa/stamp.c bb/stamp.c
-28,29c28,29
-< char Version [ ] = "2.0.4a" ;
-< char Date [ ] = "August 15, 2018" ;
----
-> char Version [ ] = "2.0.3h" ;
-> char Date [ ] = "Jan 17 2022" ;
+======================================================================
 diff -r -w aa/T.c bb/T.c
 24a25,27
 > #include <stdio.h>
 > #include <string.h>
 > extern FILE * fpout ;
 Only in aa: TODO_FOR_C89
+======================================================================
 diff -r -w aa/U.c bb/U.c
 24a25,26
 > #include <stdio.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/util.c bb/util.c
 25a26,28
 > #include <stdio.h>
 > #include <stdlib.h>
 > extern FILE * fpout ;
+======================================================================
 diff -r -w aa/V.c bb/V.c
 24a25,26
 > #include <stdio.h>
