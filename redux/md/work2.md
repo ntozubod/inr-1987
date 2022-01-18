@@ -10,18 +10,18 @@ The program operates in a traditional read/evaluate/print mode, that is,
 it repeatedly reads an expression from the input stream, computes the
 automaton required, and displays a result. For example, if we wish to
 find the minimized automaton over the alphabet
-<img src="https://render.githubusercontent.com/render/math?math=\{a,b\}">
+[[\{a,b\}]]
 that recognizes words that contain at least one
-"<img src="https://render.githubusercontent.com/render/math?math=a">"
+"[[a]]"
 and at least one
-"<img src="https://render.githubusercontent.com/render/math?math=b">".
+"[[b]]".
 This can be described using the extended regular expression indicating the
 intersection of words containing
-<img src="https://render.githubusercontent.com/render/math?math=a">
+[[a]]
 and words containing
-<img src="https://render.githubusercontent.com/render/math?math=b">:
+[[b]]:
 
->     <img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^*a\{a,b\}^* \wedge \{a,b\}^*b\{a,b\}^*.">
+>     [[\{a,b\}^*a\{a,b\}^* \wedge \{a,b\}^*b\{a,b\}^*.]]
 
 This expression can be presented to INR in the following form:
 
@@ -53,7 +53,7 @@ so that
      3 a 4
 
 indicates a transition from state `3` to state `2` which reads an
-<img src="https://render.githubusercontent.com/render/math?math=a">.
+[[a]].
 The start state is denoted by the special state name `(START)` and final
 states are indicated by a transition on end-marker (`-|`) to the dummy
 state `(FINAL)`. In the above example
@@ -93,14 +93,14 @@ terminating when it reaches a preset limit.
 Another interactive use for INR involves testing whether two regular
 sets are the same. For example consider the set of all words over the
 alphabet
-<img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^*">
+[[\{a,b\}^*]]
 that are not either all
-<img src="https://render.githubusercontent.com/render/math?math=a">'s
+[[a]]'s
 or all
-<img src="https://render.githubusercontent.com/render/math?math=b">'s.
+[[b]]'s.
 This can be denoted using the extended regular expression
 
->     <img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^* - ( \{a\}^* \cup \{b\}^* ).">
+>     [[\{a,b\}^* - ( \{a\}^* \cup \{b\}^* ).]]
 
 This can be indicated to INR as:
 
@@ -223,9 +223,9 @@ avoid pedantry and cumbersome notational problems. A string containing
 one letter is ambiguously written as the letter and a set containing one
 element is ambiguously written as its element. With this understanding
 `a`
-<img src="https://render.githubusercontent.com/render/math?math=\equiv">
+[[\equiv]]
 `{a}`
-<img src="https://render.githubusercontent.com/render/math?math=\equiv">
+[[\equiv]]
 `{'a'}`.
 
 Token
@@ -296,10 +296,10 @@ Empty String
 
 The empty string is indicated by `^`. This symbol is used because of its
 vague similariy to the Greek letter
-<img src="https://render.githubusercontent.com/render/math?math=\Lambda">
+[[\Lambda]]
 that is often used for this purpose. Note that in EBCDIC this character
 has a graphic representation of
-<img src="https://render.githubusercontent.com/render/math?math=\not c">.
+[[\not c]].
 Alternative representations is `()` (empty parentheses) or `''` (empty
 forward quotes).
 
@@ -393,9 +393,9 @@ Kleene Plus and Star
 --------------------
 
 The concatenation closure operators (Kleene
-<img src="https://render.githubusercontent.com/render/math?math=+">
+[[+]]
 and Kleene
-<img src="https://render.githubusercontent.com/render/math?math=*">)
+[[*]])
 are represented by the corresponding unary postfix operator.
 
 `(a b)+;`\
@@ -444,9 +444,9 @@ Concatenation Power
 -------------------
 
 To express the concatenation of a set with itself exactly
-<img src="https://render.githubusercontent.com/render/math?math=k">
+[[k]]
 times the expression may be followed by a `:` and the value
-<img src="https://render.githubusercontent.com/render/math?math=k">.
+[[k]].
 Thus `R1 :2` is the same as `R1 R1` and `R1 :3` the same as `R1 R1 R1`.
 
 `{a,b} :2;`
@@ -458,31 +458,31 @@ Thus `R1 :2` is the same as `R1 R1` and `R1 :3` the same as `R1 R1 R1`.
     3 -| (FINAL)
 
 To express the concatenation of a set with itself
-<img src="https://render.githubusercontent.com/render/math?math=k">
+[[k]]
 or fewer times the notation
-`R1? :`<img src="https://render.githubusercontent.com/render/math?math=k">
+`R1? :`[[k]]
 can be used. To express the concatenation of a set with itself more than
-<img src="https://render.githubusercontent.com/render/math?math=k">
+[[k]]
 times the set difference can be used:
-`R1* - (R1? :`<img src="https://render.githubusercontent.com/render/math?math=k">`)`.
+`R1* - (R1? :`[[k]]`)`.
 
 Concatenation Quotient
 ----------------------
 
 If concatenation is interpreted as a multiplication of strings so that `'abc'`
-<img src="https://render.githubusercontent.com/render/math?math=\cdot">
+[[\cdot]]
 `'def'`
-<img src="https://render.githubusercontent.com/render/math?math==">
+[[=]]
 `'abcdef'` we can define a right quotient operator
-<img src="https://render.githubusercontent.com/render/math?math=/">
+[[/]]
 as `'abcdef'` / `'def'`
-<img src="https://render.githubusercontent.com/render/math?math==">
+[[=]]
 `'abc'` and a left quotient operator
-<img src="https://render.githubusercontent.com/render/math?math=\backslash">
+[[\backslash]]
 as `'abc'`
-<img src="https://render.githubusercontent.com/render/math?math=\backslash">
+[[\backslash]]
 `'abcdef'`
-<img src="https://render.githubusercontent.com/render/math?math==">
+[[=]]
 `'def'`.  The (left or right) quotient of sets is defined as the union of
 their elementwise quotients.
 
@@ -529,7 +529,7 @@ Symmetric Difference (Exclusive Or)
 The symmetric difference of two languages is the set of words that are
 in one of the languages but not the other and will be indicated by the
 `!` operator. Thus
-<img src="https://render.githubusercontent.com/render/math?math=R_1 ! R_2 \equiv (R_1-R_2) \cup (R_2-R_1)">.
+[[R_1 ! R_2 \equiv (R_1-R_2) \cup (R_2-R_1)]].
 
 `{a,b}* ! {a,c}*;`\
 or `a* ( b {a,b}* | c {a,c}* );`
@@ -558,7 +558,7 @@ words `'ab'` and `'cd'` is the set
 of words is the union of the shuffles of all pairs of words such that
 one word is taken from each set. The shuffle operator is indicated by
 the symbol `!!` which mildly suggests the symbol
-<img src="https://render.githubusercontent.com/render/math?math=\amalg">
+[[\amalg]]
 that is often used for this purpose.
 
 `'ab' !! 'cd';`\
@@ -684,10 +684,10 @@ Stretching
 
 An operation that is sometimes useful involves replacing each letter in
 the word by a sequence of
-<img src="https://render.githubusercontent.com/render/math?math=k">
+[[k]]
 of that letter. This can be done using the `$` operator followed by a
 string of
-<img src="https://render.githubusercontent.com/render/math?math=k">
+[[k]]
 zeros.
 
 `'abc' $ 0 0;`\
@@ -708,9 +708,9 @@ Within a pair of matching parentheses or braces the expression is
 computed in the following order:
 
 1.  Kleene
-<img src="https://render.githubusercontent.com/render/math?math=+">,
+[[+]],
 Kleene
-<img src="https://render.githubusercontent.com/render/math?math=*">
+[[*]]
 and Optional operators are evaluated from
     left to right on their single argument.
 
@@ -782,11 +782,11 @@ non-determinism using the idea of a characterizing language.
 Before defining a characterizing language we will mark the alphabets
 with either a 0 or a 1 to indicate whether they are to be read from tape
 0 or tape 1. Thus
-<img src="https://render.githubusercontent.com/render/math?math=a">
+[[a]]
 will occur in the forms
-<img src="https://render.githubusercontent.com/render/math?math=a_0">
+[[a_0]]
 and
-<img src="https://render.githubusercontent.com/render/math?math=a_1">.
+[[a_1]].
 We can then define languages over this extended alphabet. From each
 language we can then obtain a relation by projecting out the tape 0
 letters and the tape 1 letters as the two components of the ordered pair.
@@ -802,9 +802,9 @@ is by means of some regular characterizing language. Then the usual
 optimizations and transformations which apply to regular languages can
 then be applied without changing the implied transduction. This is
 exactly what INR does. Instead of
-<img src="https://render.githubusercontent.com/render/math?math=a_0">
+[[a_0]]
 and
-<img src="https://render.githubusercontent.com/render/math?math=a_1">,
+[[a_1]],
 INR uses the notation `0.a` and `1.a`.
 
 Regular languages are defined in other ways than by their automata
@@ -827,7 +827,7 @@ numbers 0, 1, or 2. Again there will always be a regular characterizing
 language, and similar closure properties. The process can, of course, be
 continued to relations of any degree. INR currently restricts the degree
 to 10: `0.a`, `1.a`,
-<img src="https://render.githubusercontent.com/render/math?math=\ldots">,
+[[\ldots]],
 `9.a`.
 
 Finite transductions are also called rational relations or rational
@@ -1141,9 +1141,9 @@ Composition Power
 -----------------
 
 The
-<img src="https://render.githubusercontent.com/render/math?math=k">-fold
+[[k]]-fold
 composition of a binary rational relation is denoted by
-`:(`<img src="https://render.githubusercontent.com/render/math?math=k">`)`.
+`:(`[[k]]`)`.
 That is, the number is written in parentheses.
 
 `(a,'aa')* :(2);`\
@@ -1164,19 +1164,19 @@ Often it is desirable to extend one function by a second function, that
 is, extend the domain to include that covered by the second function
 without disturbing the values assigned by the first function within its
 domain. This operator is denoted by the symbol `||`. Thus if
-<img src="https://render.githubusercontent.com/render/math?math=f">
+[[f]]
 and
-<img src="https://render.githubusercontent.com/render/math?math=g">
+[[g]]
 are functions then
-<img src="https://render.githubusercontent.com/render/math?math=f">
+[[f]]
 `||`
-<img src="https://render.githubusercontent.com/render/math?math=g">
+[[g]]
 will agree with
-<img src="https://render.githubusercontent.com/render/math?math=f">
+[[f]]
 whenever the argument is in
-<img src="https://render.githubusercontent.com/render/math?math=dom f">.
+[[dom f]].
 Otherwise it will agree with
-<img src="https://render.githubusercontent.com/render/math?math=g">.
+[[g]].
 Note that `R || S` is simply a shorter form of `R | ( (S$0)-(R$0) @@ S )`
 
 `(a,c) || (a,b)*;`\
