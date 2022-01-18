@@ -10,7 +10,7 @@ my $s2 = '">';
 # my $s1 = '[[';
 # my $s2 = ']]';
 
-open( AA, "< :encoding(UTF-8)", "work2.md" );
+open( AA, "< :encoding(UTF-8)", "work3.md" );
 open( BB, "> :encoding(UTF-8)", "expand.md" );
 while ( my $aa = <AA> ) {
   $aa =~ s/\s*$//;
