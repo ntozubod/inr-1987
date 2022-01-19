@@ -1,19 +1,3 @@
-\documentstyle{article}
-%\documentstyle[11pt,twoside,clbiba,beaver,waterloo]{article}
-%\documentstyle[11pt,fullpage,clbiba]{article}
-%\documentstyle[12pt,clbiba,lncs]{article}
-\title{INR: A Program for Computing\\Finite Automata\thanks{This work was
-	supported by the Natural Sciences and Engineering Research Council
-	of Canada, Grant No. A0237.}}
-\author{J. Howard Johnson\\
-	Department of Computer Science\\
-	University of Waterloo\\
-	Waterloo, Ontario, Canada N2L 3G1}
-\date{8 JUL 1988 11:27}
-\newcommand{\lhead}{J. Howard Johnson}
-\newcommand{\rhead}{INR: A Program for Computing Finite Automata}
-\begin{document}
-
 \maketitle
 \begin{abstract}
 INR is a program that computes finite state automata and transducers from
@@ -819,7 +803,7 @@ some regular characterizing language.
 Then the usual optimizations and transformations which apply to regular
 languages can then be applied without changing the implied transduction.
 This is exactly what INR does.
-% Instead of $a_0$ and $a_1$, INR uses the notation \verb#0.a# and \verb#1.a#.
+Instead of $a_0$ and $a_1$, INR uses the notation \verb#0.a# and \verb#1.a#.
 
 Regular languages are defined in other ways than by their automata however.
 For example regular expressions, especially when extended to include the
@@ -842,8 +826,8 @@ numbers 0, 1, or 2.
 Again there will always be a regular characterizing language, and similar
 closure properties.
 The process can, of course, be continued to relations of any degree.
-%INR currently restricts the degree to 10: \verb#0.a#, \verb#1.a#, $\ldots$,
-%\verb#9.a#.
+INR currently restricts the degree to 10: \verb#0.a#, \verb#1.a#, $\ldots$,
+\verb#9.a#.
 
 Finite transductions are also called rational relations or rational
 transductions since they are closed under the rational operations:
@@ -864,9 +848,9 @@ or \> \verb#`1.abc`;#
 (START) 1.abc 2
 2 -| (FINAL)
 \end{verbatim}\end{minipage}\end{center}
-%Note that \verb#1.`abc`# will not work because the lexical scanner parses
-%this as \verb#1.`# followed by \verb#abc# followed by an unmatched
-%\verb#`#.
+Note that \verb#1.`abc`# will not work because the lexical scanner parses
+this as \verb#1.`# followed by \verb#abc# followed by an unmatched
+\verb#`#.
 
 \subsection{Variable}
 A variable may be assigned a rational relation in the same way that it can
@@ -1233,14 +1217,14 @@ This is performed by the \verb#:sseq# operator.
 8 0.-| 2
 8 0.a 7
 \end{verbatim}\end{minipage}\end{center}
-%Note that \verb#(START)#, \verb#3# and \verb#8# are read states since they
+Note that \verb#(START)#, \verb#3# and \verb#8# are read states since they
 must read exactly one character (or end-marker) from tape zero.
-%States \verb#2#, \verb#5#, \verb#6# and \verb#7# are write states.
+States \verb#2#, \verb#5#, \verb#6# and \verb#7# are write states.
 They can only write and the choice is determined.
 Note also that explicit end-markers are introduced.
 The existence of explicit end-markers can confuse some of the operations
 that use the characterizing language idea.
-%End-markers can be deleted by using the \verb#$# operator.
+End-markers can be deleted by using the \verb#$# operator.
 It removes explicit end-markers from any tape.
 \section{Coercing and Displaying Operators}
 \subsection{Coercing Operators}
@@ -1381,7 +1365,3 @@ The abstract data type also contains a mode indicator that indicates the
 coercing level.
 This allows the lazy evaluation mechanism to work and avoids a lot of
 redundant computation.
-
-\bibliographystyle{alpha}
-\bibliography{td,mine}
-\end{document}
