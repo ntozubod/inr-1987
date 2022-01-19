@@ -13,7 +13,10 @@ find the minimized automaton over the alphabet <img src="https://render.githubus
 words that contain at least one "*a*" and at least one "*b*". This can
 be described using the extended regular expression indicating the
 intersection of words containing *a* and words containing *b*:
-<img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^*a\{a,b\}^* \wedge \{a,b\}^*b\{a,b\}^*."> This expression can
+
+> <img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^*a\{a,b\}^* \wedge \{a,b\}^*b\{a,b\}^*.">
+
+This expression can
 be presented to INR in the following form:
 
 >     {a,b}* a {a,b}* & {a,b}* b {a,b}*;
@@ -84,7 +87,10 @@ Another interactive use for INR involves testing whether two regular
 sets are the same. For example consider the set of all words over the
 alphabet <img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^*"> that are not either all *a*'s or all *b*'s. This
 can be denoted using the extended regular expression
-<img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^* - ( \{a\}^* \cup \{b\}^* )."> This can be indicated to INR
+
+> <img src="https://render.githubusercontent.com/render/math?math=\{a,b\}^* - ( \{a\}^* \cup \{b\}^* ).">
+
+This can be indicated to INR
 as:
 
 >     {a,b}* - ( a* | b* );
@@ -1099,7 +1105,7 @@ without disturbing the values assigned by the first function within its
 domain. This operator is denoted by the symbol `||`. Thus if *f* and *g*
 are functions then *f* `||` *g* will agree with *f* whenever the
 argument is in <img src="https://render.githubusercontent.com/render/math?math=dom f">. Otherwise it will agree with *g*. Note that
-`R || S` is simply a shorter form of `R | ( (S<img src="https://render.githubusercontent.com/render/math?math=0)-(R">0) @@ S )`
+`R || S` is simply a shorter form of `R | ( (S$0)-R$0) @@ S )`
 
 `(a,c) || (a,b)*;`\
 or `^ | (a,c) | (a,b)(a,b)+;`
