@@ -9,3 +9,16 @@ of the release under GPL version 3:
 [PDF](doc/inr_intro.pdf)
 This has been converted to markdown using pandoc and a touch of Perl:
 [MD](doc/inr_intro.md)
+
+## Installation
+
+INR is a C program that will compile and run comfortably in a LINUX environment
+or one sufficiently similar to it.
+The only dependencies are *gcc*, *make* and *yacc* (as provided by *bison*).
+
+There is a make file in the src directory that will do the proper build and
+produce an executable *ginr*.
+
+## Usage
+
+See [USAGE.md](USAGE.md).
