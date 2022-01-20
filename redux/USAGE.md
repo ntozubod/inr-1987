@@ -1,7 +1,7 @@
 Introduction
 ============
 
-(Extracted from latex source from a [white paper](doc/inr_intro.pdf)
+(Extracted from latex source of a [white paper](doc/inr_intro.pdf)
 written in 1988 as documentation for INR.)
 
 INR is a program that constructs finite state automata and transducers
@@ -1173,33 +1173,19 @@ deterministic automata and produces as a result a not necessarily
 minimized deterministic automaton. For debugging and education purposes,
 the coercing operator can be explicitly used:
 
-> **:nfa**
+> **:nfa** Sort and unduplicate transitions.
 >
-> :   Sort and unduplicate transitions.
+> **:trim** Remove states that are unreachable. (Reduce)
 >
-> **:trim**
+> **:lameq** Remove lambda equivalent states.
 >
-> :   Remove states that are unreachable. (Reduce)
+> **:lamcm** Combine lambda implied states.
 >
-> **:lameq**
+> **:closed** Form lambda closure.
 >
-> :   Remove lambda equivalent states.
+> **:dfa** Form deterministic machine. (Subsets Construction)
 >
-> **:lamcm**
->
-> :   Combine lambda implied states.
->
-> **:closed**
->
-> :   Form lambda closure.
->
-> **:dfa**
->
-> :   Form deterministic machine. (Subsets Construction)
->
-> **:min**
->
-> :   Minimize the DFA.
+> **:min** Minimize the DFA.
 
 Thus `<expression> :trim;` will print the trim (reduced) automaton
 corresponding to the expression. Note that coercing is one way and that
@@ -1210,29 +1196,17 @@ Displaying Operators
 
 The following operators cause some form of printing:
 
-> **:pr**
+> **:pr** Print in readable format.
 >
-> :   Print in readable format.
+> **:save** Save in condensed format.
 >
-> **:save**
+> **:report** Write a one line report.
 >
-> :   Save in condensed format.
+> **:enum** Enumerate words.
 >
-> **:report**
+> **:card** Count number of words and print.
 >
-> :   Write a one line report.
->
-> **:enum**
->
-> :   Enumerate words.
->
-> **:card**
->
-> :   Count number of words and print.
->
-> **:length**
->
-> :   Print length of shortest word.
+> **:length** Print length of shortest word.
 
 The operation `:pr` may be followed by a filename in which case the
 automaton is printed into that file. The operation `:save` must be
@@ -1292,41 +1266,23 @@ Command Statement
 A number of commands that cause certain actions to be performed are
 provided.
 
-> **:alph;**
+> **:alph;** Display token symbol table.
 >
-> :   Display token symbol table.
+> **:free;** Display status of free lists.
 >
-> **:free;**
+> **:list;** Display variable symbol table.
 >
-> :   Display status of free lists.
+> **:noreport;** Turn off (verbose) debug tracing.
 >
-> **:list;**
+> **:pr;** Save all variables in files with the same names.
 >
-> :   Display variable symbol table.
+> **:quit;** Terminate session.
 >
-> **:noreport;**
+> **:report;** Turn on (verbose) debug tracing.
 >
-> :   Turn off (verbose) debug tracing.
+> **:save;** Save all variables in files (condensed) with the same names.
 >
-> **:pr;**
->
-> :   Save all variables in files with the same names.
->
-> **:quit;**
->
-> :   Terminate session.
->
-> **:report;**
->
-> :   Turn on (verbose) debug tracing.
->
-> **:save;**
->
-> :   Save all variables in files (condensed) with the same names.
->
-> **:time;**
->
-> :   Display time since last :time call (VAX only).
+> **:time;** Display time since last :time call (VAX only).
 
 Internals
 =========
