@@ -39,8 +39,8 @@ int fileno( FILE * );
 #define U_Object        4
 #define A_Object        5
 
-typedef unsigned short  SHORT;
-#define MAXSHORT        0177777
+typedef int             SHORT;
+#define MAXSHORT        017777777777
 
 typedef struct {
     SHORT           R_a;

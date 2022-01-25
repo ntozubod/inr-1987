@@ -1,5 +1,24 @@
 # INR main2022 Changelog
 
+## 2.1.0b (2022-01-26)
+
+Starting work on a dev branch.
+
+#### src
+
+The simple change of definition of SHORT to be an unsigned int causes
+INR to fail in a number of places where SHORTs and signed ints are used
+together.
+This is sloppiness but most of the grief can be avoided by making SHORT
+be a signed int and setting MAXSHORT to its maximum postive value of
+017777777777.
+
+So far it seems to be working but this needs a lot of testing before this
+can be considered stable.
+
+The makefile it modified to produce an executable tinr to facilate
+testing against the stable version.
+
 ## 2.1.0a (2022-01-24)
 
 Beginning of INR version 2.1.x and main2022 branch.
