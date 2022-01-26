@@ -13,8 +13,8 @@ SOURCE 	= Makefile $(HFILES) $(CFILES) Parse.y
 	gcc -ansi -Wall -O0 -g -c $*.c
 #	gcc -DUSE_MALLOC_ALLOCATOR -ansi -Wall -O0 -g -c $*.c
 
-tinr:	$(OFILES)
-	gcc -ansi -Wall -O0 -g $(OFILES) -o tinr
+ginr:	$(OFILES)
+	gcc -ansi -Wall -O0 -g $(OFILES) -o ginr
 
 inrx.a:
 	echo hi >inrx.a
@@ -22,8 +22,8 @@ inrx.a:
 	ar q inrx.a $(OFILES)
 	ranlib inrx.a
 
-install:	tinr
-	cp -p tinr ~/bin/tinr
+install:	ginr
+	cp -p ginr ~/bin/ginr
 
 lint:	y.tab.c
 	lint $(CFILES) y.tab.c

@@ -1,6 +1,6 @@
-# INR main2022 Changelog
+# INR Changelog
 
-## 2.1.0b (2022-01-26)
+## 2.1.0b (2022-01-27)
 
 Starting work on a dev branch.
 
@@ -15,9 +15,8 @@ be a signed int and setting MAXSHORT to its maximum postive value of
 
 So far it seems to be working but this needs a lot of testing before this
 can be considered stable.
-
-The makefile it modified to produce an executable tinr to facilate
-testing against the stable version.
+In the past, INR has always had MAXSHORT set to 'unsigned short' except for
+a failed experiment in 2011.
 
 ## 2.1.0a (2022-01-24)
 
