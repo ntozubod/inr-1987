@@ -95,9 +95,7 @@ int yylex()
             }
         }
         if ( ch == EOF ) Error( "End of file in string" );
-        token[ 0 ] = ch;
-        token[ 1 ] = 0;
-        yylval.up = copyof( token );
+        yylval.up = copyof( T_name( TT, ch + 2 ) );
         return( NAME );
     }
     in_comment = 0;
@@ -384,7 +382,7 @@ fprintf( fpout, "\n" );
     result = T_insert( TT, "-|" );
     assert( result == 1 );
     for( ti = 0; ti < 256; ti++ ) {
-        if ( ti > 0x20 && ti < 0x7f ) {
+        if ( ( ti >= 0x20 && ti < 0x7f ) || ti == '\t' || ti == '\n' ) {
             tstr[ 0 ] = ti;
             tstr[ 1 ] = 0;
         }
