@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <unistd.h>
+#include <assert.h>
 
 /* this seems to be needed with the -ansi option to suppress warnings */
 int fileno( FILE * );

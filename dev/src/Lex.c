@@ -316,9 +316,10 @@ char Notice[]
 
 int main( int argc, char *argv[] )
 {
-    int ti;
-    char tstr[2];
+    int ti, result;
+    char tstr[3];
     char file_in[50], file_out[50], rpt_out[50];
+    char hexmap[17] = "0123456789abcdef";
 
     fpin  = stdin;
     fpout = stdout;
@@ -378,18 +379,29 @@ fprintf( fpout, "\n" );
     }
 
     TT = T_create();
-    if ( T_insert( TT, "^^" ) != 0
-            || T_insert( TT, "-|" ) != 1 ) Error( "main: Initializing TT" );
-    tstr[1] = 0;
-    for( ti = 1; ti <= 255; ti++ )
-        if ( isprint(ti) || ti == '\t' || ti == '\n' ) {
-            tstr[0] = ti;
-            (void) T_insert( TT, tstr );
+    result = T_insert( TT, "^^" );
+    assert( result == 0 );
+    result = T_insert( TT, "-|" );
+    assert( result == 1 );
+    for( ti = 0; ti < 256; ti++ ) {
+        if ( ti > 0x20 && ti < 0x7f ) {
+            tstr[ 0 ] = ti;
+            tstr[ 1 ] = 0;
         }
+        else {
+            tstr[ 0 ] = hexmap[( ti >> 4 ) & 0xf ];
+            tstr[ 1 ] = hexmap[  ti        & 0xf ];
+            tstr[ 2 ] = 0;
+        }
+        result = T_insert( TT, tstr );
+        assert( result == ti + 2 );
+    }
+
     TAlist = T_create();
-    if ( T_insert( TAlist, "_Last_" ) != 0 )
-        Error( "main: Initializing TAlist" );
+    result = T_insert( TAlist, "_Last_" );
+    assert( result == 0 );
     Alist[ 0 ] = A_create();
+
     pr_time_diff();
     PROMT
     if ( yyparse() != 0 )
