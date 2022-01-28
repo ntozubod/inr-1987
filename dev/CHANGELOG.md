@@ -1,10 +1,12 @@
 # INR Changelog
 
-## 2.1.0b (2022-01-27)
+## 2.1.0b (2022-01-28)
 
 Starting work on a dev branch.
 
 #### src
+
+##### Define SHORT as int
 
 The simple change of definition of SHORT to be an unsigned int causes
 INR to fail in a number of places where SHORTs and signed ints are used
@@ -17,6 +19,22 @@ So far it seems to be working but this needs a lot of testing before this
 can be considered stable.
 In the past, INR has always had MAXSHORT set to 'unsigned short' except for
 a failed experiment in 2011.
+
+##### Support of Unicode UTF-8
+
+By treating input as octets, the alphabet becomes a managable small number.
+Preload the symbol table with all of these values in a predefined order.
+The string associated with octet with value k will than be stored in
+position k + 2 in the symbol table, bypassing the need for a lookup.
+
+All of the previous octets that correspond to printable ASCII will preserve
+their previous printable one character values.
+All others will have a two digit hex number to identify their value.
+
+This simple change seems to be quite workable and also largely preserves
+backward compatibility.
+However some mechanism is needed to explode/implode UTF-8 octet sequences
+and this will need to be an extension.
 
 ## 2.1.0a (2022-01-24)
 
