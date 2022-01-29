@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm *.ps Nysiis
+ginr < _Nync > N.out

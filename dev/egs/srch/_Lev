@@ -6,5 +6,5 @@ Equal      = SIGMA $ (0,0);
 Levenshtein1 = Equal*  | Equal* ( Delete | Insert | Substitute ) Equal*;
 Levk       = Levenshtein1 :4;
 Scan       = Insert* Levk;
-:save Scan;
+:pr Scan;
 t15 = SIGMA* ('abcdefghijklmno' @ Levk);

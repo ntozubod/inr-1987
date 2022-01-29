@@ -1,1 +1,4 @@
-../../src/ginr < eg.inr > eg.out
+#!/bin/bash
+
+rm *.pr
+ginr < eg.inr > eg.out

@@ -101,6 +101,7 @@ int yylex()
     in_comment = 0;
     while( ch == ' ' || ch == '\t' || ch == '\n' || ch == '#'
             || in_comment ) {
+        if( in_comment && !isatty(fileno(fpout)) ) putc( ch, fpout );
         if ( ch == '#'  ) in_comment = 1;
         if ( ch == '\n' ) in_comment = 0;
         if ( ch == EOF  ) Error( "End of file in comment" );
