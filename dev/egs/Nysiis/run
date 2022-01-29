@@ -1,4 +1,4 @@
 #!/bin/bash
 
-rm *.ps Nysiis
-ginr < _Nync > N.out
+rm *.sseq Nysiis.pr
+ginr < nysiis.inr > nysiis.out

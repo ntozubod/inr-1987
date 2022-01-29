@@ -32,9 +32,9 @@ value.
 The name associated with octet having value k will be stored in position
 k + 2.
 
-All of the octets corresponding to printable ASCII preserve their one
-character values.
-Others have a two digit hex number to identify their value.
+All of the octets corresponding to printable ASCII preserve their
+character values from previous versions of INR.
+The remainder have a two digit (two octet) hex number to identify their value.
 
 This simple change seems to be quite workable and also largely preserves
 backward compatibility.
@@ -45,20 +45,23 @@ a start.
 
 To make the examples more understandable, the output from INR should include
 commentary.
-One easy way of doing this is to echo comment text when INR is invoked
+An easy way of doing this is to echo comment text when INR is invoked
 non-interactively.
 A one line modification has been added to Lex.c to achieve this.
 
 #### egs/utf8
 
 Some experiments have been started in the use of UTF-8 in INR.
-Is it reasonable to use a subsequential transduction for conversion
-between a Unicode code point number as a bit string and a proper UTF-8
-encoding?
+It appears reasonable to use a subsequential transduction for conversion
+between a Unicode code point number and UTF-8 encoding.
+There are some caveats.
 
-It seems like the answer is yes although there is a strong suggestion in
-the data that representing the input and output using base 2 or 16 results
-in a much more economical representation.
+If this is done with an octet-based alphabet, a state explosion ensues.
+However, if base 16 is used the situation is much better.
+Note that base 4 or even base 2 are better in this particular example.
+
+Perhaps this might show a way to use transduction in other applications
+since state explosion is an ever-present problem.
 
 ## 2.1.0a (2022-01-24)
 

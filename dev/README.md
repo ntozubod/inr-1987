@@ -1,4 +1,9 @@
-# INR main
+# INR
+
+A consolidation of the INR code base has been largely completed and new
+work is beginning.
+The primary urgency is the provision of more thorough testing and
+documentation.
 
 ## Installation
 

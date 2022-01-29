@@ -1,0 +1,218 @@
+Al =	{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z};
+Vo =	{a,e,i,o,u};
+Co =	Al - Vo;
+CAl =	Al $ (0,0);
+
+#
+## ======================================================================
+## 1. If the first letters of the name are
+##    'MAC' then change these letters to 'MCC'
+##    'KN' then change these letters to 'NN'
+##    'K' then change this letter to 'C'
+##    'PH' then change these letters to 'FF'
+##    'PF' then change these letters to 'FF'
+##    'SCH' then change these letters to 'SSS'
+#
+
+Ny01 =	   ('mac', 'mcc')	CAl*
+	|| ('kn',  'nn')	CAl*
+	|| ('k',   'c')		CAl*
+	|| ('ph',  'ff')	CAl*
+	|| ('pf',  'ff')	CAl*
+	|| ('sch', 'sss')	CAl*
+	||			CAl*;
+
+Ny01   :prsseq Ny01.sseq;
+
+#
+## ======================================================================
+## 2. If the last letters of the name are
+##    'EE' then change these letters to 'Y␢'
+##    'IE' then change these letters to 'Y␢'
+##    'DT' or 'RT' or 'RD' or 'NT' or 'ND' then change these letters to 'D␢'
+#
+
+Ny02 =	   CAl*		('ee', 'y')
+	|| CAl*		('ie', 'y')
+	|| CAl*		('dt', 'd')
+	|| CAl*		('rt', 'd')
+	|| CAl*		('rd', 'd')
+	|| CAl*		('nt', 'd')
+	|| CAl*		('nd', 'd')
+	|| CAl*;
+
+Ny02   :prsseq Ny02.sseq;
+
+#
+## ======================================================================
+## 5. ...
+#
+## a  If the current position is a vowel (AEIOU)
+##      then if equal to 'EV' then change to 'AF'
+##      otherwise change current position to 'A'.
+#
+## b  If the current position is the letter
+##      'Q' then change the letter to 'G'
+##      'Z' then change the letter to 'S'
+##      'M' then change the letter to 'N'
+#
+## c  If the current position is the letter 'K'
+##      then if the next letter is 'N'
+##        then replace the current position by 'N'
+##        otherwise replace the current position by 'C'
+#
+## d  If the current position points to the letter string
+##      'SCH' then replace the string with 'SSS'
+##      'PH' then replace the string with 'FF'
+#
+## e  If the current position is the letter 'H'
+##      and either the preceding or following letter is not a vowel (AEIOU)
+##        then replace the current position with the preceding letter.
+#
+## f  If the current position is the letter 'W'
+##      and the preceding letter is a vowel
+##        then replace the current position with the preceding position.
+#
+
+Ny05 =	(^,^) | CAl [_] CAl* @ ( CAl*
+
+# Step 5a:
+
+	|| CAl* ('_',^)
+	|| CAl* ('_ev','a_f')					CAl*
+	|| CAl* ('_' Vo,'a_')					CAl*
+
+# Step 5b:
+
+	|| CAl* ('_q','g_')					CAl*
+	|| CAl* ('_z','s_')					CAl*
+	|| CAl* ('_m','n_')					CAl*
+
+# Step 5c:
+
+	|| CAl* ('_kn','n_n')					CAl*
+	|| CAl* ('_k','c_')					CAl*
+
+# Step 5d:
+
+	|| CAl* ('_sch','s_ss')					CAl*
+	|| CAl* ('_ph','f_f')					CAl*
+
+# Step 5e:
+
+	|| CAl* (Co $ (0,0 0)) ('_h','_')			CAl*
+	|| CAl* (Al $ (0,0 0)) ('_h','_') (Co $ (0,0))		CAl*
+
+# Step 5f:
+
+	|| CAl* (Vo $ (0,0 0)) ('_w','_')			CAl*
+
+	|| CAl* ('_',^) (Al $ (0,0)) (^,'_')			CAl*
+						:clsseq );
+
+Ny05   :prsseq Ny05.sseq;
+
+#
+## ======================================================================
+## 6.  If the current position letter is equal to
+##       the last letter placed in the code
+##         then set the pointer to point to the next letter and go to step 5.
+##     The next character of the NYSIIS code is the current position letter.
+##     Increment the pointer to point at the next letter.
+##     Go to step 5.
+#
+
+Ny06 =	{ (a+,a), (b+,b), (c+,c), (d+,d), (e+,e),
+	  (f+,f), (g+,g), (h+,h), (i+,i), (j+,j),
+	  (k+,k), (l+,l), (m+,m), (n+,n), (o+,o),
+	  (p+,p), (q+,q), (r+,r), (s+,s), (t+,t),
+	  (u+,u), (v+,v), (w+,w), (x+,x), (y+,y), (z+,z) }*
+	@@ ( Al* (Al $ 0 0) Al* :acomp );
+
+Ny06   :prsseq Ny06.sseq;
+
+#
+## ======================================================================
+## 7. If the last character of the NYSIIS code is the letter 'S'
+##      then remove it.
+#
+
+Ny07 =	   CAl*		('s', ^)
+	|| CAl*;
+
+Ny07   :prsseq Ny07.sseq;
+
+#
+## ======================================================================
+## 8. If the last two characters of the NYSIIS code are the letters 'AY'
+##      then replace them with the single character 'Y'.
+#
+
+Ny08 =	   CAl*		('ay', 'y')
+	|| CAl*;
+
+Ny08   :prsseq Ny08.sseq;
+
+#
+## ======================================================================
+## 9. If the last character of the NYSIIS code is the letter 'A'
+##      then remove this letter.
+#
+
+Ny09 =	   CAl*		('a', ^)
+	|| CAl*;
+
+Ny09   :prsseq Ny09.sseq;
+
+#
+## ======================================================================
+#
+
+Nysiis = Ny01 @ Ny02 @ Ny05 @ Ny06 @ Ny07 @ Ny08 @ Ny09;
+
+Nysiis :pr Nysiis.pr;
+Nysiis :prsseq Nysiis.sseq;
+
+#         Bishop: BASAP
+#        Carlson: CARLSAN
+#           Carr: CAR
+#        Chapman: CAPNAN
+#       Franklin: FRANCLAN
+#         Greene: GRAN
+#         Harper: HARPAR
+#         Jacobs: JACAB
+#         Larson: LARSAN
+#       Lawrence: LARANC
+#         Lawson: LASAN
+#     Louis, XVI: LASXV
+#          Lynch: LYNC
+#      Mackenzie: MCANSY
+#       Matthews: MATA
+#      McCormack: MCARNAC
+#       McDaniel: MCDANAL
+#       McDonald: MCDANALD
+#     Mclaughlin: MCLAGLAN
+#       Morrison: MARASAN
+#       O'Banion: OBANAN
+#        O'Brien: OBRAN
+#       Richards: RACARD
+#          Silva: SALV
+#        Watkins: WATCAN
+#        Wheeler: WALAR
+#         Willis: WALA
+#      brown, sr: BRANSR
+#    browne, III: BRAN
+#     browne, IV: BRANAV
+#         knight: NAGT
+#       mitchell: MATCAL
+#       o'daniel: ODANAL
+#
+# May jnr          : MY
+# Xi               : X
+# bevan            : BAFAN
+# evans            : EVAN
+# D'Souza          : DSAS
+# Hoyle-Johnson    : HAYLAJ(ANSAN)
+# Vaughan Williams : VAGANW(ALAN)
+# de Sousa         : DASAS
+# de la Mare II    : DALANA(R)
