@@ -16,7 +16,7 @@ MAXSHORT to its maximum positive value (017777777777 = 2^31-1).
 
 This approach appears to be working but a lot of testing is required before
 this can be considered stable.
-INR has always had MAXSHORT set to *unsigned short* with MAXSHORT as its
+INR has always had SHORT set to *unsigned short* with MAXSHORT as its
 largest possible value (177777 = 2^16-1), that is, except for a failed
 experiment in 2011.
 
