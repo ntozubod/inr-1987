@@ -2,8 +2,14 @@
 
 A consolidation of the INR code base has been largely completed and new
 work is beginning.
-The primary urgency is the provision of more thorough testing and
-documentation.
+
+Three main ideas are being introduced: (1) larger maximums for the number
+of states and the alphabet size, (2) some support for Unicode, and
+(3) some better handling of I/O for non-interactive use.
+
+These changes facilitate a number of potentially important use cases
+associated with low level Unicode text processing, as well as helping with
+the development of better test material and documentation.
 
 ## Installation
 
