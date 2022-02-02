@@ -309,3 +309,5 @@ int         tonum( char * );
 /* Parse.y */
 int         yyparse( void );
 
+/* Aunicode.c */
+A_OBJECT    A_slurp_octets( char *, T_OBJECT );

@@ -271,6 +271,9 @@ A_OBJECT do_nn_a( char *op, char *arg )
     } else if ( !strcmp("readwords",op) ) {
         A = A_lwds( arg, TT );
         disp_flag = 1;
+    } else if ( !strcmp("slurp_octets",op) ) {
+        A = A_slurp_octets( arg, TT );
+        disp_flag = 1;
     } else if ( !strcmp("save",op) ) {
         if ( (i = T_member( TAlist, arg )) >= 0 )
             A = A_save( A_copy( Alist[i] ), arg, TT );

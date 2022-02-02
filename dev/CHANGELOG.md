@@ -1,5 +1,20 @@
 # INR Changelog
 
+## 2.1.0c (2022-02-03)
+
+#### src
+
+Start work on Unicode.
+
+A new src file Aunicode.c is begun to contain the needed routines.
+A function called A_slurp_octets is added to allow a complete file to
+be read in, interpreted as a sequence of octets and made into an
+automaton that recognizes this sequence as a single word.
+
+An error led to finding at Ssize in S.c needed to be protected from
+a zero argument.
+An appropriate assertion was added.
+
 ## 2.1.0b (2022-01-29)
 
 Starting work on a dev branch.
