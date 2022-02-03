@@ -58,3 +58,54 @@ A_OBJECT A_slurp_octets( char *file, T_OBJECT T_Sigma )
     fclose( fp );
     return( A );
 }
+
+A_OBJECT A_slurp_nibbles( char *file, T_OBJECT T_Sigma )
+{
+    A_OBJECT A;
+    FILE *fp;
+    int c, i, hi, lo;
+    SHORT state, state1, state2;
+    char hex_digits[] = "0123456789abcdef";
+    int digit_hi[ 16 ];
+    int digit_lo[ 16 ];
+    char ts[ 3 ];
+
+    if ( file != NULL ) fp = fopen( file, "r" );
+    if ( fp == NULL ) {
+        Warning( "File does not exist" );
+        return( NULL );
+    }
+
+    assert( T_Sigma != NULL );
+
+    for ( i = 0; i < 16; ++i ) {
+        ts[ 0 ] = hex_digits[ i ];
+        ts[ 1 ] = hex_digits[ 0 ];
+        ts[ 2 ] = 0;
+        digit_hi[ i ] = T_insert( T_Sigma, ts );
+        ts[ 0 ] = hex_digits[ i ];
+        ts[ 1 ] = 0;
+        digit_lo[ i ] = T_insert( T_Sigma, ts );
+    }
+
+    A = A_create();
+    c = getc( fp );
+    state = 0;
+    state1 = 2;
+    state2 = 3;
+    while ( c != EOF ) {
+        assert( state2 <= MAXSHORT );
+        hi = digit_hi[ c >> 4 ];
+        lo = digit_lo[ c & 0xf ];
+        A = A_add( A, state, hi, state1 );
+        A = A_add( A, state1, lo, state2 );
+        state = state2;
+        state1 = state + 1;
+        state2 = state + 2;
+        c = getc( fp );
+    }
+    A = A_add( A, state, 1, 1 );
+    A = A_close( A );
+    fclose( fp );
+    return( A );
+}

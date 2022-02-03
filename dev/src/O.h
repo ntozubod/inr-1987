@@ -311,3 +311,4 @@ int         yyparse( void );
 
 /* Aunicode.c */
 A_OBJECT    A_slurp_octets( char *, T_OBJECT );
+A_OBJECT    A_slurp_nibbles( char *, T_OBJECT );
