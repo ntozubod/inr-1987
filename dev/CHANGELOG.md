@@ -15,6 +15,9 @@ An error led to finding at Ssize in S.c needed to be protected from
 a zero argument.
 An appropriate assertion was added.
 
+A routine called A_slurp_utf8 is added that captures complete sequences
+of octets that encode a unicode code point.
+
 ## 2.1.0b (2022-01-29)
 
 Starting work on a dev branch.
