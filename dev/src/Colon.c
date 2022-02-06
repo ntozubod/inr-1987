@@ -98,6 +98,10 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         fprintf( fpout, "\n" );
         A = A_prsseq( A, (char *) NULL, TT );
         fprintf( fpout, "\n" );
+    } else if ( !strcmp("spit_utf8",op) ) {
+        fprintf( fpout, "\n" );
+        A = A_spit_utf8( A, (char *) NULL, TT );
+        fprintf( fpout, "\n" );
     } else if ( !strcmp("acomp",op) ) {
         if ( A_report ) fprintf( fpout, "(acomp)\n" );
         Atemp = A_star( A_alph( A_copy( A ) ) );
@@ -239,6 +243,8 @@ A_OBJECT do_ann_a( A_OBJECT A, char *op, char *arg )
         A = A_store( A, arg, TT );
     else if ( !strcmp("prsseq",op) )
         A = A_prsseq( A, arg, TT );
+    else if ( !strcmp("spit_utf8",op) )
+        A = A_spit_utf8( A, arg, TT );
     else if ( !strcmp("stems",op) )
         A_prstems( A, TT, tonum(arg) );
     else if ( !strcmp("surgery",op) ) {

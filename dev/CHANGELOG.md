@@ -1,6 +1,6 @@
 # INR Changelog
 
-## 2.1.0c (2022-02-03)
+## 2.1.0c (2022-02-06)
 
 #### src
 
@@ -17,6 +17,11 @@ An appropriate assertion was added.
 
 A routine called A_slurp_utf8 is added that captures complete sequences
 of octets that encode a unicode code point.
+A routine called A_spit_utf is added that outputs to a file a string as
+would be capturered by A_slurp_utf8.
+Both of these need to be made more bullet proof with numerous assertions.
+
+This is a first cut at UTF-8 I/O.
 
 ## 2.1.0b (2022-01-29)
 

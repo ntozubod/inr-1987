@@ -340,3 +340,44 @@ A_OBJECT A_slurp_utf8( char *file, T_OBJECT T_Sigma )
     fclose( fp );
     return( A );
 }
+
+A_OBJECT A_spit_utf8( A_OBJECT A, char *file, T_OBJECT T_Sigma )
+{
+    FILE *fp;
+    int i, s1, c1, type;
+
+    if ( file != NULL ) fp = fopen( file, "w" );
+    if ( fp == NULL ) {
+        Warning( "Can't open file for write" );
+        return( NULL );
+    }
+
+    assert( T_Sigma != NULL );
+    assert( T_Sigma-> T_n >= 258 );
+
+    A = A_min( A );
+
+    for ( i = 0; i < A-> A_nrows; ++i ) {
+        s1 = A-> A_t[ i ].A_b;
+        if ( s1 < 2 ) {
+        } else if ( s1 < 258 ) {
+            c1 = s1 - 2;
+                 if ( ( c1 & 0x80 ) == 0x00 ) { type = 0; }
+            else if ( ( c1 & 0xc0 ) == 0x80 ) { type = 1; }
+            else if ( ( c1 & 0xe0 ) == 0xc0 ) { type = 2; }
+            else if ( ( c1 & 0xf0 ) == 0xe0 ) { type = 3; }
+            else if ( ( c1 & 0xf8 ) == 0xf0 ) { type = 4; }
+            else { type = 5; }
+
+            switch ( type ) {
+                case 0: case 1: case 2: case 3: case 4: case 5:
+                    fputc( c1, fp );
+                    break;
+            }
+        } else {
+            fputs( T_name( T_Sigma, s1 ), fp );
+        }
+    }
+    fclose( fp );
+    return( A );
+}
