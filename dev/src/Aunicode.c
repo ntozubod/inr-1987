@@ -381,3 +381,49 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, T_OBJECT T_Sigma )
     fclose( fp );
     return( A );
 }
+
+A_OBJECT A_utf8_nibble_map( char *arg, T_OBJECT T_Sigma )
+{
+    A_OBJECT A;
+    int i, j, c, hi, lo, state, len;
+    char *s;
+    char hex_digits[] = "0123456789abcdef";
+    int digit_hi[ 16 ];
+    int digit_lo[ 16 ];
+    char ts[ 3 ];
+
+    for ( i = 0; i < 16; ++i ) {
+        ts[ 0 ] = hex_digits[ i ];
+        ts[ 1 ] = hex_digits[ 0 ];
+        ts[ 2 ] = 0;
+        digit_hi[ i ] = T_insert( T_Sigma, ts );
+        ts[ 0 ] = hex_digits[ i ];
+        ts[ 1 ] = 0;
+        digit_lo[ i ] = T_insert( T_Sigma, ts );
+    }
+
+    assert( T_Sigma != NULL );
+    assert( T_Sigma-> T_n >= 258 );
+
+    A = A_create();
+    A-> A_nT = 2;
+
+    state = 2;
+    for ( i = 258; i < T_Sigma-> T_n; ++i ) {
+        s = T_name( T_Sigma, i );
+        A = A_add( A, 0, i * 2, state );
+        len = strlen( s );
+        for ( j = 0; j < len; ++j ) {
+            c = s[ j ] & 0xff;
+            hi = digit_hi[ c >> 4 ]  * 2 + 1;
+            lo = digit_lo[ c & 0xf ] * 2 + 1;
+            A = A_add( A, state, hi, state + 1 );
+            A = A_add( A, state + 1, lo, state + 2 );
+            state += 2;
+        }
+        A = A_add( A, state, 1, 1 );
+    }
+
+    A = A_min( A );
+    return( A );
+}

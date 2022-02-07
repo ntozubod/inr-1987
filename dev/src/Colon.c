@@ -286,6 +286,9 @@ A_OBJECT do_nn_a( char *op, char *arg )
     } else if ( !strcmp("slurp_utf8",op) ) {
         A = A_slurp_utf8( arg, TT );
         disp_flag = 1;
+    } else if ( !strcmp("utf8_nibble_map",op) ) {
+        A = A_utf8_nibble_map( arg, TT );
+        disp_flag = 1;
     } else if ( !strcmp("save",op) ) {
         if ( (i = T_member( TAlist, arg )) >= 0 )
             A = A_save( A_copy( Alist[i] ), arg, TT );

@@ -315,3 +315,4 @@ A_OBJECT    A_slurp_nibbles( char *, T_OBJECT );
 A_OBJECT    A_slurp_utf8( char *, T_OBJECT );
 A_OBJECT    A_slurp_utf8_alt( char *, T_OBJECT );
 A_OBJECT    A_spit_utf8( A_OBJECT, char *, T_OBJECT );
+A_OBJECT    A_utf8_nibble_map( char *, T_OBJECT );
