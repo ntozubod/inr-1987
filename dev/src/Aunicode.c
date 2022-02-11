@@ -40,7 +40,7 @@ A_OBJECT A_slurp_octets( char *file, T_OBJECT T_Sigma )
     }
 
     assert( T_Sigma != NULL );
-    assert( T_Sigma-> T_n >= 258 );
+    assert( T_Sigma-> T_n >= 258 + 32 );
 
     A = A_create();
     c = getc( fp );
@@ -62,12 +62,8 @@ A_OBJECT A_slurp_nibbles( char *file, T_OBJECT T_Sigma )
 {
     A_OBJECT A;
     FILE *fp;
-    int c, i, hi, lo;
+    int c;
     SHORT state, state1, state2;
-    char hex_digits[] = "0123456789abcdef";
-    int digit_hi[ 16 ];
-    int digit_lo[ 16 ];
-    char ts[ 3 ];
 
     if ( file != NULL ) fp = fopen( file, "r" );
     if ( fp == NULL ) {
@@ -76,16 +72,6 @@ A_OBJECT A_slurp_nibbles( char *file, T_OBJECT T_Sigma )
     }
 
     assert( T_Sigma != NULL );
-
-    for ( i = 0; i < 16; ++i ) {
-        ts[ 0 ] = hex_digits[ i ];
-        ts[ 1 ] = hex_digits[ 0 ];
-        ts[ 2 ] = 0;
-        digit_hi[ i ] = T_insert( T_Sigma, ts );
-        ts[ 0 ] = hex_digits[ i ];
-        ts[ 1 ] = 0;
-        digit_lo[ i ] = T_insert( T_Sigma, ts );
-    }
 
     A = A_create();
     c = getc( fp );
@@ -94,161 +80,12 @@ A_OBJECT A_slurp_nibbles( char *file, T_OBJECT T_Sigma )
     state2 = 3;
     while ( c != EOF ) {
         assert( state2 <= MAXSHORT );
-        hi = digit_hi[ c >> 4 ];
-        lo = digit_lo[ c & 0xf ];
-        A = A_add( A, state, hi, state1 );
-        A = A_add( A, state1, lo, state2 );
+        A = A_add( A, state,  ( c >> 4 ) + 2 + 256, state1 );
+        A = A_add( A, state1, ( c & 0xf) + 2 + 256 + 16, state2 );
         state = state2;
         state1 = state + 1;
         state2 = state + 2;
         c = getc( fp );
-    }
-    A = A_add( A, state, 1, 1 );
-    A = A_close( A );
-    fclose( fp );
-    return( A );
-}
-
-A_OBJECT A_slurp_utf8_alt( char *file, T_OBJECT T_Sigma )
-{
-    A_OBJECT A;
-    FILE *fp;
-    int c, c1, c2, c3;
-    SHORT state, next_state;
-    int errors = 0;
-    char *nm;
-    int nm_len;
-    char ts[ 10 ];
-
-    if ( file != NULL ) fp = fopen( file, "r" );
-    if ( fp == NULL ) {
-        Warning( "File does not exist" );
-        return( NULL );
-    }
-
-    assert( T_Sigma != NULL );
-    assert( T_Sigma-> T_n >= 258 );
-
-    A = A_create();
-    c = getc( fp );
-    state = 0;
-    next_state = 2;
-    while ( c != EOF ) {
-        assert( next_state <= MAXSHORT );
-        if ( ( c & 0x80 ) == 0x00 ) {
-            A = A_add( A, state, c + 2, next_state );
-            c = getc( fp );
-        }
-        else if ( ( c & 0xe0 ) == 0xc0 ) {
-            c1 = getc( fp );
-            if ( c1 == EOF || ( c1 & 0xc0 ) != 0x80 ) {
-                A = A_add( A, state, c + 2, next_state );
-                c = c1;
-                ++errors;
-            } else {
-                nm = T_name( T_Sigma, c + 2 );
-                nm_len = strlen( nm );
-                assert( nm_len == 2 );
-                strncpy( ts, T_name( T_Sigma, c + 2 ), 2 );
-                nm = T_name( T_Sigma, c1 + 2 );
-                nm_len = strlen( nm );
-                assert( nm_len == 2 );
-                strncpy( ts + 2, T_name( T_Sigma, c1 + 2 ), 2 );
-                ts[ 4 ] = '\0';
-                A = A_add( A, state, T_insert( T_Sigma, ts ), next_state );
-                c = getc( fp );
-            }
-        }
-        else if ( ( c & 0xf0 ) == 0xe0 ) {
-            c1 = getc( fp );
-            if ( c1 == EOF || ( c1 & 0xc0 ) != 0x80 ) {
-                A = A_add( A, state, c + 2, next_state );
-                c = c1;
-                ++errors;
-            } else if ( c1 != EOF ) {
-                c2 = getc( fp );
-                if ( c2 == EOF || ( c2 & 0xc0 ) != 0x80 ) {
-                    A = A_add( A, state, c + 2, next_state );
-                    state = next_state++;
-                    assert( next_state <= MAXSHORT );
-                    A = A_add( A, state, c1 + 2, next_state );
-                    c = c2;
-                    ++errors;
-                } else {
-                    nm = T_name( T_Sigma, c + 2 );
-                    nm_len = strlen( nm );
-                    assert( nm_len == 2 );
-                    strncpy( ts, T_name( T_Sigma, c + 2 ), 2 );
-                    nm = T_name( T_Sigma, c1 + 2 );
-                    nm_len = strlen( nm );
-                    assert( nm_len == 2 );
-                    strncpy( ts + 2, T_name( T_Sigma, c1 + 2 ), 2 );
-                    nm = T_name( T_Sigma, c2 + 2 );
-                    nm_len = strlen( nm );
-                    assert( nm_len == 2 );
-                    strncpy( ts + 2, T_name( T_Sigma, c2 + 2 ), 2 );
-                    ts[ 6 ] = '\0';
-                    A = A_add( A, state, T_insert( T_Sigma, ts ), next_state );
-                    c = getc( fp );
-                }
-            }
-        }
-        else if ( ( c & 0xf8 ) == 0xf0 ) {
-            c1 = getc( fp );
-            if ( c1 == EOF || ( c1 & 0xc0 ) != 0x80 ) {
-                A = A_add( A, state, c + 2, next_state );
-                c = c1;
-                ++errors;
-            } else if ( c1 != EOF ) {
-                c2 = getc( fp );
-                if ( c2 == EOF || ( c2 & 0xc0 ) != 0x80 ) {
-                    A = A_add( A, state, c + 2, next_state );
-                    state = next_state++;
-                    A = A_add( A, state, c1 + 2, next_state );
-                    c = c2;
-                    ++errors;
-                } else if ( c2 != EOF ) {
-                    c3 = getc( fp );
-                    if ( c3 == EOF || ( c3 & 0xc0 ) != 0x80 ) {
-                        A = A_add( A, state, c + 2, next_state );
-                        state = next_state++;
-                        assert( next_state <= MAXSHORT );
-                        A = A_add( A, state, c1+ 2, next_state );
-                        state = next_state++;
-                        assert( next_state <= MAXSHORT );
-                        A = A_add( A, state, c2 + 2, next_state );
-                        c = c2;
-                        ++errors;
-                    } else {
-                        nm = T_name( T_Sigma, c + 2 );
-                        nm_len = strlen( nm );
-                        assert( nm_len == 2 );
-                        strncpy( ts, T_name( T_Sigma, c + 2 ), 2 );
-                        nm = T_name( T_Sigma, c1 + 2 );
-                        nm_len = strlen( nm );
-                        assert( nm_len == 2 );
-                        strncpy( ts + 2, T_name( T_Sigma, c1 + 2 ), 2 );
-                        nm = T_name( T_Sigma, c2 + 2 );
-                        nm_len = strlen( nm );
-                        assert( nm_len == 2 );
-                        strncpy( ts + 4, T_name( T_Sigma, c2 + 2 ), 2 );
-                        nm = T_name( T_Sigma, c3 + 2 );
-                        nm_len = strlen( nm );
-                        assert( nm_len == 2 );
-                        strncpy( ts + 6, T_name( T_Sigma, c3 + 2 ), 2 );
-                        ts[ 8 ] = '\0';
-                        A = A_add( A, state,
-                            T_insert( T_Sigma, ts ), next_state );
-                        c = getc( fp );
-                    }
-                }
-            }
-        } else {
-            A = A_add( A, state, c + 2, next_state );
-            c = getc( fp );
-            ++errors;
-        }
-        state = next_state++;
     }
     A = A_add( A, state, 1, 1 );
     A = A_close( A );
@@ -270,7 +107,7 @@ A_OBJECT A_slurp_utf8( char *file, T_OBJECT T_Sigma )
     }
 
     assert( T_Sigma != NULL );
-    assert( T_Sigma-> T_n >= 258 );
+    assert( T_Sigma-> T_n >= 258 + 32 );
 
     A = A_slurp_octets( file, T_Sigma );
     A = A_open( A );
@@ -341,6 +178,72 @@ A_OBJECT A_slurp_utf8( char *file, T_OBJECT T_Sigma )
     return( A );
 }
 
+A_OBJECT A_spit_octets( A_OBJECT A, char *file, T_OBJECT T_Sigma )
+{
+    FILE *fp;
+    int i, s1, c1;
+
+    if ( file != NULL ) fp = fopen( file, "w" );
+    if ( fp == NULL ) {
+        Warning( "Can't open file for write" );
+        return( NULL );
+    }
+
+    assert( T_Sigma != NULL );
+    assert( T_Sigma-> T_n >= 258 + 32 );
+
+    A = A_min( A );
+
+    for ( i = 0; i < A-> A_nrows; ++i ) {
+        s1 = A-> A_t[ i ].A_b;
+        assert( s1 < 258 );
+        if ( s1 >= 2 ) {
+            c1 = s1 - 2;
+            fputc( c1, fp );
+        }
+    }
+    fclose( fp );
+    return( A );
+}
+
+A_OBJECT A_spit_nibbles( A_OBJECT A, char *file, T_OBJECT T_Sigma )
+{
+    FILE *fp;
+    int i, s1, c1;
+    int accum = -1;
+
+    if ( file != NULL ) fp = fopen( file, "w" );
+    if ( fp == NULL ) {
+        Warning( "Can't open file for write" );
+        return( NULL );
+    }
+
+    assert( T_Sigma != NULL );
+    assert( T_Sigma-> T_n >= 258 + 32 );
+
+    A = A_min( A );
+
+    for ( i = 0; i < A-> A_nrows; ++i ) {
+        s1 = A-> A_t[ i ].A_b;
+        assert( s1 < 258 + 32 );
+        if ( s1 >= 2 ) {
+            assert( s1 >= 258 );
+            c1 = s1 - 258;
+            if ( c1 < 16 ) {
+                assert( accum == -1 );
+                accum = c1 << 4;
+            } else {
+                assert( c1 < 32 );
+                fputc( accum + c1 - 16, fp );
+                accum = -1;
+            }
+        }
+    }
+    assert( accum == -1 );
+    fclose( fp );
+    return( A );
+}
+
 A_OBJECT A_spit_utf8( A_OBJECT A, char *file, T_OBJECT T_Sigma )
 {
     FILE *fp;
@@ -353,7 +256,7 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, T_OBJECT T_Sigma )
     }
 
     assert( T_Sigma != NULL );
-    assert( T_Sigma-> T_n >= 258 );
+    assert( T_Sigma-> T_n >= 258 + 32 );
 
     A = A_min( A );
 
@@ -382,46 +285,55 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, T_OBJECT T_Sigma )
     return( A );
 }
 
+A_OBJECT A_gen_min( A_OBJECT A )
+{
+    int i, dead_state, last_state, state;
+
+    A = A_lenmin( A );
+    A = A_min( A );
+    A = A_open( A );
+    dead_state = A-> A_nQ++;
+    last_state = -1;
+    for ( i = 0; i < A-> A_nrows; ++i ) {
+        state  = A-> A_t[ i ].A_a;
+        if ( state == last_state ) {
+            A-> A_t[ i ].A_c = dead_state;
+        }
+        last_state = state;
+    }
+    A = A_min( A );
+    return( A );
+}
+
 A_OBJECT A_utf8_nibble_map( char *arg, T_OBJECT T_Sigma )
 {
     A_OBJECT A;
-    int i, j, c, hi, lo, state, len;
+    int i, j, c, state, len;
     char *s;
-    char hex_digits[] = "0123456789abcdef";
-    int digit_hi[ 16 ];
-    int digit_lo[ 16 ];
-    char ts[ 3 ];
-
-    for ( i = 0; i < 16; ++i ) {
-        ts[ 0 ] = hex_digits[ i ];
-        ts[ 1 ] = hex_digits[ 0 ];
-        ts[ 2 ] = 0;
-        digit_hi[ i ] = T_insert( T_Sigma, ts );
-        ts[ 0 ] = hex_digits[ i ];
-        ts[ 1 ] = 0;
-        digit_lo[ i ] = T_insert( T_Sigma, ts );
-    }
 
     assert( T_Sigma != NULL );
-    assert( T_Sigma-> T_n >= 258 );
+    assert( T_Sigma-> T_n >= 258 + 32 );
 
     A = A_create();
     A-> A_nT = 2;
 
     state = 2;
-    for ( i = 258; i < T_Sigma-> T_n; ++i ) {
+    for ( i = 258 + 32; i < T_Sigma-> T_n; ++i ) {
         s = T_name( T_Sigma, i );
         A = A_add( A, 0, i * 2, state );
         len = strlen( s );
         for ( j = 0; j < len; ++j ) {
             c = s[ j ] & 0xff;
-            hi = digit_hi[ c >> 4 ]  * 2 + 1;
-            lo = digit_lo[ c & 0xf ] * 2 + 1;
-            A = A_add( A, state, hi, state + 1 );
-            A = A_add( A, state + 1, lo, state + 2 );
+            A = A_add( A, state,
+                ( ( c >> 4 )  + 2 + 256 ) * 2 + 1,
+                state + 1 );
+            A = A_add( A, state + 1,
+                ( ( c & 0xf ) + 2 + 256 + 16 ) * 2 + 1,
+                state + 2 );
             state += 2;
         }
         A = A_add( A, state, 1, 1 );
+        ++state;
     }
 
     A = A_min( A );

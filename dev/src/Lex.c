@@ -60,22 +60,6 @@ int yylex()
 {
     int li, d, lflag, in_comment;
 
-    char hex_digits[] = "0123456789abcdef";
-    int digit_hi[ 16 ];
-    int digit_lo[ 16 ];
-    char ts[ 3 ];
-    int i;
-
-    for ( i = 0; i < 16; ++i ) {
-        ts[ 0 ] = hex_digits[ i ];
-        ts[ 1 ] = hex_digits[ 0 ];
-        ts[ 2 ] = 0;
-        digit_hi[ i ] = T_insert( TT, ts );
-        ts[ 0 ] = hex_digits[ i ];
-        ts[ 1 ] = 0;
-        digit_lo[ i ] = T_insert( TT, ts );
-    }
-
     fflush( fpout );
     if ( in_string ) {
         ch = getc( fpin );
@@ -117,7 +101,7 @@ int yylex()
         yylval.up = copyof( T_name( TT, ch + 2 ) );
         return( NAME );
     } else if ( in_dstring && dstring_ch > 0 ) {
-        yylval.up = copyof( T_name( TT, digit_lo[ dstring_ch & 0xf ] ) );
+        yylval.up = copyof( T_name( TT, ( dstring_ch & 0xf ) + 2 + 256 + 16 ));
         dstring_ch = -1;
         return( NAME );
     } else if ( in_dstring ) {
@@ -158,7 +142,7 @@ int yylex()
         }
         if ( ch == EOF ) Error( "End of file in string" );
         dstring_ch = ch & 0xff;
-        yylval.up = copyof( T_name( TT, digit_hi[ dstring_ch >> 4] ) );
+        yylval.up = copyof( T_name( TT, ( dstring_ch >> 4 ) + 2 + 256 ) );
         return( NAME );
     }
     in_comment = 0;
@@ -382,7 +366,7 @@ int main( int argc, char *argv[] )
     int ti, result;
     char tstr[3];
     char file_in[50], file_out[50], rpt_out[50];
-    char hexmap[17] = "0123456789abcdef";
+    char hexmap[17] = "0123456789ABCDEF";
 
     fpin  = stdin;
     fpout = stdout;
@@ -454,10 +438,24 @@ fprintf( fpout, "\n" );
         else {
             tstr[ 0 ] = hexmap[( ti >> 4 ) & 0xf ];
             tstr[ 1 ] = hexmap[  ti        & 0xf ];
-            tstr[ 2 ] = 0;
+            tstr[ 2 ] = '\0';
         }
         result = T_insert( TT, tstr );
         assert( result == ti + 2 );
+    }
+    for( ti = 0; ti < 16; ti++ ) {
+        tstr[ 0 ] = '[';
+        tstr[ 1 ] = hexmap[ ti ];
+        tstr[ 2 ] = '\0';
+        result = T_insert( TT, tstr );
+        assert( result == ti + 2 + 256 );
+    }
+    for( ti = 0; ti < 16; ti++ ) {
+        tstr[ 0 ] = hexmap[ ti ];
+        tstr[ 1 ] = ']';
+        tstr[ 2 ] = '\0';
+        result = T_insert( TT, tstr );
+        assert( result == ti + 2 + 256 + 16 );
     }
 
     TAlist = T_create();

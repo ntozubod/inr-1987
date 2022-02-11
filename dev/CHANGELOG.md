@@ -27,6 +27,18 @@ Modify Lex.c to allow an alternate quoted string format: Single quotes
 yields a sequence of octets; now, double quotes yields a sequence of nibbles.
 This is another accomodation to INR processing of nibble sequences.
 
+Add matching A_spit_octets and A_spit_nibbles routines as well as a routine
+A_gen_min for extracting the single genealogical minimum (length then
+alphabetical) word from the automaton.
+The processing flow can now be:
+A_slurp_XXX followed by some transformation followed by A_gen_min to choose
+a single output followed by A_spit_XXX.
+XXX can be any of `utf8`, `octets`, or `nibbles`, as preferred.
+
+These routines are fragile against malformed input but will be hardened.
+
+Documentation of the new UTF-8 support coming soon.
+
 ## 2.1.0b (2022-01-29)
 
 Starting work on a dev branch.
