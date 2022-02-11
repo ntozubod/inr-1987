@@ -48,6 +48,8 @@ char * pad20( char *s )
 int ch = ' ';
 char    token[512];
 int in_string = 0;
+int in_dstring = 0;
+int dstring_ch = -1;
 
 char *copyof( char *str )
 {
@@ -57,6 +59,23 @@ char *copyof( char *str )
 int yylex()
 {
     int li, d, lflag, in_comment;
+
+    char hex_digits[] = "0123456789abcdef";
+    int digit_hi[ 16 ];
+    int digit_lo[ 16 ];
+    char ts[ 3 ];
+    int i;
+
+    for ( i = 0; i < 16; ++i ) {
+        ts[ 0 ] = hex_digits[ i ];
+        ts[ 1 ] = hex_digits[ 0 ];
+        ts[ 2 ] = 0;
+        digit_hi[ i ] = T_insert( TT, ts );
+        ts[ 0 ] = hex_digits[ i ];
+        ts[ 1 ] = 0;
+        digit_lo[ i ] = T_insert( TT, ts );
+    }
+
     fflush( fpout );
     if ( in_string ) {
         ch = getc( fpin );
@@ -97,6 +116,50 @@ int yylex()
         if ( ch == EOF ) Error( "End of file in string" );
         yylval.up = copyof( T_name( TT, ch + 2 ) );
         return( NAME );
+    } else if ( in_dstring && dstring_ch > 0 ) {
+        yylval.up = copyof( T_name( TT, digit_lo[ dstring_ch & 0xf ] ) );
+        dstring_ch = -1;
+        return( NAME );
+    } else if ( in_dstring ) {
+        ch = getc( fpin );
+        if ( ch == '"' ) {
+            ch = getc( fpin );
+            if ( ch != '"' ) {
+                in_dstring = 0;
+                return( RPAREN );
+            }
+        }
+        if ( ch == '\\' ) {
+            ch = getc( fpin );
+            switch( ch ) {
+            case 'n':
+                ch = '\n';
+                break;
+            case 't':
+                ch = '\t';
+                break;
+            case '_':
+                ch = ' ';
+                break;
+            case 'x':
+                d = getc( fpin );
+                if ( d >= '0' && d <= '9' ) d = d - '0';
+                else if ( d >= 'a' && d <= 'f' ) d = d - 'a' + 10;
+                else if ( d >= 'A' && d <= 'F' ) d = d - 'A' + 10;
+                else Error( "Unexpected Hex digit" );
+                ch = d << 4;
+                d = getc( fpin );
+                if ( d >= '0' && d <= '9' ) d = d - '0';
+                else if ( d >= 'a' && d <= 'f' ) d = d - 'a' + 10;
+                else if ( d >= 'A' && d <= 'F' ) d = d - 'A' + 10;
+                else Error( "Unexpected Hex digit" );
+                ch += d;
+            }
+        }
+        if ( ch == EOF ) Error( "End of file in string" );
+        dstring_ch = ch & 0xff;
+        yylval.up = copyof( T_name( TT, digit_hi[ dstring_ch >> 4] ) );
+        return( NAME );
     }
     in_comment = 0;
     while( ch == ' ' || ch == '\t' || ch == '\n' || ch == '#'
@@ -113,7 +176,9 @@ int yylex()
     switch( d ) {
     case '!':
         return( EXCLAM );
-    /*  case '"':   not used    */
+    case '"':
+        in_dstring = 1;
+        return( LPAREN );
     /*  case '#':   COMMENT     */
     case '$':
         return( DOLLAR );
@@ -175,7 +240,6 @@ int yylex()
         return( RBRACE );
         /*  case '~':   not used    */
 
-    case '"':
     case '<':
     case '>':
     case '~':

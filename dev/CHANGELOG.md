@@ -1,6 +1,6 @@
 # INR Changelog
 
-## 2.1.0c (2022-02-06)
+## 2.1.0c (2022-02-11)
 
 #### src
 
@@ -22,6 +22,10 @@ would be capturered by A_slurp_utf8.
 Both of these need to be made more bullet proof with numerous assertions.
 
 This is a first cut at UTF-8 I/O.
+
+Modify Lex.c to allow an alternate quoted string format: Single quotes
+yields a sequence of octets; now, double quotes yields a sequence of nibbles.
+This is another accomodation to INR processing of nibble sequences.
 
 ## 2.1.0b (2022-01-29)
 
