@@ -1,16 +1,16 @@
 # CHECKLIST
 
-* new feature implemented
+* [ ] new feature implemented
 
-* tested
+* [ ] tested
 
-* use cases
+* [ ] use cases
 
-* documentation
+* [ ] documentation
 
-* update stamp.c
+* [ ] update stamp.c
 
-* CHANGELOG.md
+* [ ] CHANGELOG.md
 
-* README.md
+* [ ] README.md
 
