@@ -2,7 +2,7 @@
 
 A prototype FST toolkit developed between 1983-1987 at University of Waterloo
 
-** Statement of Purpose for this Repo
+## Statement of Purpose for this Repo
 
 This repository contains a old versions of INR from 1987 and 1988 that
 represent the endpoint of the development done by me at the University
