@@ -6,8 +6,8 @@ without change and displayed as they occur in the input.
 
 There is a question of what to do with these equations when they appear
 since GitHub provides no equation support itself.
-One solution is to expand $<<TEXT>>$ to
-<img src="https://render.githubusercontent.com/render/math?math=<<TEXT>>">
+One solution is to expand `$<<TEXT>>$` to
+`<img src="https://render.githubusercontent.com/render/math?math=<<TEXT>>">`
 thus using a service that renders the math as an image and displays the
 resulting image.
 This is acceptable although a bit of overkill for that nature of the math
