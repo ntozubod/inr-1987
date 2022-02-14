@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm *.sseq Nysiis.pr
+ginr < nysiis.inr > nysiis.out

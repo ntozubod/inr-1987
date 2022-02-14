@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm TSoundex
+ginr < _Soundex > S.out
