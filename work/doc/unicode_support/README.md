@@ -72,8 +72,8 @@ the ASCII character set.
 Each of these characters has an external representation that is used for
 printing.
 These were internally the actual single character as C string although
-on input and output `'\\_` was used for blank, `'\\t` was used for tab, 
-`'\\n` was used for newline, and `'\\\\` was used for backslash. 
+on input and output `'\_'` was used for blank, `'\t'` was used for tab, 
+`'\n'` was used for newline, and `'\\'` was used for backslash. 
 
 In version 2.1.0c, this preloading of the token table is extended to all
 octets.
@@ -101,7 +101,7 @@ Assign distinct print strings in symbol table to each code point.
 
 Modify `''` strings to admit all octets in the input (from only printable).
 Modify `` ` ` `` tokens to admit all octets in the input (from only printable).
-Create new "" strings to map octets in the input to a pair of nibbles: high
+Create new `""` strings to map octets in the input to a pair of nibbles: high
 and low.
 
 ## Changes to Aload.c:
@@ -112,6 +112,93 @@ and low.
 
 Some new routines in Aunicode.c have been added to INR to make it easier
 to process text in UTF-8 format.
+
+`'abc';`
+
+    (START) a 2
+    2 b 3
+    3 c 4
+    4 -| (FINAL)
+
+as before
+
+`"abc";`
+
+    (START) [6 2
+    2 1] 3
+    3 [6 4
+    4 2] 5
+    5 [6 6
+    6 3] 7
+    7 -| (FINAL)
+
+with new high / low nibbles
+
+`` `abc`;``
+
+    (START) abc 2
+    2 -| (FINAL)
+
+as before
+
+``( `a` `b` `c` );``
+
+    (START) abc 2
+    2 -| (FINAL)
+
+as before
+
+`"ἀπὸ";`
+
+    (START) [E 2
+    2 1] 3
+    3 [B 4
+    4 C] 5
+    5 [8 6
+    6 0] 7
+    7 [C 8
+    8 F] 9
+    9 [8 10
+    10 0] 11
+    11 [E 12
+    12 1] 13
+    13 [B 14
+    14 D] 15
+    15 [B 16
+    16 8] 17
+    17 -| (FINAL)
+
+a little longer
+
+`'ἀπὸ';`
+
+    (START) E1 2
+    2 BC 3
+    3 80 4
+    4 CF 5
+    5 80 6
+    6 E1 7
+    7 BD 8
+    8 B8 9
+    9 -| (FINAL)
+
+octet form
+
+`` `ἀπὸ`;``
+
+    (START) ἀπὸ 2
+    2 -| (FINAL)
+
+unsurprising
+
+``( `ἀ` `π` `ὸ` );``
+
+    (START) ἀ 2
+    2 π 3
+    3 ὸ 4
+    4 -| (FINAL)
+
+broken apart
 
 `:slurp_octets`
 
@@ -130,4 +217,4 @@ to process text in UTF-8 format.
 ## Sample code
 
 Samples contains a programming task using the nibble based approach.
-See [md_eqn_nibbles](../../samples/md_eqn_nibbles/README.md)
+See [md_eqn_nibbles](../../samples/md_eqn_nibbles)
