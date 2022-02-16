@@ -1,23 +1,19 @@
 # Unicode Support in INR
 
-This is new functionality added to version 2.1.0c in Feb 2022 to support
+## Introduction
+
+New functionality has been added to version 2.1.0c in Feb 2022 to support
 the use of Unicode processing in UTF-8 format.
-At the present time the focus is on Unicode as expressed as a sequence
-of octets encoded as UTF-8 and no conversion to code point numbers or
-to other transfer formats is provided.
-This may be provided at a later time but there are lots of solutions to
-these types of problems.
+At the present time, the focus is on Unicode as expressed as sequences
+of octets encoded as UTF-8 with no conversion to code point numbers or
+to other transfer formats.
+These may be provided at a later time.
 
-As said above, the focus is on UTF-8 for now.
-This is quite suitable for Linux and various similar operating system
+UTF-8 is quite suitable for Linux and various similar operating system
 environments.
-Another encoding that might be useful to consider is UTF-16 and planning
-is currently keeping this in mind without directly implementing anything.
-
-Most other encodings currently in use are reasonably close in spirit to one
-of these two.
-The only exception that stands out is GB 18030 that might require more
-work to deal with properly.
+Nonetheless, UTF-16 support should be possible in the future.
+Most other encodings in use are reasonably close to one of these two
+although GB 18030 might require more work.
 
 Briefly, UTF-8 encoding represents Unicode code points as a series of one
 to four octets.
@@ -28,38 +24,36 @@ It satisfies a synchronization property that allow text matching for any
 valid UTF-8 string query against a valid UTF-8 text by matching only octets.
 There can be no misaligned matches.
 
-UTF-16 also has this property which is very convenient for applications
-such as INR might provide with the caveat that alignment much be done at
-a 16-bit short word level.
-Misalignments can occur if octet level matching is done.
+UTF-16 also has this property as long as alignment on 16-bit short word
+is preserved.
 
-Thus INR works with the octet sequence provided as input or describe in
-the INR program text.
+Thus, INR works with octet sequences.
 For now, three strategies have been partially implemented:
 
-1. There are only 256 separate octet values and this is a feasible, though
+1. There are only 256 separate octet values providing a feasible, though
 large alphabet for INR processing.
-Some issues are easy to imagine if a transducer (2 or more tapes) has a lot
-of states that need to remember an input in order to immediately write the
-same value.
-Since, many applications are like this, there will be other solutions (in
-particular, the second one).
+Large alphabets may contribute to state explosion in multi-tape
+transducers since information read can only be stored in the finite
+control (i.e., the state) if different actions need to be distinguished.
+Whether this is too large an alphabet will, of course, depend on the
+application.
 
-2. An obvious solution to the state explosion just mentioned is to split
-each 8-bit octet into two 4-bit hex digits.
-These have traditionally been called nibbles.
-Such an alphabet has 16 values but has a problem that it fails the
-above synchronization property at the nibble level.
-One way to fix this is to distinguish the nibble that represents the
-high order part of the octet from that representing the low order part.
+2. An obvious solution to this state explosion just mentioned is to split
+each 8-bit octet into two 4-bit hex digits (nibbles).
+Such an alphabet has 16 values.
+However, to avoid breaking the desirable synchronization property it is
+likely advantageous to distinguish high order nibbles from low order
+nibbles.
 The alphabet now has 32 values.
 
-3. Another approach considers that for any application only a small number
+3. Yet another approach considers that for any application only a small number
 of code points may actually be used.
 Any input can be split into tokens, each of which is a valid UTF-8 octet
 sequence corresponding to a single code point.
-The alphabet size is potentially 1,114,112 (the number of valid code points)
-although in practice the size is expected to be  much smaller.
+Although the alphabet size is potentially 1,114,112 (the number of valid
+code points), the size is expected to be much smaller in many cases.
+
+## Internal considerations
 
 INR internally represents each token by an integer greater than or equal
 to zero.
@@ -104,14 +98,7 @@ Modify `` ` ` `` tokens to admit all octets in the input (from only printable).
 Create new `""` strings to map octets in the input to a pair of nibbles: high
 and low.
 
-## Changes to Aload.c:
-
-`:lwds` will admit all octets as does Lex.c
-
-## New code in Aunicode.c:
-
-Some new routines in Aunicode.c have been added to INR to make it easier
-to process text in UTF-8 format.
+Some examples should clarify all of the above discussion:
 
 `'abc';`
 
@@ -143,8 +130,10 @@ as before
 
 ``( `a` `b` `c` );``
 
-    (START) abc 2
-    2 -| (FINAL)
+    (START) a 2
+    2 b 3
+    3 c 4
+    4 -| (FINAL)
 
 as before
 
@@ -200,19 +189,83 @@ unsurprising
 
 broken apart
 
-`:slurp_octets`
+## Changes to Aload.c:
 
-`:spit_octets`
+`:lwds` will admit all octets as does Lex.c.
+Only approach 1 is currently supported.
 
-`:gen_min`
+## New code in Aunicode.c:
 
-`:slurp_nibbles`
+Some new routines in Aunicode.c have been added to INR to make it easier
+to process text in UTF-8 format.
 
-`:spit_nibbles`
+### `:slurp_octets`, `:spit_octets`
 
-`:slurp_utf8`
+`INP = :slurp_octets c.md;`
 
-`:spit_utf8`
+This is a new function that allows the full content of a file to be read
+in in one chunk and converted to a DFA that recognizes exactly one string,
+that is, the string of octets.
+In this example `c.md` is the name of the file and INP is an INR variable
+that will contain the resulting DFA.
+
+`OUT :spit_octets trans.md;`
+
+This is new function that takes a DFA stored in the INR variable OUT and
+writes the sequence of octets traced out by the path from the start state
+to the final state.
+It is the inverse of :slurp_octets.
+In this example the output goes to the file `trans.md`.
+
+Note that the DFA should match exactly one string.
+At present, this function has undefined behaviour if more that one string
+occurs.
+
+### `:slurp_nibbles`, `:spit_nibbles`
+
+Without repeating all the details, these two routines are used in a
+similar fashion except that nibbles are read in or written out
+respectively.
+
+### `:slurp_utf8`, `:spit_utf8`
+
+Again these two routines repeat the pattern, except that the input is
+parsed into UTF-8 sequences and these are looked up or added to the
+token table as they are seen.
+The alphabet used is detected in the process of reading the file.
+
+The function `:alph` can be used to extract this alphabet from this input
+if it is needed.
+
+### `:gen_min`
+
+All of the above spit functions have undefined behaviour if their input
+automaton represents more than one string.
+An easy way of selecting a unique string to be written is using the new
+`:gen_min` fuction.
+
+`OUT = WRK :gen_min;` will conceptually do the following:
+
+1. Calculate the length of the shortest string recognized by WRK.
+
+2. Produce an automaton that recognizes all of the strings of this shortest
+length.
+
+3. Select the string that comes first in lexicographic order (alphabetic
+order).
+This is the output and is represented as a DFA recognizing exactly one
+string.
+
+For a lexicographic order to work, the alphabet must be ordered.
+For this purpose, the integer value stored in the token symbol table is
+used.
+This will have the effect that octet and nibble-based automata will have
+a natural binary ordering.
+Because of a nice property of UTF-8 encoding, this will also correspond to
+code point order (not true of UTF-16 by the way).
+
+For the third approach the order will depend on when the code points were
+first encountered, and the result might seem less predictable.
 
 ## Sample code
 

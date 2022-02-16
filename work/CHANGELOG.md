@@ -37,7 +37,30 @@ XXX can be any of `utf8`, `octets`, or `nibbles`, as preferred.
 
 These routines are fragile against malformed input but will be hardened.
 
-Documentation of the new UTF-8 support coming soon.
+#### doc
+
+The doc directory is reorganized to accomodate more entries in a more
+navigable way.
+
+The new feature implemented above are added to the documentation and
+pointed to from README.md.
+
+#### samples
+
+This new directory is introduced to contain full use cases with
+documentation.
+
+A use case that addresses identifying all equations in a markdown file
+that has dollar signs also occuring in code blocks.
+This is more challenging than one might expect, but can be done in a
+rather direct way using INR with the above new features.
+
+#### test
+
+This will be a home for small tests that can be run by calling a script.
+For now it contains the old `egs` directory.
+Some of these will be turned into tests or, more likely use cases for the
+samples directory.
 
 ## 2.1.0b (2022-01-29)
 
