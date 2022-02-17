@@ -24,6 +24,10 @@ produce an executable *ginr*.
 
 Limited documentation in the form of a PDF file was produced in 2010 as part
 of the release under GPL version 3:
-[PDF](doc/inr_intro.pdf).
+[PDF](doc/intro_1988/inr_intro.pdf).
 See also [USAGE.md](USAGE.md) extracted from the latex source using pandoc
 and with some long-standing errors corrected.
+
+A beginning is being made to provide support for processing Unicode text
+files.
+See: [Unicode Support](doc/unicode_support/README.md)

@@ -1,7 +1,7 @@
 Introduction
 ============
 
-(Extracted from latex source of a [white paper](doc/inr_intro.pdf)
+(Extracted from latex source of a [white paper](doc/intro_1988/inr_intro.pdf)
 written in 1988 as documentation for INR.)
 
 INR is a program that constructs finite state automata and transducers

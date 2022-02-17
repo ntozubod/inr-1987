@@ -28,4 +28,4 @@
  */
 
 char Version[] = "2.1.0c";
-char Date[] = "Feb XX 2022";
+char Date[] = "Feb 17 2022";
