@@ -1,17 +1,17 @@
 # INR Changelog
 
-## 2.1.0c (2022-02-11)
+## 2.1.0c (2022-02-17)
 
 #### src
 
 Start work on Unicode.
 
-A new src file Aunicode.c is begun to contain the needed routines.
+A new src file Aunicode.c contains some needed routines.
 A function called A_slurp_octets is added to allow a complete file to
 be read in, interpreted as a sequence of octets and made into an
 automaton that recognizes this sequence as a single word.
 
-An error led to finding at Ssize in S.c needed to be protected from
+An error led to finding that Ssize in S.c needed to be protected from
 a zero argument.
 An appropriate assertion was added.
 
@@ -19,30 +19,27 @@ A routine called A_slurp_utf8 is added that captures complete sequences
 of octets that encode a unicode code point.
 A routine called A_spit_utf is added that outputs to a file a string as
 would be capturered by A_slurp_utf8.
-Both of these need to be made more bullet proof with numerous assertions.
 
-This is a first cut at UTF-8 I/O.
+Lex.c is modified to allow an alternate quoted string format: Single quotes
+yields a sequence of octets; double quotes yields a sequence of nibbles.
+A nibble is half an octet or 4 bits and provides a more manageable
+alphabet size.
 
-Modify Lex.c to allow an alternate quoted string format: Single quotes
-yields a sequence of octets; now, double quotes yields a sequence of nibbles.
-This is another accomodation to INR processing of nibble sequences.
-
-Add matching A_spit_octets and A_spit_nibbles routines as well as a routine
-A_gen_min for extracting the single genealogical minimum (length then
-alphabetical) word from the automaton.
+Matching routines A_spit_octets and A_spit_nibbles have been added to allow
+processed text to be written out.
+A routine A_gen_min for extracting the single genealogical minimum (length then
+alphabetical) word from the automaton has also been added.
 The processing flow can now be:
 A_slurp_XXX followed by some transformation followed by A_gen_min to choose
 a single output followed by A_spit_XXX.
 XXX can be any of `utf8`, `octets`, or `nibbles`, as preferred.
-
-These routines are fragile against malformed input but will be hardened.
 
 #### doc
 
 The doc directory is reorganized to accomodate more entries in a more
 navigable way.
 
-The new feature implemented above are added to the documentation and
+The new features implemented above have been added to the documentation and
 pointed to from README.md.
 
 #### samples

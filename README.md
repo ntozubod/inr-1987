@@ -17,7 +17,7 @@ The goal of this repo is to provide a workshop for exploring new directions
 for INR development and application.
 There are and will be ideas incompletely explored and it will be messy.
 As ideas with their implementations, documentation, and use cases mature
-they will be copied across to the *ginr* directory.
+they will be copied across to the *ginr* repository.
 
 Here will be a more rapid update cycle and much tentative work.
 If you, the reader, have any qualms about this, look only at the *ginr*
