@@ -1,5 +1,23 @@
 # INR Changelog
 
+## 2.1.0d (2022-02-23)
+
+#### src
+
+Code re-factoring of Atrim.c to replace a deep recursion by iteration.
+This version uses goto statments in as structured a way as possible to
+mirror the execution path of the recursive form.
+
+#### samples
+
+An example that works with the new form and fails with the recursion will be
+included.
+
+#### test
+
+Now is the time to add some tests.
+A prime candidate is a collection of regression tests for Atrim.c
+
 ## 2.1.0c (2022-02-11)
 
 #### src
