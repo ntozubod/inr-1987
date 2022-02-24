@@ -25,6 +25,8 @@
 
 #include "O.h"
 
+int A_compose_clsure( U_OBJECT, int, int, int );
+
 A_OBJECT A_compose( A_OBJECT A1, A_OBJECT A2 )
 {
     A_OBJECT A;
@@ -145,8 +147,7 @@ A_OBJECT A_compose( A_OBJECT A1, A_OBJECT A2 )
                 s2 = (-1);
             } else if ( s1 == s2 && t1 == A1-> A_nT-1 && t2 == 0 ) {
                 A = A_add( A, current, 0,
-                           U_insert( U, (int)p1-> A_c,
-                                     (int)p2-> A_c, 1 ) );
+                    A_compose_clsure( U, (int)p1-> A_c, (int)p2-> A_c, 1 ) );
                 ++p1;
                 ++p2;
                 s1 = s2 = (-1);
@@ -163,4 +164,8 @@ A_OBJECT A_compose( A_OBJECT A1, A_OBJECT A2 )
     A_destroy( A2 );
     U_destroy( U );
     return( A );
+}
+
+int A_compose_clsure( U_OBJECT U, int state1, int state2, int flag ) {
+    return U_insert( U, state1, state2, flag );
 }
