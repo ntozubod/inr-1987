@@ -62,7 +62,34 @@ static int              t_cnt;
 
  * low[ <state>  ] contains lowest dfn for component containing <state>
 
+ * =================================================
+ * The old recursive implementation to be replaced:
+ * =================================================
  */
+
+#ifdef USE_RECURSIVE_TRIM
+
+SHORT A_tr_DFS( SHORT state )
+{
+    SHORT           dfn;
+    A_row           *p;
+    static SHORT    next;
+
+    t_low[ state ] = dfn = t_cnt++;
+    *t_stk++ = state;
+    for( p = GAt-> A_p[state+1]; --p >= GAt-> A_p[state]; ) {
+        if ( t_low[ next = p-> A_c ] == UNMARK )
+            next = A_tr_DFS( next );
+        if ( t_low[next] < t_low[state] )
+            t_low[state] = t_low[next];
+    }
+    if ( t_low[state] == dfn )
+        for( next = MAXSHORT; next != state; )
+            t_low[ next = *--t_stk ] = DELETED;
+    return( state );
+}
+
+#else
 
 SHORT A_tr_DFS( SHORT l_state )
 {
@@ -136,29 +163,7 @@ A_tr_DFS_exit_p_loop_label:
     return( return_val );
 }
 
-/*
-
-SHORT A_tr_DFS( SHORT state )
-{
-    SHORT           dfn;
-    A_row           *p;
-    static SHORT    next;
-
-    t_low[ state ] = dfn = t_cnt++;
-    *t_stk++ = state;
-    for( p = GAt-> A_p[state+1]; --p >= GAt-> A_p[state]; ) {
-        if ( t_low[ next = p-> A_c ] == UNMARK )
-            next = A_tr_DFS( next );
-        if ( t_low[next] < t_low[state] )
-            t_low[state] = t_low[next];
-    }
-    if ( t_low[state] == dfn )
-        for( next = MAXSHORT; next != state; )
-            t_low[ next = *--t_stk ] = DELETED;
-    return( state );
-}
-
-*/
+#endif
 
 A_OBJECT A_trim( A_OBJECT A )
 {
