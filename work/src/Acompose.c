@@ -218,25 +218,29 @@ int A_compose_clsure( A_OBJECT A1, A_OBJECT A2,
     int found_one = 0;
     int idx = 0;
     int map_value = 0;
+    int do_memoize = 0;
 
     for( ;; ) {
 
-        idx = R_insert( R, state1, state2 );
-        if ( l_idx <= idx ) {
-            map = (int *) Srealloc( (char *) map, 2 * idx * sizeof(int) );
-            l_idx = Ssize( (char *) map ) / sizeof(int);
-        }
-        assert( idx <= n_idx );
-        while ( n_idx <= idx ) {
-            map[ n_idx++ ] = (-1);
-        }
-        if ( map[ idx ] >= 0 ) {
-            A_compose_clsure_updt( map[ idx ] );
-            return( map[ idx ] );
-        }
-        assert( low_water <= idx );
-        if ( low_water > idx ) {
-            low_water = idx;
+        do_memoize = ( state1 + state2 ) % 2 == 1;
+        if ( do_memoize ) {
+            idx = R_insert( R, state1, state2 );
+            if ( l_idx <= idx ) {
+                map = (int *) Srealloc( (char *) map, 2 * idx * sizeof(int) );
+                l_idx = Ssize( (char *) map ) / sizeof(int);
+            }
+            assert( idx <= n_idx );
+            while ( n_idx <= idx ) {
+                map[ n_idx++ ] = (-1);
+            }
+            if ( map[ idx ] >= 0 ) {
+                A_compose_clsure_updt( map[ idx ] );
+                return( map[ idx ] );
+            }
+            assert( low_water <= idx );
+            if ( low_water > idx ) {
+                low_water = idx;
+            }
         }
 
         p1  = A1-> A_p[ state1 ];
