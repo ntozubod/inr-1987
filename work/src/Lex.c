@@ -28,7 +28,7 @@
 
 A_OBJECT    A, Atemp;
 T_OBJECT    TAlist;
-A_OBJECT    Alist[100];
+A_OBJECT    Alist[1000];
 T_OBJECT    TT;
 
 char * pad20( char *s )
@@ -444,15 +444,15 @@ fprintf( fpout, "\n" );
         assert( result == ti + 2 );
     }
     for( ti = 0; ti < 16; ti++ ) {
-        tstr[ 0 ] = '[';
-        tstr[ 1 ] = hexmap[ ti ];
+        tstr[ 0 ] = hexmap[ ti ];
+        tstr[ 1 ] = '_';
         tstr[ 2 ] = '\0';
         result = T_insert( TT, tstr );
         assert( result == ti + 2 + 256 );
     }
     for( ti = 0; ti < 16; ti++ ) {
-        tstr[ 0 ] = hexmap[ ti ];
-        tstr[ 1 ] = ']';
+        tstr[ 0 ] = '_';
+        tstr[ 1 ] = hexmap[ ti ];
         tstr[ 2 ] = '\0';
         result = T_insert( TT, tstr );
         assert( result == ti + 2 + 256 + 16 );

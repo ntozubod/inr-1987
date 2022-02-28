@@ -135,11 +135,11 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         disp_flag = 2;
     } else if ( !strcmp("comp",op) ) {
         if ( A_report ) fprintf( fpout, "(comp)\n" );
-        if ( (i = T_member( TAlist, "SIGMA" )) >= 0 ) {
+        if ( (i = T_member( TAlist, "_Sigma_" )) >= 0 ) {
             Atemp = A_star( A_alph( A_copy( Alist[i] ) ) );
             A = A_differ( Atemp, A );
         } else  fprintf( fpout,
-                             "Error in comp: SIGMA not defined\n" );
+                             "Error in comp: _Sigma_ not defined\n" );
         disp_flag = 2;
     } else if ( !strcmp("deecho",op) ) {
         A = A_deecho( A,
@@ -346,7 +346,7 @@ Transformation Operators               Displaying Operators\n\
 :acomp      Active complement          :card       Print cardinality\n\
 :alph       Active alphabet            :enum       Enumerate language\n\
 :clsseq     Subsequential closure      :length     Display min word length\n\
-:comp       Complement w.r.t. SIGMA*   :pr         Display automaton\n\
+:comp       Complement w.r.t. _Sigma_* :pr         Display automaton\n\
 :lenmin     Words of min length        :prsseq     Subsequential display\n\
 :pref       Set of prefixes            :report     Display report line\n\
 :rev        Reverse                    :stems #    Print tape # stems\n\

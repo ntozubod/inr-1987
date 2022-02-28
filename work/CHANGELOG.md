@@ -4,9 +4,43 @@
 
 #### src
 
+##### Atrim.c
+
 Code re-factoring of Atrim.c to replace a deep recursion by iteration.
 This version uses goto statments in as structured a way as possible to
 mirror the execution path of the recursive form.
+
+##### Acompose.c
+
+Improved version of Acompose.c to have a better time/space tradeoff.
+Many lambda transitions can be created as a result of matches being processed.
+Formerly these were removed at the end of processing using the routine
+A_lamcm.
+These take up a lot of space and can result in an exhaustion of memory
+before completion.
+Since they are easy to detect before being generated, they can be removed
+pre-emptively in many cases.
+
+Since the naive solution results in the space explosion then causes a lot
+of repeated computation, a memoization capability is added to cache the
+results.
+Since the lambda transitions occur in chains, memoizing only some of the
+values yields almost all of the time savings without all of the space cost.
+The current memoization is tuned to remember every alternate lambda transition
+in each chain.
+
+##### Alist
+
+This area had a fixed size of 100.
+It should be dynamic and will be changed.
+However, in the interim the maximum is increased to 1000.
+
+##### Nibble tokens
+
+The nibble tokens are changed to use preceding and following underscores.
+This allows them to be recognized as tokens by the parser without requiring
+backticks.
+It also avoids a potential syntactic confusion with the retape operator.
 
 #### samples
 
