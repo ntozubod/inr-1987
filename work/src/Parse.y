@@ -95,7 +95,7 @@ reg_0 SEMI
     }
     if ( (i = T_member( TAlist, $1 )) >= 0 )
         A_destroy( Alist[ i ] );
-    Alist[ T_insert( TAlist, $1 ) ] = A;
+    Alist[ T_ninsert( TAlist, $1, strlen( $1 ) ) ] = A;
     if ( T_member( TT, $1 ) >= 0 )
         fprintf( fpout,
                  "Warning: %s is also a token\n", $1 );
@@ -115,7 +115,7 @@ reg_0 SEMI
     (void) A_rept( A );
     if ( (i = T_member( TAlist, $1 )) >= 0 )
         A_destroy( Alist[ i ] );
-    Alist[ T_insert( TAlist, $1 ) ] = A;
+    Alist[ T_ninsert( TAlist, $1, strlen( $1 ) ) ] = A;
     if ( T_member( TT, $1 ) >= 0 )
         fprintf( fpout,
                  "Warning: %s is also a token\n", $1 );
@@ -218,10 +218,10 @@ reg_3 VBAR reg_4
     if ( $1-> A_nT > 1 || $4-> A_nT > 1 ) {
         Atemp = A_differ(
             A_retape( A_copy( $4 ),
-                      A_letter( 0, T_insert( TT, "0" ) ), TT
+                      A_letter( 0, T_ninsert( TT, "0", 1 ) ), TT
                     ),
             A_retape( A_copy( $1 ),
-                      A_letter( 0, T_insert( TT, "0" ) ), TT
+                      A_letter( 0, T_ninsert( TT, "0", 1 ) ), TT
                     )
         );
         $$ = A_union( $1, A_join( Atemp, $4 ) );
@@ -262,8 +262,8 @@ reg_5 BSLASH reg_6
     } else {
         Atemp = A_retape( A_star( A_alph( A_copy( $3 ) ) ),
                           A_comma(
-                              A_letter( 0, T_insert( TT, "0" ) ),
-                              A_letter( 0, T_insert( TT, "0" ) ) ),
+                              A_letter( 0, T_ninsert( TT, "0", 1 ) ),
+                              A_letter( 0, T_ninsert( TT, "0", 1 ) ) ),
                           TT );
         $$ = A_compose( $3, A_concat( $1, Atemp ) );
     }
@@ -284,8 +284,8 @@ reg_6 SLASH reg_7
     } else {
         Atemp = A_retape( A_star( A_alph( A_copy( $1 ) ) ),
                           A_comma(
-                              A_letter( 0, T_insert( TT, "0" ) ),
-                              A_letter( 0, T_insert( TT, "0" ) ) ),
+                              A_letter( 0, T_ninsert( TT, "0", 1 ) ),
+                              A_letter( 0, T_ninsert( TT, "0", 1 ) ) ),
                           TT );
         $$ = A_compose( $1, A_concat( Atemp, $3 ) );
     }
@@ -326,12 +326,12 @@ reg_8 PLUS
 {
     t = $1;
     if ( t[1] == '.' && t[0] >= '0' && t[0] <= '9' )
-        $$ = A_letter( t[0] - '0', T_insert( TT, t + 2 ) );
+        $$ = A_letter( t[0] - '0', T_ninsert( TT, t + 2, strlen( t + 2 ) ) );
     else if ( (i = T_member( TAlist, t )) >= 0
               && T_member( TT, t ) < 0 )
         $$ = A_copy( Alist[ i ] );
     else {
-        $$ = A_letter( 0, T_insert( TT, t ) );
+        $$ = A_letter( 0, T_ninsert( TT, t, strlen( t ) ) );
         if ( i >= 0 )
             fprintf( fpout,
                      "Warning: %s is a variable and a token\n", t );

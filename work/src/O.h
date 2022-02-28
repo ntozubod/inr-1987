@@ -148,6 +148,7 @@ void        T_destroy( T_OBJECT );
 int         T_member( T_OBJECT, char * );
 T_OBJECT    T_grow( T_OBJECT, int );
 int         T_insert( T_OBJECT, char * );
+int         T_ninsert( T_OBJECT, char *, int );
 char *      T_name( T_OBJECT, int );
 void        T_stats();
 

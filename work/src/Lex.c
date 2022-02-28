@@ -426,9 +426,9 @@ fprintf( fpout, "\n" );
     }
 
     TT = T_create();
-    result = T_insert( TT, "^^" );
+    result = T_ninsert( TT, "^^", 2 );
     assert( result == 0 );
-    result = T_insert( TT, "-|" );
+    result = T_ninsert( TT, "-|", 2 );
     assert( result == 1 );
     for( ti = 0; ti < 256; ti++ ) {
         if ( ( ti >= 0x20 && ti < 0x7f ) || ti == '\t' || ti == '\n' ) {
@@ -440,26 +440,26 @@ fprintf( fpout, "\n" );
             tstr[ 1 ] = hexmap[  ti        & 0xf ];
             tstr[ 2 ] = '\0';
         }
-        result = T_insert( TT, tstr );
+        result = T_ninsert( TT, tstr, 2 );
         assert( result == ti + 2 );
     }
     for( ti = 0; ti < 16; ti++ ) {
         tstr[ 0 ] = hexmap[ ti ];
         tstr[ 1 ] = '_';
         tstr[ 2 ] = '\0';
-        result = T_insert( TT, tstr );
+        result = T_ninsert( TT, tstr, 2 );
         assert( result == ti + 2 + 256 );
     }
     for( ti = 0; ti < 16; ti++ ) {
         tstr[ 0 ] = '_';
         tstr[ 1 ] = hexmap[ ti ];
         tstr[ 2 ] = '\0';
-        result = T_insert( TT, tstr );
+        result = T_ninsert( TT, tstr, 2 );
         assert( result == ti + 2 + 256 + 16 );
     }
 
     TAlist = T_create();
-    result = T_insert( TAlist, "_Last_" );
+    result = T_ninsert( TAlist, "_Last_", 6 );
     assert( result == 0 );
     Alist[ 0 ] = A_create();
 

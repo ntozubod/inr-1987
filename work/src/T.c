@@ -121,6 +121,11 @@ int T_insert( T_OBJECT T, char *name )
     return( *T_hashpos = T-> T_n++ );
 }
 
+int T_ninsert( T_OBJECT T, char *name, int length )
+{
+    return T_insert( T, name );
+}
+
 char *T_name( T_OBJECT T, int i )
 {
     if ( i >= 0 && i < T-> T_n ) return( T-> T_name[ i ] );
