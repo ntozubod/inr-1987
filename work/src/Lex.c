@@ -440,7 +440,7 @@ fprintf( fpout, "\n" );
             tstr[ 1 ] = hexmap[  ti        & 0xf ];
             tstr[ 2 ] = '\0';
         }
-        result = T_ninsert( TT, tstr, 2 );
+        result = T_ninsert( TT, tstr, strlen( tstr ) );
         assert( result == ti + 2 );
     }
     for( ti = 0; ti < 16; ti++ ) {

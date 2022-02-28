@@ -93,10 +93,10 @@ reg_0 SEMI
         fprintf( fpout, "%s  ", pad20( $1 ) );
         (void) A_rept( A );
     }
-    if ( (i = T_member( TAlist, $1 )) >= 0 )
+    if ( (i = T_nmember( TAlist, $1, strlen( $1 ) )) >= 0 )
         A_destroy( Alist[ i ] );
     Alist[ T_ninsert( TAlist, $1, strlen( $1 ) ) ] = A;
-    if ( T_member( TT, $1 ) >= 0 )
+    if ( T_nmember( TT, $1, strlen( $1 ) ) >= 0 )
         fprintf( fpout,
                  "Warning: %s is also a token\n", $1 );
     Sfree( $1 );
@@ -113,10 +113,10 @@ reg_0 SEMI
     }
     fprintf( fpout, "%s  ", pad20( $1 ) );
     (void) A_rept( A );
-    if ( (i = T_member( TAlist, $1 )) >= 0 )
+    if ( (i = T_nmember( TAlist, $1, strlen( $1 ) )) >= 0 )
         A_destroy( Alist[ i ] );
     Alist[ T_ninsert( TAlist, $1, strlen( $1 ) ) ] = A;
-    if ( T_member( TT, $1 ) >= 0 )
+    if ( T_nmember( TT, $1, strlen( $1 ) ) >= 0 )
         fprintf( fpout,
                  "Warning: %s is also a token\n", $1 );
     Sfree( $1 );
@@ -327,8 +327,8 @@ reg_8 PLUS
     t = $1;
     if ( t[1] == '.' && t[0] >= '0' && t[0] <= '9' )
         $$ = A_letter( t[0] - '0', T_ninsert( TT, t + 2, strlen( t + 2 ) ) );
-    else if ( (i = T_member( TAlist, t )) >= 0
-              && T_member( TT, t ) < 0 )
+    else if ( (i = T_nmember( TAlist, t, strlen( t ) )) >= 0
+              && T_nmember( TT, t, strlen( t ) ) < 0 )
         $$ = A_copy( Alist[ i ] );
     else {
         $$ = A_letter( 0, T_ninsert( TT, t, strlen( t ) ) );

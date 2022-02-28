@@ -135,7 +135,7 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         disp_flag = 2;
     } else if ( !strcmp("comp",op) ) {
         if ( A_report ) fprintf( fpout, "(comp)\n" );
-        if ( (i = T_member( TAlist, "_Sigma_" )) >= 0 ) {
+        if ( (i = T_nmember( TAlist, "_Sigma_", 7 )) >= 0 ) {
             Atemp = A_star( A_alph( A_copy( Alist[i] ) ) );
             A = A_differ( Atemp, A );
         } else  fprintf( fpout,
@@ -283,7 +283,7 @@ A_OBJECT do_nn_a( char *op, char *arg )
     disp_flag = 0;
     A = NULL;
     if ( !strcmp("get",op) ) {
-        if ( (i = T_member( TAlist, arg )) >= 0 )
+        if ( (i = T_nmember( TAlist, arg, strlen( arg ) )) >= 0 )
             A = A_copy( Alist[i] );
         disp_flag = 1;
     } else if ( !strcmp("read",op) || !strcmp("load",op) ) {
@@ -305,11 +305,11 @@ A_OBJECT do_nn_a( char *op, char *arg )
         A = A_utf8_nibble_map( arg, TT );
         disp_flag = 1;
     } else if ( !strcmp("save",op) ) {
-        if ( (i = T_member( TAlist, arg )) >= 0 )
+        if ( (i = T_nmember( TAlist, arg, strlen( arg ) )) >= 0 )
             A = A_save( A_copy( Alist[i] ), arg, TT );
         else fprintf( fpout, "Warning: %s undefined\n", arg );
     } else if ( !strcmp("pr",op) ) {
-        if ( (i = T_member( TAlist, arg )) >= 0 )
+        if ( (i = T_nmember( TAlist, arg, strlen( arg ) )) >= 0 )
             A = A_store( Alist[i], arg, TT );
         else fprintf( fpout, "Warning: %s undefined\n", arg );
     } else if ( !strcmp("help",op) ) {
