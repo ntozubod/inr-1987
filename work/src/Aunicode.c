@@ -130,7 +130,7 @@ A_OBJECT A_slurp_utf8( char *file, T_OBJECT T_Sigma )
                     ts[ 1 ] = c2;
                     ts[ 2 ] = '\0';
                 }
-                A-> A_t[ i ].A_b = T_ninsert( T_Sigma, ts, 2 );
+                A-> A_t[ i ].A_b = Tn_insert( T_Sigma, ts, 2 );
                 A-> A_t[ i ].A_c += 1;
                 break;
 
@@ -144,7 +144,7 @@ A_OBJECT A_slurp_utf8( char *file, T_OBJECT T_Sigma )
                     ts[ 2 ] = c3;
                     ts[ 3 ] = '\0';
                 }
-                A-> A_t[ i ].A_b = T_ninsert( T_Sigma, ts, 3 );
+                A-> A_t[ i ].A_b = Tn_insert( T_Sigma, ts, 3 );
                 A-> A_t[ i ].A_c += 2;
                 break;
 
@@ -161,7 +161,7 @@ A_OBJECT A_slurp_utf8( char *file, T_OBJECT T_Sigma )
                     ts[ 3 ] = c4;
                     ts[ 4 ] = '\0';
                 }
-                A-> A_t[ i ].A_b = T_ninsert( T_Sigma, ts, 4 );
+                A-> A_t[ i ].A_b = Tn_insert( T_Sigma, ts, 4 );
                 A-> A_t[ i ].A_c += 3;
                 break;
 

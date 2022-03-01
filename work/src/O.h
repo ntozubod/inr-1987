@@ -39,6 +39,7 @@ int fileno( FILE * );
 #define R_Object        3
 #define U_Object        4
 #define A_Object        5
+#define Tn_Object       6
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -62,6 +63,15 @@ typedef struct T_desc {
     char **         T_name;
     SHORT *         T_hash;
 } *     T_OBJECT;
+
+typedef struct Tn_desc {
+    int             Type;
+    int             Tn_n;
+    int             Tn_lname;
+    int             Tn_lhash;
+    char **         Tn_name;
+    SHORT *         Tn_hash;
+} *     Tn_OBJECT;
 
 typedef struct V_desc {
     int             Type;
@@ -145,12 +155,21 @@ void        pr_time_diff();
 /* T.c */
 T_OBJECT    T_create();
 void        T_destroy( T_OBJECT );
-int         T_nmember( T_OBJECT, char *, int );
+int         T_member( T_OBJECT, char * );
 T_OBJECT    T_grow( T_OBJECT, int );
-int         T_ninsert( T_OBJECT, char *, int );
+int         T_insert( T_OBJECT, char * );
 char *      T_name( T_OBJECT, int );
-int         T_length( T_OBJECT, int );
 void        T_stats();
+
+/* Tn.c */
+Tn_OBJECT   Tn_create();
+void        Tn_destroy( Tn_OBJECT );
+int         Tn_member( Tn_OBJECT, char *, int );
+Tn_OBJECT   Tn_grow( Tn_OBJECT, int );
+int         Tn_insert( Tn_OBJECT, char *, int );
+char *      Tn_name( Tn_OBJECT, int );
+int         Tn_length( Tn_OBJECT, int );
+void        Tn_stats();
 
 /* V.c */
 SHORT *     veccpy( SHORT *, SHORT * );

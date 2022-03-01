@@ -125,14 +125,14 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
     }
     A = A_create();
     if ( T_Sigma == NULL
-            || T_ninsert( T_Sigma, "^^", 2 ) != 0
-            || T_ninsert( T_Sigma, "-|", 2 ) != 1 ) Error( "A_load: BOTCH 1" );
+            || Tn_insert( T_Sigma, "^^", 2 ) != 0
+            || Tn_insert( T_Sigma, "-|", 2 ) != 1 ) Error( "A_load: BOTCH 1" );
     A-> A_nT = ntapes = 1;
     c = getc( fp );
     if ( c >= 10 ) {
         TQ = T_create();
-        if ( T_ninsert( TQ, "(START)", 7 ) != START
-          || T_ninsert( TQ, "(FINAL)", 7 ) != FINAL )
+        if ( Tn_insert( TQ, "(START)", 7 ) != START
+          || Tn_insert( TQ, "(FINAL)", 7 ) != FINAL )
             Error( "A_load: BOTCH 2" );
         while ( c != EOF ) {
             if ( (t = get_name()) == NULL ) {
@@ -140,7 +140,7 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
                 T_destroy( TQ );
                 return( NULL );
             }
-            from = T_ninsert( TQ, t, strlen( t ) );
+            from = Tn_insert( TQ, t, strlen( t ) );
             if ( (t = get_name()) == NULL ) {
                 A_destroy( A );
                 T_destroy( TQ );
@@ -159,11 +159,11 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
                     }
                     A-> A_nT = ntapes = tape + 1;
                 }
-                symb = T_ninsert( T_Sigma, t + 2, strlen( t + 2) );
+                symb = Tn_insert( T_Sigma, t + 2, strlen( t + 2) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 symb = symb * ntapes + tape;
             } else {
-                symb = T_ninsert( T_Sigma, t, strlen( t ) );
+                symb = Tn_insert( T_Sigma, t, strlen( t ) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 if ( symb != 1 ) symb *= ntapes;
             }
@@ -172,7 +172,7 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
                 T_destroy( TQ );
                 return( NULL );
             }
-            to   = T_ninsert( TQ, t, strlen( t ) );
+            to   = Tn_insert( TQ, t, strlen( t ) );
             A = A_add( A, from, symb, to );
             if ( !get_nl() ) {
                 A_destroy( A );
@@ -216,11 +216,11 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
                     }
                     A-> A_nT = ntapes = tape + 1;
                 }
-                symb = T_ninsert( T_Sigma, t + 2, strlen( t + 2 ) );
+                symb = Tn_insert( T_Sigma, t + 2, strlen( t + 2 ) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 symb = symb * ntapes + tape;
             } else {
-                symb = T_ninsert( T_Sigma, t, strlen( t ) );
+                symb = Tn_insert( T_Sigma, t, strlen( t ) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 if ( symb != 1 ) symb *= ntapes;
             }

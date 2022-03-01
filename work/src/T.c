@@ -57,15 +57,11 @@ void T_destroy( T_OBJECT T )
     Sfree( (char *) T );
 }
 
-int T_nmember( T_OBJECT T, char *name, int length )
+int T_member( T_OBJECT T, char *name )
 {
     int h;
     char *na;
     SHORT *p;
-    if ( strlen( name ) != length ) {
-        printf( "%s %d\n", name, length );
-        Error( "T_nmember: bad length" );
-    }
     ++T_calls;
     h = 0;
     for ( na = name; *na; ) h = ( ( h + *na++ ) * 16807 ) & 017777777777;
@@ -87,7 +83,6 @@ T_OBJECT T_grow( T_OBJECT T, int lname )
     SHORT *p, *pl;
     char **q, **ql;
     int i;
-    int len;
     if ( lname < 15 ) lname = 15;
     if ( lname <= T-> T_lname ) return( T );
     Sfree( (char *) T-> T_hash );
@@ -105,27 +100,22 @@ T_OBJECT T_grow( T_OBJECT T, int lname )
     ql = q + T-> T_n;
     i = 0;
     while ( q < ql ) {
-        len = strlen( *q );
-        if ( T_nmember( T, *q++, len ) != (-1) )
+        if ( T_member( T, *q++ ) != (-1) )
             Error( "T_grow: BOTCH" );
         *T_hashpos = i++;
     }
     return( T );
 }
 
-int T_ninsert( T_OBJECT T, char *name, int length )
+int T_insert( T_OBJECT T, char *name )
 {
     int i;
-    if ( strlen( name ) != length ) {
-        printf( "%s %d\n", name, length );
-        Error( "T_ninsert: bad length" );
-    }
     if ( T-> T_n >= T-> T_lname ) {
         if ( T-> T_n >= MAXSHORT )
-            Error( "T_ninsert: Table FULL" );
+            Error( "T_insert: Table FULL" );
         T = T_grow( T, 2 * T-> T_lname );
     }
-    if ( (i = T_nmember( T, name, length )) >= 0 ) return( i );
+    if ( (i = T_member( T, name )) >= 0 ) return( i );
     T-> T_name[ T-> T_n ]
         = strcpy( Salloc( T_nmeptr - name + 1 ), name );
     return( *T_hashpos = T-> T_n++ );
@@ -135,12 +125,6 @@ char *T_name( T_OBJECT T, int i )
 {
     if ( i >= 0 && i < T-> T_n ) return( T-> T_name[ i ] );
     else    return( NULL );
-}
-
-int T_length( T_OBJECT T, int i )
-{
-    if ( i >= 0 && i < T-> T_n ) return( strlen( T-> T_name[ i ] ) );
-    else    return( -1 );
 }
 
 void T_stats()
