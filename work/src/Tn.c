@@ -40,6 +40,7 @@ Tn_OBJECT Tn_create( )
     Tn-> Tn_lname = 0;
     Tn-> Tn_lhash = 1;
     Tn-> Tn_name = 0;
+    Tn-> Tn_lens = 0;
     Tn-> Tn_hash = s_alloc( 1 );
     Tn-> Tn_hash[ 0 ] = MAXSHORT;
     return( Tn );
@@ -53,6 +54,7 @@ void Tn_destroy( Tn_OBJECT Tn )
     pl = p + Tn-> Tn_n;
     while ( p < pl ) Sfree( (char *) *p++ );
     Sfree( (char *) Tn-> Tn_name );
+    Sfree( (char *) Tn-> Tn_lens );
     Sfree( (char *) Tn-> Tn_hash );
     Sfree( (char *) Tn );
 }
@@ -66,16 +68,18 @@ int Tn_member( Tn_OBJECT Tn, char *name, int length )
     ++Tn_calls;
     h = 0;
     for ( i = 0; i < length; ++i ) {
-        h = ( ( h + name[ i ] ) * 16807 ) & 017777777777;
+        h = ( ( h + (unsigned) name[ i ] ) * 16807 ) & 017777777777;
     }
     p  = Tn-> Tn_hash + h % Tn-> Tn_lhash;
     while ( *p < MAXSHORT ) {
         ++Tn_probes;
-        na = Tn-> Tn_name[ *p ];
-        for ( i = 0; i < length; ++i ) {
-            if ( na[ i ] != name[ i ] ) break;
+        if ( length == Tn-> Tn_lens[ *p ] ) {
+            na = Tn-> Tn_name[ *p ];
+            for ( i = 0; i < length; ++i ) {
+                if ( na[ i ] != name[ i ] ) break;
+            }
+            if ( i == length ) return( *p );
         }
-        if ( i == length ) return( *p );
         if ( --p < Tn-> Tn_hash )
             p = Tn-> Tn_hash + Tn-> Tn_lhash - 1;
     }
@@ -96,6 +100,9 @@ Tn_OBJECT Tn_grow( Tn_OBJECT Tn, int lname )
     Tn-> Tn_name =
         (char **) Srealloc( (char *) Tn-> Tn_name,
                             lname * sizeof(char *) );
+    Tn-> Tn_lens =
+        (int *) Srealloc( (char *) Tn-> Tn_lens,
+                            lname * sizeof(int) );
     Tn-> Tn_lname = Ssize( (char *) Tn-> Tn_name ) / sizeof(char *);
     if ( Tn-> Tn_lname > MAXSHORT ) Tn-> Tn_lname = MAXSHORT;
     Tn-> Tn_hash = s_alloc( 2 * Tn-> Tn_lname );
@@ -130,7 +137,9 @@ int Tn_insert( Tn_OBJECT Tn, char *name, int length )
     for( i = 0; i < length; ++i ) {
         na[ i ] = name[ i ];
     }
+    na[ length ] = '\0';
     Tn-> Tn_name[ Tn-> Tn_n ] = na;
+    Tn-> Tn_lens[ Tn-> Tn_n ] = length;
     return( *Tn_hashpos = Tn-> Tn_n++ );
 }
 
@@ -142,7 +151,8 @@ char *Tn_name( Tn_OBJECT Tn, int i )
 
 int Tn_length( Tn_OBJECT Tn, int i )
 {
-    if ( i >= 0 && i < Tn-> Tn_n ) return( strlen( Tn-> Tn_name[ i ] ) );
+    if ( i >= 0 && i < Tn-> Tn_n )
+            return( Tn-> Tn_lens[ i ] );
     else    return( -1 );
 }
 

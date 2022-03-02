@@ -73,6 +73,7 @@ typedef struct Tn_desc {
     int             Tn_lhash;
     char **         Tn_name;
     SHORT *         Tn_hash;
+    int   *         Tn_lens;
 } *     Tn_OBJECT;
 
 typedef struct V_desc {
