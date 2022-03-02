@@ -248,6 +248,8 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 {
     FILE *fp;
     int i, s1, c1, type;
+    int j, length;
+    char *cstr;
 
     if ( file != NULL ) fp = fopen( file, "w" );
     if ( fp == NULL ) {
@@ -278,7 +280,11 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
                     break;
             }
         } else {
-            fputs( Tn_name( Tn_Sigma, s1 ), fp );
+            cstr = Tn_name( Tn_Sigma, s1 );
+            length = Tn_length( Tn_Sigma, s1 );
+            for ( j = 0; j < length; ++j ) {
+                fputc( cstr[ j ], fp );
+            }
         }
     }
     fclose( fp );
