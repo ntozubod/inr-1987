@@ -229,7 +229,7 @@ idone:
         j = fvec[ i ];
         printf( "%5d ", j );
         for( tt = 0; fr_coeff[j][tt] != MAXSHORT; tt++ )
-        printf( "%s ", T_name( TT, fr_coeff[j][tt] ) );
+        printf( "%s ", Tn_name( TT, fr_coeff[j][tt] ) );
         printf( "\n" );
         }
         */
@@ -303,12 +303,12 @@ for( i = 0; i < vlen; i++ ) {
 j = vec[ i ];
 printf( "%5d ", j );
 for( tt = 0; to_coeff[j][tt] != MAXSHORT; tt++ ) {
-int symb = T_name( TT, to_coeff[j][tt] )[ 0 ] & 0xff;
+int symb = Tn_name( TT, to_coeff[j][tt] )[ 0 ] & 0xff;
 if ( symb <= ' ' || symb > 127 ) {
 printf( "\\%x ", symb );
 }
 else {
-printf( "%s ", T_name( TT, to_coeff[j][tt] ) );
+printf( "%s ", Tn_name( TT, to_coeff[j][tt] ) );
 }
 }
 printf( "\n" );
@@ -361,7 +361,7 @@ done:
                 int j1 = vec[ i1 ];
                 printf( "%5d ", j1 );
                 for( tt = 0; to_coeff[j1][tt] != MAXSHORT; tt++ )
-                printf( "%s ", T_name( TT, to_coeff[j1][tt] ) );
+                printf( "%s ", Tn_name( TT, to_coeff[j1][tt] ) );
                 printf( "\n" );
               }
 */

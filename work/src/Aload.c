@@ -108,11 +108,11 @@ int get_nl()
     return( 1 );
 }
 
-A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
+A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
 {
     int from, symb, to, tape, ntapes, i;
     A_OBJECT A;
-    T_OBJECT TQ;
+    Tn_OBJECT TQ;
     char *t;
     A_row *p;
 
@@ -124,26 +124,26 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
         return( NULL );
     }
     A = A_create();
-    if ( T_Sigma == NULL
-            || Tn_insert( T_Sigma, "^^", 2 ) != 0
-            || Tn_insert( T_Sigma, "-|", 2 ) != 1 ) Error( "A_load: BOTCH 1" );
+    if ( Tn_Sigma == NULL
+            || Tn_insert( Tn_Sigma, "^^", 2 ) != 0
+            || Tn_insert( Tn_Sigma, "-|", 2 ) != 1 ) Error( "A_load: BOTCH 1" );
     A-> A_nT = ntapes = 1;
     c = getc( fp );
     if ( c >= 10 ) {
-        TQ = T_create();
+        TQ = Tn_create();
         if ( Tn_insert( TQ, "(START)", 7 ) != START
           || Tn_insert( TQ, "(FINAL)", 7 ) != FINAL )
             Error( "A_load: BOTCH 2" );
         while ( c != EOF ) {
             if ( (t = get_name()) == NULL ) {
                 A_destroy( A );
-                T_destroy( TQ );
+                Tn_destroy( TQ );
                 return( NULL );
             }
             from = Tn_insert( TQ, t, strlen( t ) );
             if ( (t = get_name()) == NULL ) {
                 A_destroy( A );
-                T_destroy( TQ );
+                Tn_destroy( TQ );
                 return( NULL );
             }
             if ( t[1] == '.' && t[0] >= '0' && t[0] <= '9' ) {
@@ -159,29 +159,29 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
                     }
                     A-> A_nT = ntapes = tape + 1;
                 }
-                symb = Tn_insert( T_Sigma, t + 2, strlen( t + 2) );
+                symb = Tn_insert( Tn_Sigma, t + 2, strlen( t + 2) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 symb = symb * ntapes + tape;
             } else {
-                symb = Tn_insert( T_Sigma, t, strlen( t ) );
+                symb = Tn_insert( Tn_Sigma, t, strlen( t ) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 if ( symb != 1 ) symb *= ntapes;
             }
             if ( (t = get_name()) == NULL ) {
                 A_destroy( A );
-                T_destroy( TQ );
+                Tn_destroy( TQ );
                 return( NULL );
             }
             to   = Tn_insert( TQ, t, strlen( t ) );
             A = A_add( A, from, symb, to );
             if ( !get_nl() ) {
                 A_destroy( A );
-                T_destroy( TQ );
+                Tn_destroy( TQ );
                 return( NULL );
             }
         }
         if ( file != NULL ) fclose( fp );
-        T_destroy( TQ );
+        Tn_destroy( TQ );
         return( A_close( A_rename( A, (SHORT *) NULL ) ) );
     } else {
         A-> A_nT = ntapes = c + 1;
@@ -216,11 +216,11 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
                     }
                     A-> A_nT = ntapes = tape + 1;
                 }
-                symb = Tn_insert( T_Sigma, t + 2, strlen( t + 2 ) );
+                symb = Tn_insert( Tn_Sigma, t + 2, strlen( t + 2 ) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 symb = symb * ntapes + tape;
             } else {
-                symb = Tn_insert( T_Sigma, t, strlen( t ) );
+                symb = Tn_insert( Tn_Sigma, t, strlen( t ) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 if ( symb != 1 ) symb *= ntapes;
             }
@@ -237,12 +237,12 @@ A_OBJECT A_load( char *file, T_OBJECT T_Sigma )
     }
 }
 
-A_OBJECT A_store( A_OBJECT A, char *file, T_OBJECT T_Sigma )
+A_OBJECT A_store( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 {
     int t;
     A_row *p, *pz;
 
-    if ( A == NULL || T_Sigma == NULL ) return( A );
+    if ( A == NULL || Tn_Sigma == NULL ) return( A );
     if ( file != NULL ) {
         if ( strcmp( file, "devnull" ) == 0 ) return( A );
         else fp = fopen( file, "w" );
@@ -260,10 +260,10 @@ A_OBJECT A_store( A_OBJECT A, char *file, T_OBJECT T_Sigma )
         else if ( t == FINAL )          fprintf( fp, "(FINAL) " );
         else                            fprintf( fp, "%d ", t );
         if ( ( t = p-> A_b ) <= 1 || A-> A_nT == 1 )
-            put_name( T_name( T_Sigma, t ) );
+            put_name( Tn_name( Tn_Sigma, t ) );
         else {
             fprintf( fp, "%1d.", t % A-> A_nT );
-            put_name( T_name( T_Sigma, t / A-> A_nT ) );
+            put_name( Tn_name( Tn_Sigma, t / A-> A_nT ) );
         }
         if ( ( t = p-> A_c ) == START ) fprintf( fp, " (START)\n" );
         else if ( t == FINAL )          fprintf( fp, " (FINAL)\n" );
@@ -275,12 +275,12 @@ A_OBJECT A_store( A_OBJECT A, char *file, T_OBJECT T_Sigma )
     return( A );
 }
 
-A_OBJECT A_save( A_OBJECT A, char *file, T_OBJECT T_Sigma )
+A_OBJECT A_save( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 {
     int t;
     A_row *p, *pz;
 
-    if ( A == NULL || T_Sigma == NULL ) return( A );
+    if ( A == NULL || Tn_Sigma == NULL ) return( A );
     if ( file != NULL ) {
         if ( strcmp( file, "devnull" ) == 0 ) return( A );
         else fp = fopen( file, "w" );
@@ -306,10 +306,10 @@ A_OBJECT A_save( A_OBJECT A, char *file, T_OBJECT T_Sigma )
         t = p-> A_c % 256;
         (void) putc( (char) ( t ), fp );
         if ( ( t = p-> A_b ) <= 1 || A-> A_nT == 1 )
-            put_name( T_name( T_Sigma, t ) );
+            put_name( Tn_name( Tn_Sigma, t ) );
         else {
             fprintf( fp, "%1d.", t % A-> A_nT );
-            put_name( T_name( T_Sigma, t / A-> A_nT ) );
+            put_name( Tn_name( Tn_Sigma, t / A-> A_nT ) );
         }
         (void) putc( '\n', fp );
     }
@@ -319,7 +319,7 @@ A_OBJECT A_save( A_OBJECT A, char *file, T_OBJECT T_Sigma )
     return( A );
 }
 
-A_OBJECT A_lwds( char *file, T_OBJECT T_Sigma )
+A_OBJECT A_lwds( char *file, Tn_OBJECT Tn_Sigma )
 {
     A_OBJECT A, As;
     char *p;
@@ -333,8 +333,8 @@ A_OBJECT A_lwds( char *file, T_OBJECT T_Sigma )
         return( NULL );
     }
 
-    assert( T_Sigma != NULL );
-    assert( T_Sigma-> T_n >= 258 );
+    assert( Tn_Sigma != NULL );
+    assert( Tn_Sigma-> Tn_n >= 258 );
 
     A = A_create();
     As = A_create();
@@ -379,14 +379,14 @@ A_OBJECT A_lwds( char *file, T_OBJECT T_Sigma )
     return( As );
 }
 
-A_OBJECT A_prsseq( A_OBJECT A, char *file, T_OBJECT T_Sigma )
+A_OBJECT A_prsseq( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 {
     int t;
     A_row *p, *pz;
     int i, n_read, n_write;
     int ss_states = 0;
 
-    if ( A == NULL || T_Sigma == NULL ) return( A );
+    if ( A == NULL || Tn_Sigma == NULL ) return( A );
     if ( A-> A_nT != 2 ) Error( "A_prsseq: Not two tapes" );
     if ( A-> A_mode < SSEQ ) A = A_min( A_sseq( A ) );
     if ( file != NULL ) {
@@ -420,7 +420,7 @@ A_OBJECT A_prsseq( A_OBJECT A, char *file, T_OBJECT T_Sigma )
                 else if ( t == FINAL )          fprintf( fp, "(FINAL)  " );
                 else                            fprintf( fp, "%-7d  ", t );
                 if ( n_write == 0 ) {
-                    put_name( T_name( T_Sigma, p-> A_b / 2 ) );
+                    put_name( Tn_name( Tn_Sigma, p-> A_b / 2 ) );
                     t = p-> A_c;
                     fprintf( fp, " [" );
                 } else {
@@ -431,7 +431,7 @@ A_OBJECT A_prsseq( A_OBJECT A, char *file, T_OBJECT T_Sigma )
                         && A-> A_p[t]-> A_b % 2 == 1 ) {
                     if ( A-> A_p[t]-> A_b != 1 ) {
                         fprintf( fp, " " );
-                        put_name( T_name( T_Sigma,
+                        put_name( Tn_name( Tn_Sigma,
                                           A-> A_p[t]-> A_b / 2 ) );
                     }
                     t = A-> A_p[t]-> A_c;

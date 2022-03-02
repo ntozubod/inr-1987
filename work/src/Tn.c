@@ -26,7 +26,6 @@
 
 #include "O.h"
 
-static char *Tn_nmeptr = 0;
 static SHORT *Tn_hashpos = 0;
 static int Tn_calls = 0;
 static int Tn_probes = 0;
@@ -60,25 +59,27 @@ void Tn_destroy( Tn_OBJECT Tn )
 
 int Tn_member( Tn_OBJECT Tn, char *name, int length )
 {
-    int h;
+    int h, i;
     char *na;
     SHORT *p;
-    if ( strlen( name ) != length ) {
-        printf( "%s %d\n", name, length );
-        Error( "Tn_member: bad length" );
-    }
+    assert( name[ length ] == '\0' );
     ++Tn_calls;
     h = 0;
-    for ( na = name; *na; ) h = ( ( h + *na++ ) * 16807 ) & 017777777777;
+    for ( i = 0; i < length; ++i ) {
+        h = ( ( h + name[ i ] ) * 16807 ) & 017777777777;
+    }
     p  = Tn-> Tn_hash + h % Tn-> Tn_lhash;
     while ( *p < MAXSHORT ) {
         ++Tn_probes;
-        if ( strcmp( Tn-> Tn_name[*p], name ) == 0 ) return( *p );
+        na = Tn-> Tn_name[ *p ];
+        for ( i = 0; i < length; ++i ) {
+            if ( na[ i ] != name[ i ] ) break;
+        }
+        if ( i == length ) return( *p );
         if ( --p < Tn-> Tn_hash )
             p = Tn-> Tn_hash + Tn-> Tn_lhash - 1;
     }
     ++Tn_fail;
-    Tn_nmeptr = na;
     Tn_hashpos = p;
     return( -1 );
 }
@@ -117,18 +118,19 @@ Tn_OBJECT Tn_grow( Tn_OBJECT Tn, int lname )
 int Tn_insert( Tn_OBJECT Tn, char *name, int length )
 {
     int i;
-    if ( strlen( name ) != length ) {
-        printf( "%s %d\n", name, length );
-        Error( "Tn_insert: bad length" );
-    }
+    char *na;
+    assert( name[ length ] == '\0' );
     if ( Tn-> Tn_n >= Tn-> Tn_lname ) {
         if ( Tn-> Tn_n >= MAXSHORT )
             Error( "Tn_insert: Table FULL" );
         Tn = Tn_grow( Tn, 2 * Tn-> Tn_lname );
     }
     if ( (i = Tn_member( Tn, name, length )) >= 0 ) return( i );
-    Tn-> Tn_name[ Tn-> Tn_n ]
-        = strcpy( Salloc( Tn_nmeptr - name + 1 ), name );
+    na = Salloc( length + 1 );
+    for( i = 0; i < length; ++i ) {
+        na[ i ] = name[ i ];
+    }
+    Tn-> Tn_name[ Tn-> Tn_n ] = na;
     return( *Tn_hashpos = Tn-> Tn_n++ );
 }
 

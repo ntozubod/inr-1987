@@ -32,8 +32,8 @@ int do_n_i( char *op )
     int i;
     if ( !strcmp("alph",op) ) {
         fprintf( fpout, "\n" );
-        for( i = 2; i < TT-> T_n; i++ ) {
-            fprintf( fpout, "%s", T_name( TT, i ) );
+        for( i = 2; i < TT-> Tn_n; i++ ) {
+            fprintf( fpout, "%s", Tn_name( TT, i ) );
             fprintf( fpout, " " );
         }
         fprintf( fpout, "\n" );
@@ -44,24 +44,24 @@ int do_n_i( char *op )
         fprintf( fpout, "\n" );
     } else if ( !strcmp("list",op) ) {
         fprintf( fpout, "\n" );
-        for( i = 0; i < TAlist-> T_n; i++ ) {
+        for( i = 0; i < TAlist-> Tn_n; i++ ) {
             fprintf( fpout, "%s  ", pad20(
-                         T_name( TAlist, i ) ) );
+                         Tn_name( TAlist, i ) ) );
             (void) A_rept( Alist[ i ] );
         }
         fprintf( fpout, "\n" );
     } else if ( !strcmp("noreport",op) ) A_report = 0;
     else if ( !strcmp("pr",op) ) {
-        for( i = 1; i < TAlist-> T_n; i++ )
+        for( i = 1; i < TAlist-> Tn_n; i++ )
             if ( Alist[ i ]-> A_nrows > 0 )
                 (void) A_store( Alist[ i ],
-                                T_name( TAlist, i ), TT );
+                                Tn_name( TAlist, i ), TT );
     } else if ( !strcmp("report",op) ) A_report = 1;
     else if ( !strcmp("save",op) ) {
-        for( i = 1; i < TAlist-> T_n; i++ )
+        for( i = 1; i < TAlist-> Tn_n; i++ )
             if ( Alist[ i ]-> A_nrows > 0 )
                 Alist[ i ] = A_save( Alist[ i ],
-                                     T_name( TAlist, i ), TT );
+                                     Tn_name( TAlist, i ), TT );
     } else if ( !strcmp("time",op) ) pr_time_diff();
     else if( !strcmp("help",op) )
 

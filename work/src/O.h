@@ -55,6 +55,7 @@ typedef struct {
     SHORT           A_c;
 }       A_row;
 
+/*
 typedef struct T_desc {
     int             Type;
     int             T_n;
@@ -63,6 +64,7 @@ typedef struct T_desc {
     char **         T_name;
     SHORT *         T_hash;
 } *     T_OBJECT;
+*/
 
 typedef struct Tn_desc {
     int             Type;
@@ -153,6 +155,7 @@ int         *i_alloc( int );
 void        pr_time_diff();
 
 /* T.c */
+/*
 T_OBJECT    T_create();
 void        T_destroy( T_OBJECT );
 int         T_member( T_OBJECT, char * );
@@ -160,6 +163,7 @@ T_OBJECT    T_grow( T_OBJECT, int );
 int         T_insert( T_OBJECT, char * );
 char *      T_name( T_OBJECT, int );
 void        T_stats();
+*/
 
 /* Tn.c */
 Tn_OBJECT   Tn_create();
@@ -222,11 +226,11 @@ A_OBJECT    A_rename( A_OBJECT, SHORT * );
 A_OBJECT    A_mkdense( A_OBJECT );
 
 /* Aload.c */
-A_OBJECT    A_load( char *, T_OBJECT );
-A_OBJECT    A_store( A_OBJECT, char *, T_OBJECT );
-A_OBJECT    A_save( A_OBJECT, char *, T_OBJECT );
-A_OBJECT    A_lwds( char *, T_OBJECT );
-A_OBJECT    A_prsseq( A_OBJECT, char *, T_OBJECT );
+A_OBJECT    A_load( char *, Tn_OBJECT );
+A_OBJECT    A_store( A_OBJECT, char *, Tn_OBJECT );
+A_OBJECT    A_save( A_OBJECT, char *, Tn_OBJECT );
+A_OBJECT    A_lwds( char *, Tn_OBJECT );
+A_OBJECT    A_prsseq( A_OBJECT, char *, Tn_OBJECT );
 
 /* Atrim.c */
 A_OBJECT    A_trim( A_OBJECT );
@@ -266,7 +270,7 @@ A_OBJECT    A_rev( A_OBJECT );
 A_OBJECT    A_shuffle( A_OBJECT, A_OBJECT );
 
 /* Aenum.c */
-A_OBJECT    A_enum( A_OBJECT, T_OBJECT, int );
+A_OBJECT    A_enum( A_OBJECT, Tn_OBJECT, int );
 int         A_card( A_OBJECT );
 A_OBJECT    A_pref( A_OBJECT );
 A_OBJECT    A_suff( A_OBJECT );
@@ -278,7 +282,7 @@ A_OBJECT    A_compose( A_OBJECT, A_OBJECT );
 A_OBJECT    A_join( A_OBJECT, A_OBJECT );
 
 /* Aretape.c */
-A_OBJECT    A_retape( A_OBJECT, A_OBJECT, T_OBJECT );
+A_OBJECT    A_retape( A_OBJECT, A_OBJECT, Tn_OBJECT );
 A_OBJECT    A_comma( A_OBJECT, A_OBJECT );
 
 /* Apowers.c */
@@ -293,7 +297,7 @@ int         A_minlen( A_OBJECT );
 /* Astems.c */
 void        A_st_free();
 SHORT **    A_stems( A_OBJECT, int );
-void        A_prstems( A_OBJECT, T_OBJECT, int );
+void        A_prstems( A_OBJECT, Tn_OBJECT, int );
 
 /* Asseq.c */
 A_OBJECT    A_sseq( A_OBJECT );
@@ -318,8 +322,8 @@ A_OBJECT    do_nn_a( char *, char * );
 extern A_OBJECT A;
 extern A_OBJECT Atemp;
 extern A_OBJECT Alist[1000];
-extern T_OBJECT TAlist;
-extern T_OBJECT TT;
+extern Tn_OBJECT TAlist;
+extern Tn_OBJECT TT;
 extern char Notice[];
 char *      pad20( char * );
 int         yylex();
@@ -330,11 +334,11 @@ int         tonum( char * );
 int         yyparse( void );
 
 /* Aunicode.c */
-A_OBJECT    A_slurp_octets( char *, T_OBJECT );
-A_OBJECT    A_slurp_nibbles( char *, T_OBJECT );
-A_OBJECT    A_slurp_utf8( char *, T_OBJECT );
-A_OBJECT    A_spit_octets( A_OBJECT, char *, T_OBJECT );
-A_OBJECT    A_spit_nibbles( A_OBJECT, char *, T_OBJECT );
-A_OBJECT    A_spit_utf8( A_OBJECT, char *, T_OBJECT );
+A_OBJECT    A_slurp_octets( char *, Tn_OBJECT );
+A_OBJECT    A_slurp_nibbles( char *, Tn_OBJECT );
+A_OBJECT    A_slurp_utf8( char *, Tn_OBJECT );
+A_OBJECT    A_spit_octets( A_OBJECT, char *, Tn_OBJECT );
+A_OBJECT    A_spit_nibbles( A_OBJECT, char *, Tn_OBJECT );
+A_OBJECT    A_spit_utf8( A_OBJECT, char *, Tn_OBJECT );
 A_OBJECT    A_gen_min( A_OBJECT );
-A_OBJECT    A_utf8_nibble_map( char *, T_OBJECT );
+A_OBJECT    A_utf8_nibble_map( char *, Tn_OBJECT );
