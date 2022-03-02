@@ -153,7 +153,8 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         A = A_min( A );
         disp_flag = 1;
     } else if ( !strcmp("enum",op) ) {
-        A = A_enum( A, TT, 1000 );
+        TT_sync( TT, TT_print );
+        A = A_enum( A, TT_print, 1000 );
     } else if ( !strcmp("limit",op) ) {
         if ( A_report ) fprintf( fpout, "(limit)\n" );
         if ( A-> A_nT != 2 )
@@ -246,9 +247,10 @@ A_OBJECT do_ann_a( A_OBJECT A, char *op, char *arg )
 {
     int num;
     disp_flag = 0;
-    if ( !strcmp("enum",op) && (num = tonum(arg)) >= 0)
-        A = A_enum( A, TT, num );
-    else if ( !strcmp("save",op) )
+    if ( !strcmp("enum",op) && (num = tonum(arg)) >= 0) {
+        TT_sync( TT, TT_print );
+        A = A_enum( A, TT_print, num );
+    } else if ( !strcmp("save",op) )
         A = A_save( A, arg, TT );
     else if ( !strcmp("pr",op) )
         A = A_store( A, arg, TT );

@@ -26,7 +26,7 @@
 #include "O.h"
 
 static A_OBJECT         GAe;
-static Tn_OBJECT        GTe;
+static T_OBJECT         GTe;
 static SHORT            *e_vec;
 static int              *c_vec;
 static int              e_lev;
@@ -46,7 +46,7 @@ int A_en_DFS( SHORT state )
             else for( i = 0; i < e_lev; i++ ) {
                     ++en_cnt;
                     if ( GAe-> A_nT == 1 ) {
-                        en_str = Tn_name( GTe, (int) e_vec[i] );
+                        en_str = T_name( GTe, (int) e_vec[i] );
                         if ( *en_str == '\n' )
                             en_str = "\\n";
                         else if ( *en_str == '\t' )
@@ -57,7 +57,7 @@ int A_en_DFS( SHORT state )
                             en_str = "\\\\";
                         fprintf( fpout, "%s ", en_str );
                     } else {
-                        en_str = Tn_name( GTe, (int) e_vec[i]
+                        en_str = T_name( GTe, (int) e_vec[i]
                                          / GAe-> A_nT );
                         if ( *en_str == '\n' )
                             en_str = "\\n";
@@ -83,7 +83,7 @@ int A_en_DFS( SHORT state )
     return( 0 );
 }
 
-A_OBJECT A_enum( A_OBJECT A, Tn_OBJECT Tn, int max )
+A_OBJECT A_enum( A_OBJECT A, T_OBJECT T, int max )
 {
     A_OBJECT Ar, Am;
 
@@ -94,7 +94,7 @@ A_OBJECT A_enum( A_OBJECT A, Tn_OBJECT Tn, int max )
     en_max = max;
     e_vec = s_alloc( en_max );
     e_lev = 0;
-    GTe = Tn;
+    GTe = T;
     en_cnt = 0;
 
     while( Ar-> A_nrows > 0 ) {

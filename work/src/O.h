@@ -56,7 +56,6 @@ typedef struct {
     SHORT           A_c;
 }       A_row;
 
-/*
 typedef struct T_desc {
     int             Type;
     int             T_n;
@@ -65,7 +64,6 @@ typedef struct T_desc {
     char **         T_name;
     SHORT *         T_hash;
 } *     T_OBJECT;
-*/
 
 typedef struct Tn_desc {
     int             Type;
@@ -163,7 +161,6 @@ int         *i_alloc( int );
 void        pr_time_diff();
 
 /* T.c */
-/*
 T_OBJECT    T_create();
 void        T_destroy( T_OBJECT );
 int         T_member( T_OBJECT, char * );
@@ -171,7 +168,6 @@ T_OBJECT    T_grow( T_OBJECT, int );
 int         T_insert( T_OBJECT, char * );
 char *      T_name( T_OBJECT, int );
 void        T_stats();
-*/
 
 /* Tn.c */
 Tn_OBJECT   Tn_create();
@@ -284,7 +280,7 @@ A_OBJECT    A_rev( A_OBJECT );
 A_OBJECT    A_shuffle( A_OBJECT, A_OBJECT );
 
 /* Aenum.c */
-A_OBJECT    A_enum( A_OBJECT, Tn_OBJECT, int );
+A_OBJECT    A_enum( A_OBJECT, T_OBJECT, int );
 int         A_card( A_OBJECT );
 A_OBJECT    A_pref( A_OBJECT );
 A_OBJECT    A_suff( A_OBJECT );
@@ -338,11 +334,13 @@ extern A_OBJECT Atemp;
 extern A_OBJECT Alist[1000];
 extern Tn_OBJECT TAlist;
 extern Tn_OBJECT TT;
+extern T_OBJECT TT_print;
 extern char Notice[];
 char *      pad20( char * );
 int         yylex();
 void        yyerror( char * );
 int         tonum( char * );
+void        TT_sync( Tn_OBJECT, T_OBJECT );
 
 /* Parse.y */
 int         yyparse( void );
