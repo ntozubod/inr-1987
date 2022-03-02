@@ -40,6 +40,7 @@ int fileno( FILE * );
 #define U_Object        4
 #define A_Object        5
 #define Tn_Object       6
+#define P_Object        7
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -116,6 +117,12 @@ typedef struct A_desc {
     A_row *         A_t;
 } *     A_OBJECT;
 
+typedef struct P_desc {
+    int             Type;
+    int             P_length;
+    char *          P_cstr;
+} *     P_OBJECT;
+
 #define OPEN            0
 #define NFA             1
 #define NFA_TRIM        2
@@ -175,6 +182,12 @@ int         Tn_insert( Tn_OBJECT, char *, int );
 char *      Tn_name( Tn_OBJECT, int );
 int         Tn_length( Tn_OBJECT, int );
 void        Tn_stats();
+
+/* P.c */
+P_OBJECT    P_create( int, char * );
+void        P_destroy( P_OBJECT );
+int         P_length( P_OBJECT );
+char *      P_cstr( P_OBJECT );
 
 /* V.c */
 SHORT *     veccpy( SHORT *, SHORT * );

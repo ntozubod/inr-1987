@@ -98,10 +98,12 @@ int yylex()
             }
         }
         if ( ch == EOF ) Error( "End of file in string" );
-        yylval.up = copyof( Tn_name( TT, ch + 2 ) );
+        yylval.up = P_create( Tn_length( TT, ch + 2 ), Tn_name( TT, ch + 2 ) );
         return( NAME );
     } else if ( in_dstring && dstring_ch > 0 ) {
-        yylval.up = copyof( Tn_name( TT, ( dstring_ch & 0xf ) + 2 + 256 + 16 ));
+        yylval.up = P_create(
+            Tn_length( TT, ( dstring_ch & 0xf ) + 2 + 256 + 16 ),
+            Tn_name( TT, ( dstring_ch & 0xf ) + 2 + 256 + 16 ) );
         dstring_ch = -1;
         return( NAME );
     } else if ( in_dstring ) {
@@ -142,7 +144,9 @@ int yylex()
         }
         if ( ch == EOF ) Error( "End of file in string" );
         dstring_ch = ch & 0xff;
-        yylval.up = copyof( Tn_name( TT, ( dstring_ch >> 4 ) + 2 + 256 ) );
+        yylval.up = P_create(
+            Tn_length( TT, ( dstring_ch >> 4 ) + 2 + 256 ),
+            Tn_name( TT, ( dstring_ch >> 4 ) + 2 + 256 ) );
         return( NAME );
     }
     in_comment = 0;
@@ -354,7 +358,7 @@ int yylex()
         }
     }
     token[ li ] = 0;
-    yylval.up = copyof( token );
+    yylval.up = P_create( li, token );
     return( NAME );
 }
 
