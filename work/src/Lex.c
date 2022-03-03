@@ -508,6 +508,7 @@ void TT_sync( Tn_OBJECT TT, T_OBJECT TT_print )
             pr_str = Srealloc( pr_str, length * 4 + 1 );
         }
         cstr = Tn_name( TT, i );
+        k = 0;
         for( j = 0; j < length; ++j ) {
             next_ch = cstr[ j ];
             if ( next_ch == ' ' ) {

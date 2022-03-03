@@ -259,9 +259,9 @@ A_OBJECT A_store( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         if ( ( t = p-> A_a ) == START ) fprintf( fp, "(START) " );
         else if ( t == FINAL )          fprintf( fp, "(FINAL) " );
         else                            fprintf( fp, "%d ", t );
-        if ( ( t = p-> A_b ) <= 1 || A-> A_nT == 1 )
+        if ( ( t = p-> A_b ) <= 1 || A-> A_nT == 1 ) {
             put_name( Tn_name( Tn_Sigma, t ) );
-        else {
+        } else {
             fprintf( fp, "%1d.", t % A-> A_nT );
             put_name( Tn_name( Tn_Sigma, t / A-> A_nT ) );
         }

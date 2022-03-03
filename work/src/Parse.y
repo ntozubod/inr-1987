@@ -333,7 +333,7 @@ reg_8 PLUS
               && Tn_member( TT, t, P_length( $1 ) ) < 0 )
         $$ = A_copy( Alist[ i ] );
     else {
-        $$ = A_letter( 0, Tn_insert( TT, t, strlen( t ) ) );
+        $$ = A_letter( 0, Tn_insert( TT, t, P_length( $1 ) ) );
         if ( i >= 0 )
             fprintf( fpout,
                      "Warning: %s is a variable and a token\n", t );
