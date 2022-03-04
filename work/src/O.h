@@ -70,9 +70,10 @@ typedef struct Tn_desc {
     int             Tn_n;
     int             Tn_lname;
     int             Tn_lhash;
-    char **         Tn_name;
+    int             Tn_lstor;
+    int   *         Tn_idxs;
     SHORT *         Tn_hash;
-    int   *         Tn_lens;
+    char  *         Tn_stor;
 } *     Tn_OBJECT;
 
 typedef struct V_desc {
@@ -177,6 +178,7 @@ Tn_OBJECT   Tn_grow( Tn_OBJECT, int );
 int         Tn_insert( Tn_OBJECT, char *, int );
 char *      Tn_name( Tn_OBJECT, int );
 int         Tn_length( Tn_OBJECT, int );
+P_OBJECT    Tn_Pstr( Tn_OBJECT, int );
 void        Tn_stats();
 
 /* P.c */

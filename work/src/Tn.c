@@ -39,29 +39,30 @@ Tn_OBJECT Tn_create( )
     Tn-> Tn_n  = 0;
     Tn-> Tn_lname = 0;
     Tn-> Tn_lhash = 1;
-    Tn-> Tn_name = 0;
-    Tn-> Tn_lens = 0;
+    Tn-> Tn_lstor = 100;
+
+    Tn-> Tn_idxs = (int *) Salloc( 100 * sizeof( int ) );
+    Tn-> Tn_idxs[ 0 ] = 0;
     Tn-> Tn_hash = s_alloc( 1 );
     Tn-> Tn_hash[ 0 ] = MAXSHORT;
+    Tn-> Tn_stor = Salloc( 100 );
+
     return( Tn );
 }
 
 void Tn_destroy( Tn_OBJECT Tn )
 {
-    char **p, **pl;
     if ( Tn == NULL ) return;
-    p = Tn-> Tn_name;
-    pl = p + Tn-> Tn_n;
-    while ( p < pl ) Sfree( (char *) *p++ );
-    Sfree( (char *) Tn-> Tn_name );
-    Sfree( (char *) Tn-> Tn_lens );
+
+    Sfree( (char *) Tn-> Tn_idxs );
     Sfree( (char *) Tn-> Tn_hash );
+    Sfree( (char *) Tn-> Tn_stor );
     Sfree( (char *) Tn );
 }
 
 int Tn_member( Tn_OBJECT Tn, char *name, int length )
 {
-    int h, i;
+    int h, i, k, len_k;
     char *na;
     SHORT *p;
     assert( name[ length ] == '\0' );
@@ -73,12 +74,14 @@ int Tn_member( Tn_OBJECT Tn, char *name, int length )
     p  = Tn-> Tn_hash + h % Tn-> Tn_lhash;
     while ( *p < MAXSHORT ) {
         ++Tn_probes;
-        if ( length == Tn-> Tn_lens[ *p ] ) {
-            na = Tn-> Tn_name[ *p ];
+        k = *p;
+        len_k = Tn-> Tn_idxs[ k + 1 ] - Tn-> Tn_idxs[ k ] - 1;
+        if ( length == len_k ) {
+            na = Tn-> Tn_stor + Tn-> Tn_idxs[ k ];
             for ( i = 0; i < length; ++i ) {
                 if ( na[ i ] != name[ i ] ) break;
             }
-            if ( i == length ) return( *p );
+            if ( i == length ) return( k );
         }
         if ( --p < Tn-> Tn_hash )
             p = Tn-> Tn_hash + Tn-> Tn_lhash - 1;
@@ -90,41 +93,41 @@ int Tn_member( Tn_OBJECT Tn, char *name, int length )
 
 Tn_OBJECT Tn_grow( Tn_OBJECT Tn, int lname )
 {
-    SHORT *p, *pl;
-    char **q, **ql;
-    int i;
-    int len;
+    int i, idx, idx_next, len;
+
     if ( lname < 15 ) lname = 15;
     if ( lname <= Tn-> Tn_lname ) return( Tn );
+
     Sfree( (char *) Tn-> Tn_hash );
-    Tn-> Tn_name =
-        (char **) Srealloc( (char *) Tn-> Tn_name,
-                            lname * sizeof(char *) );
-    Tn-> Tn_lens =
-        (int *) Srealloc( (char *) Tn-> Tn_lens,
-                            lname * sizeof(int) );
-    Tn-> Tn_lname = Ssize( (char *) Tn-> Tn_name ) / sizeof(char *);
+
+    Tn-> Tn_idxs =
+        (int *) Srealloc( (char *) Tn-> Tn_idxs, ( lname + 1 ) * sizeof(int) );
+    Tn-> Tn_lname = Ssize( (char *) Tn-> Tn_idxs ) / sizeof(int) - 1;
     if ( Tn-> Tn_lname > MAXSHORT ) Tn-> Tn_lname = MAXSHORT;
+
     Tn-> Tn_hash = s_alloc( 2 * Tn-> Tn_lname );
     Tn-> Tn_lhash = Ssize( (char *) Tn-> Tn_hash ) / sizeof(SHORT);
-    p = Tn-> Tn_hash;
-    pl = p + Tn-> Tn_lhash;
-    while ( p < pl ) *p++ = MAXSHORT;
-    q = Tn-> Tn_name;
-    ql = q + Tn-> Tn_n;
-    i = 0;
-    while ( q < ql ) {
-        len = strlen( *q );
-        if ( Tn_member( Tn, *q++, len ) != (-1) )
+    for( i = 0; i < Tn-> Tn_lhash; ++i ) {
+        Tn-> Tn_hash[ i ] = MAXSHORT;
+    }
+
+    idx_next = Tn-> Tn_idxs[ 0 ];
+    assert( idx_next == 0 );
+    
+    for( i = 0; i < Tn-> Tn_n; ++i ) {
+        idx = idx_next;
+        idx_next = Tn-> Tn_idxs[ i + 1 ];
+        len = idx_next - idx - 1;
+        if ( Tn_member( Tn, Tn-> Tn_stor + idx, len ) != (-1) )
             Error( "Tn_grow: BOTCH" );
-        *Tn_hashpos = i++;
+        *Tn_hashpos = i;
     }
     return( Tn );
 }
 
 int Tn_insert( Tn_OBJECT Tn, char *name, int length )
 {
-    int i;
+    int i, k, current_stor_size, next_stor_size;
     char *na;
     assert( name[ length ] == '\0' );
     if ( Tn-> Tn_n >= Tn-> Tn_lname ) {
@@ -132,28 +135,48 @@ int Tn_insert( Tn_OBJECT Tn, char *name, int length )
             Error( "Tn_insert: Table FULL" );
         Tn = Tn_grow( Tn, 2 * Tn-> Tn_lname );
     }
+    
     if ( (i = Tn_member( Tn, name, length )) >= 0 ) return( i );
-    na = Salloc( length + 1 );
+
+    k = Tn-> Tn_n;
+    current_stor_size = Tn-> Tn_idxs[ k ];
+    next_stor_size = current_stor_size + length + 1;
+    if ( next_stor_size > Tn-> Tn_lstor ) {
+        Tn-> Tn_stor = Srealloc( Tn-> Tn_stor, 2 * next_stor_size );
+    }
+
+    na = Tn-> Tn_stor + current_stor_size;
     for( i = 0; i < length; ++i ) {
         na[ i ] = name[ i ];
     }
     na[ length ] = '\0';
-    Tn-> Tn_name[ Tn-> Tn_n ] = na;
-    Tn-> Tn_lens[ Tn-> Tn_n ] = length;
+
+    Tn-> Tn_idxs[ k + 1 ] = next_stor_size;
     return( *Tn_hashpos = Tn-> Tn_n++ );
 }
 
 char *Tn_name( Tn_OBJECT Tn, int i )
 {
-    if ( i >= 0 && i < Tn-> Tn_n ) return( Tn-> Tn_name[ i ] );
+    if ( i >= 0 && i < Tn-> Tn_n )
+            return( Tn-> Tn_stor + Tn-> Tn_idxs[ i ] );
     else    return( NULL );
 }
 
 int Tn_length( Tn_OBJECT Tn, int i )
 {
     if ( i >= 0 && i < Tn-> Tn_n )
-            return( Tn-> Tn_lens[ i ] );
+            return( Tn-> Tn_idxs[ i + 1 ] - Tn-> Tn_idxs[ i ] - 1 );
     else    return( -1 );
+}
+
+P_OBJECT Tn_Pstr( Tn_OBJECT Tn, int i )
+{
+    if ( i >= 0 && i < Tn-> Tn_n )
+        return(
+            P_create(
+                Tn-> Tn_idxs[ i + 1 ] - Tn-> Tn_idxs[ i ] - 1,
+                Tn-> Tn_stor + Tn-> Tn_idxs[ i ] ) );
+    else    return( NULL );
 }
 
 void Tn_stats()
