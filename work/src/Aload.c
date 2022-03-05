@@ -277,7 +277,8 @@ A_OBJECT A_store( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 
 A_OBJECT A_save( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 {
-    int t;
+    int t, tape_number, label_length, tt, i;
+    char *label_name;
     A_row *p, *pz;
 
     if ( A == NULL || Tn_Sigma == NULL ) return( A );
@@ -293,23 +294,37 @@ A_OBJECT A_save( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         return( A );
     }
     A = A_min( A );
-    (void) putc( A-> A_nT - 1, fp );
-    (void) putc( '\n', fp );
+    fprintf( fp, "INR21\t%d\t%d\n", A-> A_nT, A-> A_nrows );
     pz = A-> A_t + A-> A_nrows;
     for( p = A-> A_t; p < pz; p++ ) {
-        t = ( p-> A_a / 256 ) & 0377;
-        (void) putc( (char) ( t ), fp );
-        t = p-> A_a % 256;
-        (void) putc( (char) ( t ), fp );
-        t = ( p-> A_c / 256 ) & 0377;
-        (void) putc( (char) ( t ), fp );
-        t = p-> A_c % 256;
-        (void) putc( (char) ( t ), fp );
-        if ( ( t = p-> A_b ) <= 1 || A-> A_nT == 1 )
-            put_name( Tn_name( Tn_Sigma, t ) );
-        else {
-            fprintf( fp, "%1d.", t % A-> A_nT );
-            put_name( Tn_name( Tn_Sigma, t / A-> A_nT ) );
+        t = p-> A_b;
+        if ( t == 0 ) {
+            tape_number = -1;
+            label_length = 0;
+            label_name = "";
+        } else if ( t == 1 ) {
+            tape_number = 0;
+            label_length = 0;
+            label_name = "";
+        } else if ( A-> A_nT == 1 ) {
+            tape_number = 0;
+            label_length = Tn_length( Tn_Sigma, t );
+            label_name = Tn_name( Tn_Sigma, t );
+        } else {
+            tape_number = t % A-> A_nT;
+            tt = t / A-> A_nT;
+            if ( tt == 1 ) {
+                label_length = 0;
+                label_name = "";
+            } else {
+                label_length = Tn_length( Tn_Sigma, tt );
+                label_name = Tn_name( Tn_Sigma, tt );
+            }
+        }
+        fprintf( fp, "%d\t%d\t%d\t%d\t",
+            p-> A_a, p-> A_c, tape_number, label_length );
+        for( i = 0; i < label_length; ++i ) {
+            (void) putc( label_name[ i ], fp );
         }
         (void) putc( '\n', fp );
     }
