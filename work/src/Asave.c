@@ -45,7 +45,6 @@ A_OBJECT A_save( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         Warning( "Cannot open file" );
         return( A );
     }
-    A = A_min( A );
     fprintf( fp, "INR210\t%d\t%d\n", A-> A_nT, A-> A_nrows );
     pz = A-> A_t + A-> A_nrows;
     for( p = A-> A_t; p < pz; p++ ) {
@@ -181,14 +180,20 @@ NEXT_ROW:
 
 /* Tape number */
 
-    if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
-        tape_no = c - '0'; c = getc( fp );
-
-    while ( c != '\t' ) {
+    if ( c == '-' ) {
+        c = getc( fp );
+        if ( c != '1' ) { goto FAIL_FORMAT; } c = getc( fp );
+        tape_no = (-1);
+    } else {
         if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
-        tape_no = tape_no * 10  +  ( c - '0' );
-            c = getc( fp );
-        if ( tape_no >= MAXSHORT ) { goto FAIL_FORMAT; }
+            tape_no = c - '0'; c = getc( fp );
+
+        while ( c != '\t' ) {
+            if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
+            tape_no = tape_no * 10  +  ( c - '0' );
+                c = getc( fp );
+            if ( tape_no >= MAXSHORT ) { goto FAIL_FORMAT; }
+        }
     }
     if ( c != '\t' ) { goto FAIL_FORMAT; } c = getc( fp );
 
@@ -222,9 +227,14 @@ NEXT_ROW:
 
 /* Process a line here */
 
-    index = Tn_insert( Tn_Sigma, buffer, length );
-    label = index * number_tapes + tape_no;
-    A = A_add( A, from_state, label, to_state );
+    if ( tape_no == -1 ) {
+        A = A_add( A, from_state, 0, to_state );
+        if ( length != 0 ) { goto FAIL_FORMAT; }
+    } else {
+        index = Tn_insert( Tn_Sigma, buffer, length );
+        label = index * number_tapes + tape_no;
+        A = A_add( A, from_state, label, to_state );
+    }
 
     if ( c != EOF ) { goto NEXT_ROW; }
 
