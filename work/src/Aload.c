@@ -129,7 +129,7 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
             || Tn_insert( Tn_Sigma, "-|", 2 ) != 1 ) Error( "A_load: BOTCH 1" );
     A-> A_nT = ntapes = 1;
     c = getc( fp );
-    if ( c >= 10 ) {
+    if ( c >= 10 && c != 'I' ) {
         TQ = Tn_create();
         if ( Tn_insert( TQ, "(START)", 7 ) != START
           || Tn_insert( TQ, "(FINAL)", 7 ) != FINAL )
@@ -183,7 +183,7 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
         if ( file != NULL ) fclose( fp );
         Tn_destroy( TQ );
         return( A_close( A_rename( A, (SHORT *) NULL ) ) );
-    } else {
+    } else if ( c < 10 ) {
         A-> A_nT = ntapes = c + 1;
         c = getc(fp);
         if ( !get_nl() ) {
@@ -234,6 +234,10 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
         A = A_close( A );
         A-> A_mode = DFA_MIN;
         return( A );
+    } else {
+        A_destroy( A );
+        fclose( fp );
+        return( A_load_save( file, Tn_Sigma ) );
     }
 }
 
@@ -272,65 +276,6 @@ A_OBJECT A_store( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
     if ( file != NULL ) {
         fclose( fp );
     } else  if ( fflush( stdout ) == EOF ) Error( "A_store: fflush" );
-    return( A );
-}
-
-A_OBJECT A_save( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
-{
-    int t, tape_number, label_length, tt, i;
-    char *label_name;
-    A_row *p, *pz;
-
-    if ( A == NULL || Tn_Sigma == NULL ) return( A );
-    if ( file != NULL ) {
-        if ( strcmp( file, "devnull" ) == 0 ) return( A );
-        else fp = fopen( file, "w" );
-    } else {
-        fp = fpout;
-        if ( fp == NULL ) fp = stdin;
-    }
-    if ( fp == NULL ) {
-        Warning( "Cannot open file" );
-        return( A );
-    }
-    A = A_min( A );
-    fprintf( fp, "INR21\t%d\t%d\n", A-> A_nT, A-> A_nrows );
-    pz = A-> A_t + A-> A_nrows;
-    for( p = A-> A_t; p < pz; p++ ) {
-        t = p-> A_b;
-        if ( t == 0 ) {
-            tape_number = -1;
-            label_length = 0;
-            label_name = "";
-        } else if ( t == 1 ) {
-            tape_number = 0;
-            label_length = 0;
-            label_name = "";
-        } else if ( A-> A_nT == 1 ) {
-            tape_number = 0;
-            label_length = Tn_length( Tn_Sigma, t );
-            label_name = Tn_name( Tn_Sigma, t );
-        } else {
-            tape_number = t % A-> A_nT;
-            tt = t / A-> A_nT;
-            if ( tt == 1 ) {
-                label_length = 0;
-                label_name = "";
-            } else {
-                label_length = Tn_length( Tn_Sigma, tt );
-                label_name = Tn_name( Tn_Sigma, tt );
-            }
-        }
-        fprintf( fp, "%d\t%d\t%d\t%d\t",
-            p-> A_a, p-> A_c, tape_number, label_length );
-        for( i = 0; i < label_length; ++i ) {
-            (void) putc( label_name[ i ], fp );
-        }
-        (void) putc( '\n', fp );
-    }
-    if ( file != NULL ) {
-        fclose( fp );
-    } else  if ( fflush( stdout ) == EOF ) Error( "A_save: fflush" );
     return( A );
 }
 

@@ -240,9 +240,12 @@ A_OBJECT    A_mkdense( A_OBJECT );
 /* Aload.c */
 A_OBJECT    A_load( char *, Tn_OBJECT );
 A_OBJECT    A_store( A_OBJECT, char *, Tn_OBJECT );
-A_OBJECT    A_save( A_OBJECT, char *, Tn_OBJECT );
 A_OBJECT    A_lwds( char *, Tn_OBJECT );
 A_OBJECT    A_prsseq( A_OBJECT, char *, Tn_OBJECT );
+
+/* Asave.c */
+A_OBJECT    A_save( A_OBJECT, char *, Tn_OBJECT );
+A_OBJECT    A_load_save( char *, Tn_OBJECT );
 
 /* Atrim.c */
 A_OBJECT    A_trim( A_OBJECT );
