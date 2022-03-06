@@ -230,6 +230,9 @@ NEXT_ROW:
     if ( tape_no == -1 ) {
         A = A_add( A, from_state, 0, to_state );
         if ( length != 0 ) { goto FAIL_FORMAT; }
+    } else if ( length == 0 ) {
+        label = 1 * number_tapes + tape_no;
+        A = A_add( A, from_state, label, to_state );
     } else {
         index = Tn_insert( Tn_Sigma, buffer, length );
         label = index * number_tapes + tape_no;
