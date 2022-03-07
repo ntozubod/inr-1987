@@ -45,7 +45,8 @@ A_OBJECT A_save( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         Warning( "Cannot open file" );
         return( A );
     }
-    fprintf( fp, "INR210\t%d\t%d\n", A-> A_nT, A-> A_nrows );
+    fprintf( fp, "INR210\t%d\t%d\t%d\t%d\n",
+        A-> A_nT, A-> A_nrows, A-> A_nQ, A-> A_nS );
     pz = A-> A_t + A-> A_nrows;
     for( p = A-> A_t; p < pz; p++ ) {
         t = p-> A_b;
@@ -87,8 +88,8 @@ A_OBJECT A_save( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 
 A_OBJECT A_load_save( char *file, Tn_OBJECT Tn_Sigma )
 {
-    int c, number_tapes, number_rows;
-    int from_state, to_state, tape_no, length, label;
+    int c, number_tapes, number_rows, number_states, number_symbols;
+    int from_state, to_state, row_no, tape_no, length, label;
     int i, index;
     char *buffer;
     FILE *fp;
@@ -140,17 +141,45 @@ A_OBJECT A_load_save( char *file, Tn_OBJECT Tn_Sigma )
     if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
         number_rows = c - '0'; c = getc( fp );
 
-    while ( c != '\n' ) {
+    while ( c != '\t' ) {
         if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
         number_rows = number_rows * 10  +  ( c - '0' );
             c = getc( fp );
         if ( number_rows >= MAXSHORT ) { goto FAIL_FORMAT; }
     }
+    if ( c != '\t' ) { goto FAIL_FORMAT; } c = getc( fp );
+
+/* Number of states */
+
+    if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
+        number_states = c - '0'; c = getc( fp );
+
+    while ( c != '\t' ) {
+        if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
+        number_states = number_states * 10  +  ( c - '0' );
+            c = getc( fp );
+        if ( number_states >= MAXSHORT ) { goto FAIL_FORMAT; }
+    }
+    if ( c != '\t' ) { goto FAIL_FORMAT; } c = getc( fp );
+
+/* Bound on number of letters in alphabet */
+
+    if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
+        number_symbols = c - '0'; c = getc( fp );
+
+    while ( c != '\n' ) {
+        if ( c < '0' || c > '9' ) { goto FAIL_FORMAT; }
+        number_symbols = number_symbols * 10  +  ( c - '0' );
+            c = getc( fp );
+        if ( number_symbols >= MAXSHORT ) { goto FAIL_FORMAT; }
+    }
     if ( c != '\n' ) { goto FAIL_FORMAT; } c = getc( fp );
 
-/* Get a row */
+    row_no = -1;
 
 NEXT_ROW:
+
+    if ( ++row_no >= number_rows ) { goto FAIL_FORMAT; }
 
 /* From state */
 
@@ -164,6 +193,7 @@ NEXT_ROW:
         if ( from_state >= MAXSHORT ) { goto FAIL_FORMAT; }
     }
     if ( c != '\t' ) { goto FAIL_FORMAT; } c = getc( fp );
+    if ( from_state >= number_states ) { goto FAIL_FORMAT; }
 
 /* To state */
 
@@ -177,6 +207,7 @@ NEXT_ROW:
         if ( to_state >= MAXSHORT ) { goto FAIL_FORMAT; }
     }
     if ( c != '\t' ) { goto FAIL_FORMAT; } c = getc( fp );
+    if ( to_state >= number_states ) { goto FAIL_FORMAT; }
 
 /* Tape number */
 
@@ -196,6 +227,7 @@ NEXT_ROW:
         }
     }
     if ( c != '\t' ) { goto FAIL_FORMAT; } c = getc( fp );
+    if ( tape_no >= number_tapes ) { goto FAIL_FORMAT; }
 
 /* Token length */
 
@@ -231,10 +263,15 @@ NEXT_ROW:
         A = A_add( A, from_state, 0, to_state );
         if ( length != 0 ) { goto FAIL_FORMAT; }
     } else if ( length == 0 ) {
-        label = 1 * number_tapes + tape_no;
+        if ( to_state == 1 ) {
+            label = 1;
+        } else {
+            label = 1 * number_tapes + tape_no;
+        }
         A = A_add( A, from_state, label, to_state );
     } else {
         index = Tn_insert( Tn_Sigma, buffer, length );
+        if ( index >= number_symbols ) { goto FAIL_FORMAT; }
         label = index * number_tapes + tape_no;
         A = A_add( A, from_state, label, to_state );
     }
