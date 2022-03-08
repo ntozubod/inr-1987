@@ -1,5 +1,111 @@
 # INR Changelog
 
+## 2.1.0c5 (2022-03-08)
+
+#### src
+
+The :save format is updated to have two more fields in the header
+to contain the number of states and a bound on the size of the alphabet.
+
+The code for loading from the save file is made more defensive against
+corruption by checking for more types of errors.
+
+#### doc
+
+The documentation is updated to reflect these changes.
+
+## 2.1.0c4 (2022-03-06)
+
+#### src
+
+An updated version of A_save and A_load_save is provided based on a
+productive discussion with Valkyrie at the end of February.
+This is a mixed text / binary format that is particularly easy to parse and
+accurately represents the content of an INR automaton.
+
+A_save is now called when :save is invoked and :read / :load will accept it
+as a new format it will read.
+
+#### doc
+
+Documentation of the new :save format is provided.
+See: [New Save Format](doc/save_format/README.md)
+
+## 2.1.0c3 (2022-03-04)
+
+#### src
+
+The implementation of P-string usage is continued.
+All of the communication between Lex.c and Parse.y has been modified to use
+P-strings.
+
+NB: The usage anything that prints out the content of a string will display
+unprintable characters for unprintable input.
+This is a feature or a bug depending on how you look at it.
+
+NULL bytes are now properly detected in Lex.c and passed to Parse.y.
+Further down the processing pipeline, they might not be treated correctly.
+
+## 2.1.0c2 (2022-03-04)
+
+#### src
+
+These modifications follow from a very profitable discussion with Valkyrie
+about the use of INR for jrte.
+He uses INR transducers to process text of various levels of quality and type
+and needs to allow for the possibility that null bytes can occur.
+This is actually quite common with various binary formats.
+This almost works in INR but there is too much usage of C null-terminated
+strings.
+Although this is biggish change, it is a good one to make as null-terminated
+strings can have a lot of security issues.
+As well, the storage usage of INR can be improved by putting all strings in
+a dynamically allocated pool.
+This provides at least three reasons to make these changes already, and the
+structure of INR makes this easier than I thought it would be.
+
+NB: This is only part of the implementation.
+Changes have to be made in the rest of INR to work exclusively with the new
+string type.
+
+Two new source files named Tn.c and P.c have been added to begin support
+for strings that may contain null bytes.
+This is done by creating a new object type P_OBJECT that contains storage
+with a sequence of octets, and a length field.
+The name P has been used refer to the concept of a Pascal-string type.
+In this case the length field is a 32-bit int and the format is different.
+However, the motivation is exactly the same.
+
+Tn.c is a replacement for T.c that avoids all use of C 'str' operations.
+The 'n' is added to the name to indicate that by avoiding null-termination
+and always providing string lengths as an explicit argument, some of the
+problems with unterminated strings can be avoided.
+It is also possible to store null bytes within strings.
+For extra safety, all strings in the pool have a redundant null octet at the
+end.
+They can successfully be used as C strings with the caveat that they will be
+truncated if there is an embedded null.
+
+NB: A new kind of unsafe usage occurs with Tn.c compared to T.c.
+With the older code, a string returned from T_name would never move.
+Tn.c includes an optimization of storing all strings into one large
+string pool.
+This may be reorganized if a Tn_insert is done on a full table.
+If you need persistent access to a string use the index or the returned
+value form Tn_Pstr.
+
+In order to test these changes, T.c is removed from the compile and a number
+of macros are added to force all usage of T.c to invoke Tn.c.
+(See O.h for details.)
+
+## 2.1.0c1 (2022-02-27)
+
+The automata table Alist was never made dynamic but allocated as an array of
+size 100.
+This is not adequate and is hereby increased to 1000.
+In future, it will be made dynamic.
+(Bug found by Valkyrie: 2022-02-27)
+
 ## 2.1.0c (2022-02-17)
 
 #### src
