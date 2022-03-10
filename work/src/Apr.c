@@ -26,10 +26,14 @@
 
 #include "O.h"
 
+static int error_code = 0;
+#define fail(x) { error_code = x; goto FAIL_FORMAT; }
+
 A_OBJECT A_pr( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 {
     int t;
     A_row *p, *pz;
+    FILE *fp;
 
     if ( A == NULL || Tn_Sigma == NULL ) return( A );
     if ( file != NULL ) {
@@ -49,10 +53,10 @@ A_OBJECT A_pr( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         else if ( t == FINAL )          fprintf( fp, "(FINAL) " );
         else                            fprintf( fp, "%d ", t );
         if ( ( t = p-> A_b ) <= 1 || A-> A_nT == 1 ) {
-            fprintf( fp, Tn_pr_name( Tn_Sigma, t ) );
+            fprintf( fp, "%s", Tn_name( Tn_Sigma, t ) );
         } else {
             fprintf( fp, "%1d.", t % A-> A_nT );
-            fprintf( fp, Tn_pr_name( Tn_Sigma, t / A-> A_nT ) );
+            fprintf( fp, "%s", Tn_name( Tn_Sigma, t / A-> A_nT ) );
         }
         if ( ( t = p-> A_c ) == START ) fprintf( fp, " (START)\n" );
         else if ( t == FINAL )          fprintf( fp, " (FINAL)\n" );
@@ -66,13 +70,13 @@ A_OBJECT A_pr( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
 
 A_OBJECT A_load_pr( char *file, Tn_OBJECT Tn_Sigma )
 {
-    int from, symb, to, tape, ntapes, i;
-    int c;
+    int from_state, to_state, tape_number, ntapes, l;
+    int c, d, j, transition_label;
     A_OBJECT A;
     Tn_OBJECT TQ;
-    char *t;
     char *buffer;
     A_row *p;
+    FILE *fp;
 
     buffer = Salloc( 100 );
 
@@ -84,65 +88,151 @@ A_OBJECT A_load_pr( char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
     A = A_create();
+    A-> A_nT = ntapes = 1;
+
     if ( Tn_Sigma == NULL
             || Tn_insert( Tn_Sigma, "^^", 2 ) != 0
             || Tn_insert( Tn_Sigma, "-|", 2 ) != 1 )
                 Error( "A_load: BOTCH 1" );
 
-    A-> A_nT = ntapes = 1;
-    c = getc( fp );
-
     TQ = Tn_create();
     if ( Tn_insert( TQ, "(START)", 7 ) != START
       || Tn_insert( TQ, "(FINAL)", 7 ) != FINAL )
         Error( "A_load: BOTCH 2" );
-    while ( c != EOF ) {
-        if ( (t = get_name()) == NULL ) {
-            A_destroy( A );
-            Tn_destroy( TQ );
-            return( NULL );
-        }
-        from = Tn_insert( TQ, t, strlen( t ) );
-        if ( (t = get_name()) == NULL ) {
-            A_destroy( A );
-            Tn_destroy( TQ );
-            return( NULL );
-        }
-        if ( t[1] == '.' && t[0] >= '0' && t[0] <= '9' ) {
-            tape = t[0] - '0';
-            if ( tape >= ntapes ) {
-                for( p = A-> A_t + A-> A_nrows;
-                        --p >= A-> A_t; ) {
-                    i = p-> A_b;
-                    if ( i > 1 )
-                        i = i / ntapes * (tape+1)
-                            + i % ntapes;
-                    p-> A_b = i;
-                }
-                A-> A_nT = ntapes = tape + 1;
-            }
-            symb = Tn_insert( Tn_Sigma, t + 2, strlen( t + 2) );
-            if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
-            symb = symb * ntapes + tape;
-        } else {
-            symb = Tn_insert( Tn_Sigma, t, strlen( t ) );
-            if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
-            if ( symb != 1 ) symb *= ntapes;
-        }
-        if ( (t = get_name()) == NULL ) {
-            A_destroy( A );
-            Tn_destroy( TQ );
-            return( NULL );
-        }
-        to   = Tn_insert( TQ, t, strlen( t ) );
-        A = A_add( A, from, symb, to );
-        if ( !get_nl() ) {
-            A_destroy( A );
-            Tn_destroy( TQ );
-            return( NULL );
-        }
+
+    c = getc( fp );
+
+NEXT_ROW:
+
+/* From state */
+/* Here c should contain the first character of a non empty line. */
+
+    if ( c == ' ' || c == '\t' || c == '\n' || c == EOF ) { fail(1); }
+
+    l = 0;
+    if ( l >= Ssize( buffer ) ) { buffer = Srealloc( buffer, 2 * l ); }
+    buffer[ l++ ] = c; c = getc( fp );
+
+    while ( c != ' ' && c != '\t' && c != '\n' && c != EOF ) {
+        if ( l >= Ssize( buffer ) ) { buffer = Srealloc( buffer, 2 * l ); }
+        buffer[ l++ ] = c; c = getc( fp );
     }
+
+    from_state = Tn_insert( TQ, buffer, l );
+
+/* Transition label */
+/* Here c should contain a tab or blank separator. */
+/* If c is new line or EOF, this is an error. */
+/* Anything else is OK and part of a transition label. */
+
+    if ( c == '\n' || c == EOF ) { fail(1); }
+
+    assert( c == ' ' || c == '\t' );  c = getc( fp );
+
+    l = 0;
+    tape_number = 0;
+
+/* Look for a leading tape number. */
+
+    while ( c >= 0 && c <= '9' ) {
+        tape_number = tape_number * 10 + ( c - '0' );
+        if ( l >= Ssize( buffer ) ) { buffer = Srealloc( buffer, 2 * l ); }
+        buffer[ l++ ] = c; c = getc( fp );
+    }
+
+    if ( l > 0 && c == '.' ) {
+        l = 0;
+        c = getc( fp );
+    } else {
+        tape_number = 0;
+    }
+
+    if ( tape_number >= ntapes ) {
+        for ( p = A-> A_t + A-> A_nrows; --p >= A-> A_t; ) {
+            j = p-> A_b;
+            if ( j > 1 ) {
+                j = j / ntapes * ( tape_number + 1 ) + j % ntapes;
+            }
+            p-> A_b = j;
+        }
+        A-> A_nT = ntapes = tape_number + 1;
+    }
+
+/* Tape number processed. */
+/* Now c must be a non-delimiter. */
+
+    if ( c == ' ' || c == '\t' || c == '\n' || c == EOF ) { fail(10); }
+
+    while ( c != ' ' && c != '\t' && c != '\n' && c != EOF ) {
+        if ( l >= Ssize( buffer ) ) { buffer = Srealloc( buffer, 2 * l ); }
+        if ( c == '\\' ) {
+            c = getc( fp );
+            if ( c == '_' ) { d = ' '; }
+            else if ( c == 't' ) { d = '\t'; }
+            else if ( c == 'n' ) { d = '\n'; }
+            else if ( c == 'r' ) { d = '\r'; }
+            else if ( c == 'x' ) {
+                c = getc( fp );
+                if ( c >= '0' && c <= '9' ) { d = c - '0'; }
+                else if ( c >= 'A' && c <= 'F' ) { d = c + 10 - 'A'; }
+                else if ( c >= 'a' && c <= 'f' ) { d = c + 10 - 'a'; }
+                else { fail(10); }
+                d *= 16;
+                c = getc( fp );
+                if ( c >= '0' && c <= '9' ) { d += c - '0'; }
+                else if ( c >= 'A' && c <= 'F' ) { d += c + 10 - 'A'; }
+                else if ( c >= 'a' && c <= 'f' ) { d += c + 10 - 'a'; }
+                else { fail(10); }
+                c = d;
+            } else if ( c != EOF ) { fail(11); }
+        }
+
+        buffer[ l++ ] = c; c = getc( fp );
+    }
+
+    transition_label = Tn_insert( TQ, buffer, l );
+
+/* To state */
+/* Here c must not be a delimiter. */
+
+    if ( c == ' ' || c == '\t' || c == '\n' || c == EOF ) { fail(1); }
+
+    l = 0;
+    if ( l >= Ssize( buffer ) ) { buffer = Srealloc( buffer, 2 * l ); }
+    buffer[ l++ ] = c; c = getc( fp );
+
+    while ( c != ' ' && c != '\t' && c != '\n' && c != EOF ) {
+        if ( l >= Ssize( buffer ) ) { buffer = Srealloc( buffer, 2 * l ); }
+        buffer[ l++ ] = c; c = getc( fp );
+    }
+
+    to_state = Tn_insert( TQ, buffer, l );
+
+/* Process transition */
+/* Here c must be the end of a line or EOF. */
+
+    if ( c != '\n' && c != EOF ) { fail(2); } c = getc( fp );
+
+    A = A_add( A, from_state,
+        transition_label * ntapes + tape_number, to_state );
+
+    if ( c != EOF ) { goto NEXT_ROW; }
+
+/* Done: package up result */
+
+    Sfree( buffer );
     if ( file != NULL ) fclose( fp );
     Tn_destroy( TQ );
-    return( A_close( A_rename( A, (SHORT *) NULL ) ) );
+    return ( A );
+/*  return( A_close( A_rename( A, (SHORT *) NULL ) ) ); */
+
+FAIL_FORMAT:
+
+    fprintf( fpout, "A_load_pr: Error code = %d\n", error_code );
+    Error( "Illegal pr format" );
+    Sfree( buffer );
+    if ( file != NULL ) fclose( fp );
+    A_destroy( A );
+    Tn_destroy( TQ );
+    return ( 0 );
 }

@@ -26,7 +26,7 @@
 
 #include "O.h"
 
-int error_code = 0;
+static int error_code = 0;
 #define fail(x) { error_code = x; goto FAIL_FORMAT; }
 
 A_OBJECT A_save( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
