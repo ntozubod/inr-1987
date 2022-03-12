@@ -69,7 +69,7 @@ reg_0 SEMI
     if ( disp_flag ) {
         (void) A_rept( A );
         fprintf( fpout, "\n" );
-        (void) A_store( A, (char *) NULL, TT );
+        (void) A_pr( A, (char *) NULL, TT );
         fprintf( fpout, "\n" );
     }
     A_destroy( Alist[ 0 ] );

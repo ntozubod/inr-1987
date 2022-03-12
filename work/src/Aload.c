@@ -112,7 +112,6 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
 {
     int from, symb, to, tape, ntapes, i;
     A_OBJECT A;
-    Tn_OBJECT TQ;
     char *t;
     A_row *p;
 
@@ -129,61 +128,15 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
             || Tn_insert( Tn_Sigma, "-|", 2 ) != 1 ) Error( "A_load: BOTCH 1" );
     A-> A_nT = ntapes = 1;
     c = getc( fp );
-    if ( c >= 10 && c != 'I' ) {
-        TQ = Tn_create();
-        if ( Tn_insert( TQ, "(START)", 7 ) != START
-          || Tn_insert( TQ, "(FINAL)", 7 ) != FINAL )
-            Error( "A_load: BOTCH 2" );
-        while ( c != EOF ) {
-            if ( (t = get_name()) == NULL ) {
-                A_destroy( A );
-                Tn_destroy( TQ );
-                return( NULL );
-            }
-            from = Tn_insert( TQ, t, strlen( t ) );
-            if ( (t = get_name()) == NULL ) {
-                A_destroy( A );
-                Tn_destroy( TQ );
-                return( NULL );
-            }
-            if ( t[1] == '.' && t[0] >= '0' && t[0] <= '9' ) {
-                tape = t[0] - '0';
-                if ( tape >= ntapes ) {
-                    for( p = A-> A_t + A-> A_nrows;
-                            --p >= A-> A_t; ) {
-                        i = p-> A_b;
-                        if ( i > 1 )
-                            i = i / ntapes * (tape+1)
-                                + i % ntapes;
-                        p-> A_b = i;
-                    }
-                    A-> A_nT = ntapes = tape + 1;
-                }
-                symb = Tn_insert( Tn_Sigma, t + 2, strlen( t + 2) );
-                if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
-                symb = symb * ntapes + tape;
-            } else {
-                symb = Tn_insert( Tn_Sigma, t, strlen( t ) );
-                if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
-                if ( symb != 1 ) symb *= ntapes;
-            }
-            if ( (t = get_name()) == NULL ) {
-                A_destroy( A );
-                Tn_destroy( TQ );
-                return( NULL );
-            }
-            to   = Tn_insert( TQ, t, strlen( t ) );
-            A = A_add( A, from, symb, to );
-            if ( !get_nl() ) {
-                A_destroy( A );
-                Tn_destroy( TQ );
-                return( NULL );
-            }
-        }
-        if ( file != NULL ) fclose( fp );
-        Tn_destroy( TQ );
-        return( A_close( A_rename( A, (SHORT *) NULL ) ) );
-    } else if ( c < 10 ) {
+    if ( c == 'I' ) {
+        A_destroy( A );
+        fclose( fp );
+        return( A_load_save( file, Tn_Sigma ) );
+    } else if ( c >= 0 ) {
+        A_destroy( A );
+        fclose( fp );
+        return( A_load_pr( file, Tn_Sigma ) );
+    } else {
         A-> A_nT = ntapes = c + 1;
         c = getc(fp);
         if ( !get_nl() ) {
@@ -234,49 +187,7 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
         A = A_close( A );
         A-> A_mode = DFA_MIN;
         return( A );
-    } else {
-        A_destroy( A );
-        fclose( fp );
-        return( A_load_save( file, Tn_Sigma ) );
     }
-}
-
-A_OBJECT A_store( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
-{
-    int t;
-    A_row *p, *pz;
-
-    if ( A == NULL || Tn_Sigma == NULL ) return( A );
-    if ( file != NULL ) {
-        if ( strcmp( file, "devnull" ) == 0 ) return( A );
-        else fp = fopen( file, "w" );
-    } else {
-        fp = fpout;
-        if ( fp == NULL ) fp = stdin;
-    }
-    if ( fp == NULL ) {
-        Warning( "Cannot open file" );
-        return( A );
-    }
-    pz = A-> A_t + A-> A_nrows;
-    for( p = A-> A_t; p < pz; p++ ) {
-        if ( ( t = p-> A_a ) == START ) fprintf( fp, "(START) " );
-        else if ( t == FINAL )          fprintf( fp, "(FINAL) " );
-        else                            fprintf( fp, "%d ", t );
-        if ( ( t = p-> A_b ) <= 1 || A-> A_nT == 1 ) {
-            put_name( Tn_name( Tn_Sigma, t ) );
-        } else {
-            fprintf( fp, "%1d.", t % A-> A_nT );
-            put_name( Tn_name( Tn_Sigma, t / A-> A_nT ) );
-        }
-        if ( ( t = p-> A_c ) == START ) fprintf( fp, " (START)\n" );
-        else if ( t == FINAL )          fprintf( fp, " (FINAL)\n" );
-        else                            fprintf( fp, " %d\n", t );
-    }
-    if ( file != NULL ) {
-        fclose( fp );
-    } else  if ( fflush( stdout ) == EOF ) Error( "A_store: fflush" );
-    return( A );
 }
 
 A_OBJECT A_lwds( char *file, Tn_OBJECT Tn_Sigma )
