@@ -41,6 +41,7 @@ int fileno( FILE * );
 #define A_Object        5
 #define Tn_Object       6
 #define P_Object        7
+#define T2_Object       8
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -75,6 +76,12 @@ typedef struct Tn_desc {
     SHORT *         Tn_hash;
     char  *         Tn_stor;
 } *     Tn_OBJECT;
+
+typedef struct T2_desc {
+    int             Type;
+    Tn_OBJECT       T2_int;
+    Tn_OBJECT       T2_ext;
+} *     T2_OBJECT;
 
 typedef struct V_desc {
     int             Type;
@@ -180,6 +187,20 @@ char *      Tn_name( Tn_OBJECT, int );
 int         Tn_length( Tn_OBJECT, int );
 P_OBJECT    Tn_Pstr( Tn_OBJECT, int );
 void        Tn_stats();
+
+/* T2.c */
+T2_OBJECT   T2_create();
+void        T2_destroy( T2_OBJECT );
+int         T2_member( T2_OBJECT, char *, int );
+int         T2_insert( T2_OBJECT, char *, int );
+char *      T2_name( T2_OBJECT, int );
+int         T2_length( T2_OBJECT, int );
+P_OBJECT    T2_Pstr( T2_OBJECT, int );
+char *      T2_name_pr( T2_OBJECT, int );
+int         T2_length_pr( T2_OBJECT, int );
+P_OBJECT    T2_Pstr_pr( T2_OBJECT, int );
+void        T2_stats();
+void        T2_sync( T2_OBJECT );
 
 /* P.c */
 P_OBJECT    P_create( int, char * );
