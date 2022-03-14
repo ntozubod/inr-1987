@@ -79,8 +79,7 @@ reg_0 SEMI
 }
 | reg_0 COLON SEMI
 {
-    TT_sync( TT, TT_print );
-    A = A_enum( $1, TT_print, 1000 );
+    A = A_enum( $1, TT2, 1000 );
     A_destroy( Alist[ 0 ] );
     Alist[ 0 ] = A;
     if ( A_report ) pr_time_diff();

@@ -29,8 +29,10 @@
 A_OBJECT    A, Atemp;
 Tn_OBJECT   TAlist;
 A_OBJECT    Alist[1000];
+
+T2_OBJECT   TT2;
 Tn_OBJECT   TT;
-T_OBJECT    TT_print;
+Tn_OBJECT   TT_print;
 
 char * pad20( char *s )
 {
@@ -430,8 +432,10 @@ fprintf( fpout, "\n" );
         fprintf( fpout, "\n\n\n" );
     }
 
-    TT = Tn_create();
-    TT_print = T_create();
+    TT2 = T2_create();
+    TT = TT2-> T2_int;
+    TT_print = TT2-> T2_ext;
+
     result = Tn_insert( TT, "^^", 2 );
     assert( result == 0 );
     result = Tn_insert( TT, "-|", 2 );
@@ -492,49 +496,4 @@ int tonum( char *p )
         acum = acum * 10 + c - '0';
     }
     return( acum );
-}
-
-void TT_sync( Tn_OBJECT TT, T_OBJECT TT_print )
-{
-    char hexmap[17] = "0123456789ABCDEF";
-    char *pr_str, *cstr;
-    int i, j, k, length, next_ch, ii, pr_str_length;
-
-    pr_str = Salloc( 100 );
-    pr_str_length = Ssize( pr_str );
-    for( i = TT_print-> T_n; i < TT-> Tn_n; ++i ) {
-        length = Tn_length( TT, i );
-        if ( pr_str_length < length * 4 + 1 ) {
-            pr_str = Srealloc( pr_str, length * 4 + 1 );
-        }
-        cstr = Tn_name( TT, i );
-        k = 0;
-        for( j = 0; j < length; ++j ) {
-            next_ch = cstr[ j ];
-            if ( next_ch == ' ' ) {
-                pr_str[ k++ ] = '\\';
-                pr_str[ k++ ] = '_';
-            } else if ( next_ch == '\t' ) {
-                pr_str[ k++ ] = '\\';
-                pr_str[ k++ ] = 't';
-            } else if ( next_ch == '\n' ) {
-                pr_str[ k++ ] = '\\';
-                pr_str[ k++ ] = 'n';
-            } else if ( next_ch == '\\' ) {
-                pr_str[ k++ ] = '\\';
-                pr_str[ k++ ] = '\\';
-            } else if ( isprint( next_ch ) ) {
-                pr_str[ k++ ] = next_ch;
-            } else {
-                pr_str[ k++ ] = '\\';
-                pr_str[ k++ ] = 'x';
-                pr_str[ k++ ] = hexmap[ ( next_ch >> 4 ) & 0xf ];
-                pr_str[ k++ ] = hexmap[ next_ch & 0xf ];
-            }
-        }
-        pr_str[ k++ ] = '\0';
-        ii = T_insert( TT_print, pr_str );
-        assert( i == ii );
-    }
-    Sfree( pr_str );
 }

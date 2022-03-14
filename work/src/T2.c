@@ -135,7 +135,7 @@ void T2_sync( T2_OBJECT T2 )
             }
         }
         pr_str[ k ] = '\0';
-        ii = Tn_insert( TT_print, pr_str, k - 1 );
+        ii = Tn_insert( TT_print, pr_str, k );
         assert( i == ii );
     }
     Sfree( pr_str );

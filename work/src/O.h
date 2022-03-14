@@ -34,7 +34,6 @@
 /* this seems to be needed with the -ansi option to suppress warnings */
 int fileno( FILE * );
 
-#define T_Object        1
 #define V_Object        2
 #define R_Object        3
 #define U_Object        4
@@ -56,15 +55,6 @@ typedef struct {
     SHORT           A_b;
     SHORT           A_c;
 }       A_row;
-
-typedef struct T_desc {
-    int             Type;
-    int             T_n;
-    int             T_lname;
-    int             T_lhash;
-    char **         T_name;
-    SHORT *         T_hash;
-} *     T_OBJECT;
 
 typedef struct Tn_desc {
     int             Type;
@@ -167,15 +157,6 @@ void        Error( char * );
 SHORT       *s_alloc( int );
 int         *i_alloc( int );
 void        pr_time_diff();
-
-/* T.c */
-T_OBJECT    T_create();
-void        T_destroy( T_OBJECT );
-int         T_member( T_OBJECT, char * );
-T_OBJECT    T_grow( T_OBJECT, int );
-int         T_insert( T_OBJECT, char * );
-char *      T_name( T_OBJECT, int );
-void        T_stats();
 
 /* Tn.c */
 Tn_OBJECT   Tn_create();
@@ -309,7 +290,7 @@ A_OBJECT    A_rev( A_OBJECT );
 A_OBJECT    A_shuffle( A_OBJECT, A_OBJECT );
 
 /* Aenum.c */
-A_OBJECT    A_enum( A_OBJECT, T_OBJECT, int );
+A_OBJECT    A_enum( A_OBJECT, T2_OBJECT, int );
 int         A_card( A_OBJECT );
 A_OBJECT    A_pref( A_OBJECT );
 A_OBJECT    A_suff( A_OBJECT );
@@ -362,14 +343,16 @@ extern A_OBJECT A;
 extern A_OBJECT Atemp;
 extern A_OBJECT Alist[1000];
 extern Tn_OBJECT TAlist;
+
+extern T2_OBJECT TT2;
 extern Tn_OBJECT TT;
-extern T_OBJECT TT_print;
+extern Tn_OBJECT TT_print;
+
 extern char Notice[];
 char *      pad20( char * );
 int         yylex();
 void        yyerror( char * );
 int         tonum( char * );
-void        TT_sync( Tn_OBJECT, T_OBJECT );
 
 /* Parse.y */
 int         yyparse( void );
