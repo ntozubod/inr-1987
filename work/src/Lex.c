@@ -277,6 +277,9 @@ int yylex()
             ch = getc( fpin );
         }
         if ( li == 0 ) return( CIRCUMFLEX );
+        token[ li ] = 0;
+        yylval.up = P_create( li, token );
+        return( LNAME );
     } else {
         while ( lflag && ch != EOF ) {
             token[ li++ ] = ch;

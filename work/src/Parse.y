@@ -46,7 +46,7 @@
 %token          AT
 %token          LBRACK BSLASH RBRACK    CIRCUMFLEX
 %token          LBRACE VBAR   RBRACE
-%token  <up>    NAME
+%token  <up>    LNAME NAME
 
 %%
 
@@ -321,6 +321,20 @@ reg_8 PLUS
 | CIRCUMFLEX
 {
     $$ = A_lambda();
+}
+| LNAME
+{
+    t = P_cstr( $1 );
+    if ( (i = Tn_member( TAlist, t, P_length( $1 ) )) >= 0
+              && Tn_member( TT, t, P_length( $1 ) ) < 0 )
+        $$ = A_copy( Alist[ i ] );
+    else {
+        $$ = A_letter( 0, Tn_insert( TT, t, P_length( $1 ) ) );
+        if ( i >= 0 )
+            fprintf( fpout,
+                     "Warning: %s is a variable and a token\n", t );
+    }
+    P_destroy( $1 );
 }
 | NAME
 {
