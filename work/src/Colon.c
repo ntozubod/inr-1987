@@ -55,7 +55,7 @@ int do_n_i( char *op )
         for( i = 1; i < TAlist-> Tn_n; i++ )
             if ( Alist[ i ]-> A_nrows > 0 )
                 (void) A_pr( Alist[ i ],
-                                Tn_name( TAlist, i ), TT );
+                                Tn_name( TAlist, i ), TT2 );
     } else if ( !strcmp("report",op) ) A_report = 1;
     else if ( !strcmp("save",op) ) {
         for( i = 1; i < TAlist-> Tn_n; i++ )
@@ -92,7 +92,7 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
     if ( !strcmp("pr",op) ) {
         (void) A_rept( A );
         fprintf( fpout, "\n" );
-        A = A_pr( A, (char *) NULL, TT );
+        A = A_pr( A, (char *) NULL, TT2 );
         fprintf( fpout, "\n" );
     } else if ( !strcmp("prsseq",op) ) {
         fprintf( fpout, "\n" );
@@ -251,7 +251,7 @@ A_OBJECT do_ann_a( A_OBJECT A, char *op, char *arg )
     } else if ( !strcmp("save",op) )
         A = A_save( A, arg, TT );
     else if ( !strcmp("pr",op) )
-        A = A_pr( A, arg, TT );
+        A = A_pr( A, arg, TT2 );
     else if ( !strcmp("prsseq",op) )
         A = A_prsseq( A, arg, TT );
     else if ( !strcmp("spit_octets",op) )
@@ -310,7 +310,7 @@ A_OBJECT do_nn_a( char *op, char *arg )
         else fprintf( fpout, "Warning: %s undefined\n", arg );
     } else if ( !strcmp("pr",op) ) {
         if ( (i = Tn_member( TAlist, arg, strlen( arg ) )) >= 0 )
-            A = A_pr( Alist[i], arg, TT );
+            A = A_pr( Alist[i], arg, TT2 );
         else fprintf( fpout, "Warning: %s undefined\n", arg );
     } else if ( !strcmp("help",op) ) {
         if ( !strcmp("ops",arg) )

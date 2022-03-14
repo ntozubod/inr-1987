@@ -245,7 +245,7 @@ A_OBJECT    A_lwds( char *, Tn_OBJECT );
 A_OBJECT    A_prsseq( A_OBJECT, char *, Tn_OBJECT );
 
 /* Apr.c */
-A_OBJECT    A_pr( A_OBJECT, char *, Tn_OBJECT );
+A_OBJECT    A_pr( A_OBJECT, char *, T2_OBJECT );
 A_OBJECT    A_load_pr( char *, Tn_OBJECT );
 
 /* Asave.c */
@@ -346,7 +346,6 @@ extern Tn_OBJECT TAlist;
 
 extern T2_OBJECT TT2;
 extern Tn_OBJECT TT;
-extern Tn_OBJECT TT_print;
 
 extern char Notice[];
 char *      pad20( char * );

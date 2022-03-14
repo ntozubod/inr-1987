@@ -29,15 +29,13 @@
 static int error_code = 0;
 #define fail(x) { error_code = x; goto FAIL_FORMAT; }
 
-A_OBJECT A_pr( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_pr( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
 {
-    int t, c, i, l;
+    int t;
     A_row *p, *pz;
     FILE *fp;
-    char *s;
-    char hexstr[] = "0123456789ABCDEF";
 
-    if ( A == NULL || Tn_Sigma == NULL ) return( A );
+    if ( A == NULL || T2_Sigma == NULL ) return( A );
     if ( file != NULL ) {
         if ( strcmp( file, "devnull" ) == 0 ) return( A );
         else fp = fopen( file, "w" );
@@ -55,30 +53,10 @@ A_OBJECT A_pr( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         else if ( t == FINAL )          fprintf( fp, "(FINAL) " );
         else                            fprintf( fp, "%d ", t );
         if ( ( t = p-> A_b ) <= 1 || A-> A_nT == 1 ) {
-            s = Tn_name( Tn_Sigma, t );
-            l = Tn_length( Tn_Sigma, t );
+            fprintf( fp, "%s", T2_name_pr( T2_Sigma, t ) );
         } else {
-            fprintf( fp, "%1d.", t % A-> A_nT );
-            s = Tn_name( Tn_Sigma, t / A-> A_nT );
-            l = Tn_length( Tn_Sigma, t / A-> A_nT );
-        }
-        for ( i = 0; i < l; ++i ) {
-            c = s[ i ];
-            if ( c == '\\' ) {
-                putc( '\\', fp ); putc( '\\', fp );
-            } else if ( c > 0x20 && c < 0x7f ) {
-                putc( c, fp );
-            } else if ( c == ' ' ) {
-                putc( '\\', fp ); putc( '_', fp );
-            } else if ( c == '\t' ) {
-                putc( '\\', fp ); putc( 't', fp );
-            } else if ( c == '\n' ) {
-                putc( '\\', fp ); putc( 'n', fp );
-            } else {
-                putc( '\\', fp ); putc( 'x', fp );
-                putc( hexstr[ ( c >> 4 ) & 0xf ], fp );
-                putc( hexstr[   c        & 0xf ], fp );
-            }
+            fprintf( fp, "%1d.%s", t % A-> A_nT,
+                T2_name_pr( T2_Sigma, t / A-> A_nT ) );
         }
         if ( ( t = p-> A_c ) == START ) fprintf( fp, " (START)\n" );
         else if ( t == FINAL )          fprintf( fp, " (FINAL)\n" );

@@ -125,6 +125,9 @@ void T2_sync( T2_OBJECT T2 )
             } else if ( next_ch == '\\' ) {
                 pr_str[ k++ ] = '\\';
                 pr_str[ k++ ] = '\\';
+            } else if ( next_ch == '.' ) {
+                pr_str[ k++ ] = '\\';
+                pr_str[ k++ ] = '.';
             } else if ( isprint( next_ch ) ) {
                 pr_str[ k++ ] = next_ch;
             } else {

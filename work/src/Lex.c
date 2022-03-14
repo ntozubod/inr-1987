@@ -32,7 +32,6 @@ A_OBJECT    Alist[1000];
 
 T2_OBJECT   TT2;
 Tn_OBJECT   TT;
-Tn_OBJECT   TT_print;
 
 char * pad20( char *s )
 {
@@ -434,7 +433,6 @@ fprintf( fpout, "\n" );
 
     TT2 = T2_create();
     TT = TT2-> T2_int;
-    TT_print = TT2-> T2_ext;
 
     result = Tn_insert( TT, "^^", 2 );
     assert( result == 0 );
