@@ -72,31 +72,6 @@ char *get_name()
     return( token );
 }
 
-void put_name( char *str )
-{
-    int i;
-    while ( ( i = *str++ ) ) {
-        switch( i ) {
-        case ' ':
-            putc( '\\', fp );
-            i = '_';
-            break;
-        case '\n':
-            putc( '\\', fp );
-            i = 'n';
-            break;
-        case '\t':
-            putc( '\\', fp );
-            i = 't';
-            break;
-        case '\\':
-            putc( '\\', fp );
-            break;
-        }
-        putc( i, fp );
-    }
-}
-
 int get_nl()
 {
     while ( c == ' ' || c == '\t' ) c = getc( fp );
@@ -250,14 +225,14 @@ A_OBJECT A_lwds( char *file, Tn_OBJECT Tn_Sigma )
     return( As );
 }
 
-A_OBJECT A_prsseq( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_prsseq( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
 {
     int t;
     A_row *p, *pz;
     int i, n_read, n_write;
     int ss_states = 0;
 
-    if ( A == NULL || Tn_Sigma == NULL ) return( A );
+    if ( A == NULL || T2_Sigma == NULL ) return( A );
     if ( A-> A_nT != 2 ) Error( "A_prsseq: Not two tapes" );
     if ( A-> A_mode < SSEQ ) A = A_min( A_sseq( A ) );
     if ( file != NULL ) {
@@ -291,7 +266,7 @@ A_OBJECT A_prsseq( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
                 else if ( t == FINAL )          fprintf( fp, "(FINAL)  " );
                 else                            fprintf( fp, "%-7d  ", t );
                 if ( n_write == 0 ) {
-                    put_name( Tn_name( Tn_Sigma, p-> A_b / 2 ) );
+                    fprintf( fp, "%s", T2_name_pr( T2_Sigma, p-> A_b / 2 ) );
                     t = p-> A_c;
                     fprintf( fp, " [" );
                 } else {
@@ -301,9 +276,8 @@ A_OBJECT A_prsseq( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
                 while ( A-> A_p[t] + 1 == A-> A_p[t+1]
                         && A-> A_p[t]-> A_b % 2 == 1 ) {
                     if ( A-> A_p[t]-> A_b != 1 ) {
-                        fprintf( fp, " " );
-                        put_name( Tn_name( Tn_Sigma,
-                                          A-> A_p[t]-> A_b / 2 ) );
+                        fprintf( fp, " %s",
+                            T2_name_pr( T2_Sigma, A-> A_p[t]-> A_b / 2 ) );
                     }
                     t = A-> A_p[t]-> A_c;
                 }

@@ -96,7 +96,7 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         fprintf( fpout, "\n" );
     } else if ( !strcmp("prsseq",op) ) {
         fprintf( fpout, "\n" );
-        A = A_prsseq( A, (char *) NULL, TT );
+        A = A_prsseq( A, (char *) NULL, TT2 );
         fprintf( fpout, "\n" );
     } else if ( !strcmp("spit_octets",op) ) {
         fprintf( fpout, "\n" );
@@ -220,7 +220,7 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         A = A_GMsseq( A );
         disp_flag = 2;
     } else if ( !strcmp("stems",op) ) {
-        A_prstems( A, TT, 0 );
+        A_prstems( A, TT2, 0 );
     } else if ( !strcmp("suff",op) ) {
         if ( A_report ) fprintf( fpout, "(suff)\n" );
         A = A_suff( A );
@@ -253,7 +253,7 @@ A_OBJECT do_ann_a( A_OBJECT A, char *op, char *arg )
     else if ( !strcmp("pr",op) )
         A = A_pr( A, arg, TT2 );
     else if ( !strcmp("prsseq",op) )
-        A = A_prsseq( A, arg, TT );
+        A = A_prsseq( A, arg, TT2 );
     else if ( !strcmp("spit_octets",op) )
         A = A_spit_octets( A, arg, TT );
     else if ( !strcmp("spit_nibbles",op) )
@@ -261,7 +261,7 @@ A_OBJECT do_ann_a( A_OBJECT A, char *op, char *arg )
     else if ( !strcmp("spit_utf8",op) )
         A = A_spit_utf8( A, arg, TT );
     else if ( !strcmp("stems",op) )
-        A_prstems( A, TT, tonum(arg) );
+        A_prstems( A, TT2, tonum(arg) );
     else if ( !strcmp("surgery",op) ) {
         num = tonum(arg);
         if ( num < 2 || num >= A-> A_nrows )

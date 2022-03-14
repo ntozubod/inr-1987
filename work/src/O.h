@@ -242,7 +242,7 @@ A_OBJECT    A_mkdense( A_OBJECT );
 /* Aload.c */
 A_OBJECT    A_load( char *, Tn_OBJECT );
 A_OBJECT    A_lwds( char *, Tn_OBJECT );
-A_OBJECT    A_prsseq( A_OBJECT, char *, Tn_OBJECT );
+A_OBJECT    A_prsseq( A_OBJECT, char *, T2_OBJECT );
 
 /* Apr.c */
 A_OBJECT    A_pr( A_OBJECT, char *, T2_OBJECT );
@@ -317,7 +317,7 @@ int         A_minlen( A_OBJECT );
 /* Astems.c */
 void        A_st_free();
 SHORT **    A_stems( A_OBJECT, int );
-void        A_prstems( A_OBJECT, Tn_OBJECT, int );
+void        A_prstems( A_OBJECT, T2_OBJECT, int );
 
 /* Asseq.c */
 A_OBJECT    A_sseq( A_OBJECT );
