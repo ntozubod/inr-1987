@@ -34,12 +34,13 @@
 /* this seems to be needed with the -ansi option to suppress warnings */
 int fileno( FILE * );
 
+#define Tn_Object       1
 #define V_Object        2
 #define R_Object        3
 #define U_Object        4
 #define A_Object        5
-#define Tn_Object       6
-#define P_Object        7
+#define P_Object        6
+#define Q_Object        7
 #define T2_Object       8
 
 typedef int             SHORT;
@@ -119,6 +120,13 @@ typedef struct P_desc {
     char *          P_cstr;
 } *     P_OBJECT;
 
+typedef struct Q_desc {
+    int             Type;
+    int             Q_tapeno;
+    int             Q_length;
+    char *          Q_cstr;
+} *     Q_OBJECT;
+
 #define OPEN            0
 #define NFA             1
 #define NFA_TRIM        2
@@ -185,9 +193,18 @@ void        T2_sync( T2_OBJECT );
 
 /* P.c */
 P_OBJECT    P_create( int, char * );
+P_OBJECT    P_fromQ( Q_OBJECT );
 void        P_destroy( P_OBJECT );
 int         P_length( P_OBJECT );
 char *      P_cstr( P_OBJECT );
+
+/* Q.c */
+Q_OBJECT    Q_create( int, int, char * );
+Q_OBJECT    Q_fromP( P_OBJECT );
+void        Q_destroy( Q_OBJECT );
+int         Q_tapeno( Q_OBJECT );
+int         Q_length( Q_OBJECT );
+char *      Q_cstr( Q_OBJECT );
 
 /* V.c */
 SHORT *     veccpy( SHORT *, SHORT * );

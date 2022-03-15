@@ -28,7 +28,10 @@
 #include "O.h"
 
     int             i, num;
-    char *          t;
+    P_OBJECT P;
+    Q_OBJECT Q;
+    char *t;
+    int l, i_var, tapeno, i_tok;
 
 #define PROMT   if(isatty(fileno(fpin))&&isatty(fileno(fpout)))printf("--* ");
 
@@ -338,6 +341,31 @@ reg_8 PLUS
 }
 | NAME
 {
+    P = $1;
+    t = P_cstr( P );
+    l = P_length( P );
+    i_var = Tn_member( TAlist, t, l );
+
+    Q = Q_fromP( P );
+    t = Q_cstr( Q );
+    l = Q_length( Q );
+    tapeno = Q_tapeno( Q );
+    i_tok = Tn_member( TT, t, l );
+
+    if ( i_var >= 0 && i_tok >= 0 ) {
+        fprintf( fpout, "Warning: %s is a variable and a token\n", t );
+    }
+
+    if ( i_var < 0 ) {
+        if ( tapeno < 0 ) { tapeno = 0; }
+        i_tok = Tn_insert( TT, t, l );
+        $$ = A_letter( tapeno, i_tok );
+    } else {
+        $$ = A_copy( Alist[ i_var ] );
+    }
+    Q_destroy( Q );
+
+/*
     t = P_cstr( $1 );
     if ( t[1] == '.' && t[0] >= '0' && t[0] <= '9' )
         $$ = A_letter( t[0] - '0',
@@ -352,6 +380,7 @@ reg_8 PLUS
                      "Warning: %s is a variable and a token\n", t );
     }
     P_destroy( $1 );
+*/
 }
 | LBRACK reg_0 RBRACK
 {
