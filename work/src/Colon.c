@@ -163,12 +163,12 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
                     A_retape(
                         A_copy( A ),
                         A_letter( 0, T2_insert( TT2, "1", 1 ) ),
-                        TT
+                        TT2
                     ),
                     A_retape(
                         A_copy( A ),
                         A_letter( 0, T2_insert( TT2, "0", 1 ) ),
-                        TT
+                        TT2
                     )
                 );
 

@@ -319,7 +319,7 @@ A_OBJECT    A_compose( A_OBJECT, A_OBJECT );
 A_OBJECT    A_join( A_OBJECT, A_OBJECT );
 
 /* Aretape.c */
-A_OBJECT    A_retape( A_OBJECT, A_OBJECT, Tn_OBJECT );
+A_OBJECT    A_retape( A_OBJECT, A_OBJECT, T2_OBJECT );
 A_OBJECT    A_comma( A_OBJECT, A_OBJECT );
 
 /* Apowers.c */
@@ -362,7 +362,6 @@ extern A_OBJECT Alist[1000];
 extern Tn_OBJECT TAlist;
 
 extern T2_OBJECT TT2;
-extern Tn_OBJECT TT;
 
 extern char Notice[];
 char *      pad20( char * );
