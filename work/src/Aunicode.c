@@ -26,7 +26,7 @@
 
 #include "O.h"
 
-A_OBJECT A_slurp_octets( char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_slurp_octets( char *file, T2_OBJECT T2_Sigma )
 {
     A_OBJECT A;
     FILE *fp;
@@ -39,8 +39,8 @@ A_OBJECT A_slurp_octets( char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
 
-    assert( Tn_Sigma != NULL );
-    assert( Tn_Sigma-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma != NULL );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
 
     A = A_create();
     c = getc( fp );
@@ -58,7 +58,7 @@ A_OBJECT A_slurp_octets( char *file, Tn_OBJECT Tn_Sigma )
     return( A );
 }
 
-A_OBJECT A_slurp_nibbles( char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_slurp_nibbles( char *file, T2_OBJECT T2_Sigma )
 {
     A_OBJECT A;
     FILE *fp;
@@ -71,7 +71,7 @@ A_OBJECT A_slurp_nibbles( char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
 
-    assert( Tn_Sigma != NULL );
+    assert( T2_Sigma != NULL );
 
     A = A_create();
     c = getc( fp );
@@ -93,7 +93,7 @@ A_OBJECT A_slurp_nibbles( char *file, Tn_OBJECT Tn_Sigma )
     return( A );
 }
 
-A_OBJECT A_slurp_utf8( char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_slurp_utf8( char *file, T2_OBJECT T2_Sigma )
 {
     A_OBJECT A;
     FILE *fp;
@@ -106,10 +106,10 @@ A_OBJECT A_slurp_utf8( char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
 
-    assert( Tn_Sigma != NULL );
-    assert( Tn_Sigma-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma != NULL );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
 
-    A = A_slurp_octets( file, Tn_Sigma );
+    A = A_slurp_octets( file, T2_Sigma );
     A = A_open( A );
 
     for ( i = 0; i < A-> A_nrows; ++i ) {
@@ -130,7 +130,7 @@ A_OBJECT A_slurp_utf8( char *file, Tn_OBJECT Tn_Sigma )
                     ts[ 1 ] = c2;
                     ts[ 2 ] = '\0';
                 }
-                A-> A_t[ i ].A_b = Tn_insert( Tn_Sigma, ts, 2 );
+                A-> A_t[ i ].A_b = T2_insert( T2_Sigma, ts, 2 );
                 A-> A_t[ i ].A_c += 1;
                 break;
 
@@ -144,7 +144,7 @@ A_OBJECT A_slurp_utf8( char *file, Tn_OBJECT Tn_Sigma )
                     ts[ 2 ] = c3;
                     ts[ 3 ] = '\0';
                 }
-                A-> A_t[ i ].A_b = Tn_insert( Tn_Sigma, ts, 3 );
+                A-> A_t[ i ].A_b = T2_insert( T2_Sigma, ts, 3 );
                 A-> A_t[ i ].A_c += 2;
                 break;
 
@@ -161,7 +161,7 @@ A_OBJECT A_slurp_utf8( char *file, Tn_OBJECT Tn_Sigma )
                     ts[ 3 ] = c4;
                     ts[ 4 ] = '\0';
                 }
-                A-> A_t[ i ].A_b = Tn_insert( Tn_Sigma, ts, 4 );
+                A-> A_t[ i ].A_b = T2_insert( T2_Sigma, ts, 4 );
                 A-> A_t[ i ].A_c += 3;
                 break;
 
@@ -170,15 +170,15 @@ A_OBJECT A_slurp_utf8( char *file, Tn_OBJECT Tn_Sigma )
         }
     }
 
-    if ( Tn_Sigma-> Tn_n > A-> A_nS ) {
-        A-> A_nS = Tn_Sigma-> Tn_n;
+    if ( T2_Sigma-> T2_int-> Tn_n > A-> A_nS ) {
+        A-> A_nS = T2_Sigma-> T2_int-> Tn_n;
     }
     A = A_min( A );
     fclose( fp );
     return( A );
 }
 
-A_OBJECT A_spit_octets( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_spit_octets( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
 {
     FILE *fp;
     int i, s1, c1;
@@ -189,8 +189,8 @@ A_OBJECT A_spit_octets( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
 
-    assert( Tn_Sigma != NULL );
-    assert( Tn_Sigma-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma != NULL );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
 
     A = A_min( A );
 
@@ -206,7 +206,7 @@ A_OBJECT A_spit_octets( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
     return( A );
 }
 
-A_OBJECT A_spit_nibbles( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_spit_nibbles( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
 {
     FILE *fp;
     int i, s1, c1;
@@ -218,8 +218,8 @@ A_OBJECT A_spit_nibbles( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
 
-    assert( Tn_Sigma != NULL );
-    assert( Tn_Sigma-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma != NULL );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
 
     A = A_min( A );
 
@@ -244,7 +244,7 @@ A_OBJECT A_spit_nibbles( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
     return( A );
 }
 
-A_OBJECT A_spit_utf8( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_spit_utf8( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
 {
     FILE *fp;
     int i, s1, c1, type;
@@ -257,8 +257,8 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
 
-    assert( Tn_Sigma != NULL );
-    assert( Tn_Sigma-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma != NULL );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
 
     A = A_min( A );
 
@@ -280,8 +280,8 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, Tn_OBJECT Tn_Sigma )
                     break;
             }
         } else {
-            cstr = Tn_name( Tn_Sigma, s1 );
-            length = Tn_length( Tn_Sigma, s1 );
+            cstr = T2_name( T2_Sigma, s1 );
+            length = T2_length( T2_Sigma, s1 );
             for ( j = 0; j < length; ++j ) {
                 fputc( cstr[ j ], fp );
             }
@@ -311,21 +311,21 @@ A_OBJECT A_gen_min( A_OBJECT A )
     return( A );
 }
 
-A_OBJECT A_utf8_nibble_map( char *arg, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_utf8_nibble_map( char *arg, T2_OBJECT T2_Sigma )
 {
     A_OBJECT A;
     int i, j, c, state, len;
     char *s;
 
-    assert( Tn_Sigma != NULL );
-    assert( Tn_Sigma-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma != NULL );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
 
     A = A_create();
     A-> A_nT = 2;
 
     state = 2;
-    for ( i = 258 + 32; i < Tn_Sigma-> Tn_n; ++i ) {
-        s = Tn_name( Tn_Sigma, i );
+    for ( i = 258 + 32; i < T2_Sigma-> T2_int-> Tn_n; ++i ) {
+        s = T2_name( T2_Sigma, i );
         A = A_add( A, 0, i * 2, state );
         len = strlen( s );
         for ( j = 0; j < len; ++j ) {

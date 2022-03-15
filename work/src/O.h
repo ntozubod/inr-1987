@@ -257,17 +257,17 @@ A_OBJECT    A_rename( A_OBJECT, SHORT * );
 A_OBJECT    A_mkdense( A_OBJECT );
 
 /* Aload.c */
-A_OBJECT    A_load( char *, Tn_OBJECT );
-A_OBJECT    A_lwds( char *, Tn_OBJECT );
+A_OBJECT    A_load( char *, T2_OBJECT );
+A_OBJECT    A_lwds( char *, T2_OBJECT );
 A_OBJECT    A_prsseq( A_OBJECT, char *, T2_OBJECT );
 
 /* Apr.c */
 A_OBJECT    A_pr( A_OBJECT, char *, T2_OBJECT );
-A_OBJECT    A_load_pr( char *, Tn_OBJECT );
+A_OBJECT    A_load_pr( char *, T2_OBJECT );
 
 /* Asave.c */
-A_OBJECT    A_save( A_OBJECT, char *, Tn_OBJECT );
-A_OBJECT    A_load_save( char *, Tn_OBJECT );
+A_OBJECT    A_save( A_OBJECT, char *, T2_OBJECT );
+A_OBJECT    A_load_save( char *, T2_OBJECT );
 
 /* Atrim.c */
 A_OBJECT    A_trim( A_OBJECT );
@@ -374,11 +374,11 @@ int         tonum( char * );
 int         yyparse( void );
 
 /* Aunicode.c */
-A_OBJECT    A_slurp_octets( char *, Tn_OBJECT );
-A_OBJECT    A_slurp_nibbles( char *, Tn_OBJECT );
-A_OBJECT    A_slurp_utf8( char *, Tn_OBJECT );
-A_OBJECT    A_spit_octets( A_OBJECT, char *, Tn_OBJECT );
-A_OBJECT    A_spit_nibbles( A_OBJECT, char *, Tn_OBJECT );
-A_OBJECT    A_spit_utf8( A_OBJECT, char *, Tn_OBJECT );
+A_OBJECT    A_slurp_octets( char *, T2_OBJECT );
+A_OBJECT    A_slurp_nibbles( char *, T2_OBJECT );
+A_OBJECT    A_slurp_utf8( char *, T2_OBJECT );
+A_OBJECT    A_spit_octets( A_OBJECT, char *, T2_OBJECT );
+A_OBJECT    A_spit_nibbles( A_OBJECT, char *, T2_OBJECT );
+A_OBJECT    A_spit_utf8( A_OBJECT, char *, T2_OBJECT );
 A_OBJECT    A_gen_min( A_OBJECT );
-A_OBJECT    A_utf8_nibble_map( char *, Tn_OBJECT );
+A_OBJECT    A_utf8_nibble_map( char *, T2_OBJECT );

@@ -83,7 +83,7 @@ int get_nl()
     return( 1 );
 }
 
-A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_load( char *file, T2_OBJECT T2_Sigma )
 {
     int from, symb, to, tape, ntapes, i;
     A_OBJECT A;
@@ -98,19 +98,19 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
     A = A_create();
-    if ( Tn_Sigma == NULL
-            || Tn_insert( Tn_Sigma, "^^", 2 ) != 0
-            || Tn_insert( Tn_Sigma, "-|", 2 ) != 1 ) Error( "A_load: BOTCH 1" );
+    if ( T2_Sigma == NULL
+            || T2_insert( T2_Sigma, "^^", 2 ) != 0
+            || T2_insert( T2_Sigma, "-|", 2 ) != 1 ) Error( "A_load: BOTCH 1" );
     A-> A_nT = ntapes = 1;
     c = getc( fp );
     if ( c == 'I' ) {
         A_destroy( A );
         fclose( fp );
-        return( A_load_save( file, Tn_Sigma ) );
+        return( A_load_save( file, T2_Sigma ) );
     } else if ( c >= 0 ) {
         A_destroy( A );
         fclose( fp );
-        return( A_load_pr( file, Tn_Sigma ) );
+        return( A_load_pr( file, T2_Sigma ) );
     } else {
         A-> A_nT = ntapes = c + 1;
         c = getc(fp);
@@ -144,11 +144,11 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
                     }
                     A-> A_nT = ntapes = tape + 1;
                 }
-                symb = Tn_insert( Tn_Sigma, t + 2, strlen( t + 2 ) );
+                symb = T2_insert( T2_Sigma, t + 2, strlen( t + 2 ) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 symb = symb * ntapes + tape;
             } else {
-                symb = Tn_insert( Tn_Sigma, t, strlen( t ) );
+                symb = T2_insert( T2_Sigma, t, strlen( t ) );
                 if ( symb == 1 && ntapes > 1 ) A-> A_ems = 1;
                 if ( symb != 1 ) symb *= ntapes;
             }
@@ -165,7 +165,7 @@ A_OBJECT A_load( char *file, Tn_OBJECT Tn_Sigma )
     }
 }
 
-A_OBJECT A_lwds( char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_lwds( char *file, T2_OBJECT T2_Sigma )
 {
     A_OBJECT A, As;
     char *p;
@@ -179,8 +179,8 @@ A_OBJECT A_lwds( char *file, Tn_OBJECT Tn_Sigma )
         return( NULL );
     }
 
-    assert( Tn_Sigma != NULL );
-    assert( Tn_Sigma-> Tn_n >= 258 );
+    assert( T2_Sigma != NULL );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
     A = A_create();
     As = A_create();

@@ -32,8 +32,8 @@ int do_n_i( char *op )
     int i;
     if ( !strcmp("alph",op) ) {
         fprintf( fpout, "\n" );
-        for( i = 2; i < TT-> Tn_n; i++ ) {
-            fprintf( fpout, "%s", Tn_name( TT, i ) );
+        for( i = 2; i < TT2-> T2_int-> Tn_n; i++ ) {
+            fprintf( fpout, "%s", T2_name( TT2, i ) );
             fprintf( fpout, " " );
         }
         fprintf( fpout, "\n" );
@@ -61,7 +61,7 @@ int do_n_i( char *op )
         for( i = 1; i < TAlist-> Tn_n; i++ )
             if ( Alist[ i ]-> A_nrows > 0 )
                 Alist[ i ] = A_save( Alist[ i ],
-                                     Tn_name( TAlist, i ), TT );
+                                Tn_name( TAlist, i ), TT2 );
     } else if ( !strcmp("time",op) ) pr_time_diff();
     else if( !strcmp("help",op) )
 
@@ -100,15 +100,15 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         fprintf( fpout, "\n" );
     } else if ( !strcmp("spit_octets",op) ) {
         fprintf( fpout, "\n" );
-        A = A_spit_octets( A, (char *) NULL, TT );
+        A = A_spit_octets( A, (char *) NULL, TT2 );
         fprintf( fpout, "\n" );
     } else if ( !strcmp("spit_nibbles",op) ) {
         fprintf( fpout, "\n" );
-        A = A_spit_nibbles( A, (char *) NULL, TT );
+        A = A_spit_nibbles( A, (char *) NULL, TT2 );
         fprintf( fpout, "\n" );
     } else if ( !strcmp("spit_utf8",op) ) {
         fprintf( fpout, "\n" );
-        A = A_spit_utf8( A, (char *) NULL, TT );
+        A = A_spit_utf8( A, (char *) NULL, TT2 );
         fprintf( fpout, "\n" );
     } else if ( !strcmp("acomp",op) ) {
         if ( A_report ) fprintf( fpout, "(acomp)\n" );
@@ -143,8 +143,8 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         disp_flag = 2;
     } else if ( !strcmp("deecho",op) ) {
         A = A_deecho( A,
-                      Tn_insert(TT,"_Echo_",6) * A-> A_nT + 1,
-                      Tn_insert(TT,"_Noecho_",8) * A-> A_nT + 1 );
+                      T2_insert(TT2,"_Echo_",6) * A-> A_nT + 1,
+                      T2_insert(TT2,"_Noecho_",8) * A-> A_nT + 1 );
         disp_flag = 2;
     } else if ( !strcmp("dfa",op) ) {
         A = A_subs( A );
@@ -162,12 +162,12 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         Atemp = A_differ(
                     A_retape(
                         A_copy( A ),
-                        A_letter( 0, Tn_insert( TT, "1", 1 ) ),
+                        A_letter( 0, T2_insert( TT2, "1", 1 ) ),
                         TT
                     ),
                     A_retape(
                         A_copy( A ),
-                        A_letter( 0, Tn_insert( TT, "0", 1 ) ),
+                        A_letter( 0, T2_insert( TT2, "0", 1 ) ),
                         TT
                     )
                 );
@@ -249,17 +249,17 @@ A_OBJECT do_ann_a( A_OBJECT A, char *op, char *arg )
     if ( !strcmp("enum",op) && (num = tonum(arg)) >= 0) {
         A = A_enum( A, TT2, num );
     } else if ( !strcmp("save",op) )
-        A = A_save( A, arg, TT );
+        A = A_save( A, arg, TT2 );
     else if ( !strcmp("pr",op) )
         A = A_pr( A, arg, TT2 );
     else if ( !strcmp("prsseq",op) )
         A = A_prsseq( A, arg, TT2 );
     else if ( !strcmp("spit_octets",op) )
-        A = A_spit_octets( A, arg, TT );
+        A = A_spit_octets( A, arg, TT2 );
     else if ( !strcmp("spit_nibbles",op) )
-        A = A_spit_nibbles( A, arg, TT );
+        A = A_spit_nibbles( A, arg, TT2 );
     else if ( !strcmp("spit_utf8",op) )
-        A = A_spit_utf8( A, arg, TT );
+        A = A_spit_utf8( A, arg, TT2 );
     else if ( !strcmp("stems",op) )
         A_prstems( A, TT2, tonum(arg) );
     else if ( !strcmp("surgery",op) ) {
@@ -269,7 +269,7 @@ A_OBJECT do_ann_a( A_OBJECT A, char *op, char *arg )
         else {
             A = A_open( A );
             A = A_add( A, num,
-                       Tn_insert(TT,"_Incision_", 10) * A-> A_nT,
+                       T2_insert(TT2,"_Incision_", 10) * A-> A_nT,
                        num );
         }
     } else Warning( "Unknown function" );
@@ -287,26 +287,26 @@ A_OBJECT do_nn_a( char *op, char *arg )
             A = A_copy( Alist[i] );
         disp_flag = 1;
     } else if ( !strcmp("read",op) || !strcmp("load",op) ) {
-        A = A_load( arg, TT );
+        A = A_load( arg, TT2 );
         disp_flag = 1;
     } else if ( !strcmp("readwords",op) ) {
-        A = A_lwds( arg, TT );
+        A = A_lwds( arg, TT2 );
         disp_flag = 1;
     } else if ( !strcmp("slurp_octets",op) ) {
-        A = A_slurp_octets( arg, TT );
+        A = A_slurp_octets( arg, TT2);
         disp_flag = 1;
     } else if ( !strcmp("slurp_nibbles",op) ) {
-        A = A_slurp_nibbles( arg, TT );
+        A = A_slurp_nibbles( arg, TT2 );
         disp_flag = 1;
     } else if ( !strcmp("slurp_utf8",op) ) {
-        A = A_slurp_utf8( arg, TT );
+        A = A_slurp_utf8( arg, TT2 );
         disp_flag = 1;
     } else if ( !strcmp("utf8_nibble_map",op) ) {
-        A = A_utf8_nibble_map( arg, TT );
+        A = A_utf8_nibble_map( arg, TT2 );
         disp_flag = 1;
     } else if ( !strcmp("save",op) ) {
         if ( (i = Tn_member( TAlist, arg, strlen( arg ) )) >= 0 )
-            A = A_save( A_copy( Alist[i] ), arg, TT );
+            A = A_save( A_copy( Alist[i] ), arg, TT2 );
         else fprintf( fpout, "Warning: %s undefined\n", arg );
     } else if ( !strcmp("pr",op) ) {
         if ( (i = Tn_member( TAlist, arg, strlen( arg ) )) >= 0 )

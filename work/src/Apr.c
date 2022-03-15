@@ -68,7 +68,7 @@ A_OBJECT A_pr( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
     return( A );
 }
 
-A_OBJECT A_load_pr( char *file, Tn_OBJECT Tn_Sigma )
+A_OBJECT A_load_pr( char *file, T2_OBJECT T2_Sigma )
 {
     int from_state, to_state, tape_number, ntapes, l;
     int c, d, j, transition_label;
@@ -90,9 +90,9 @@ A_OBJECT A_load_pr( char *file, Tn_OBJECT Tn_Sigma )
     A = A_create();
     A-> A_nT = ntapes = 1;
 
-    if ( Tn_Sigma == NULL
-            || Tn_insert( Tn_Sigma, "^^", 2 ) != 0
-            || Tn_insert( Tn_Sigma, "-|", 2 ) != 1 )
+    if ( T2_Sigma == NULL
+            || T2_insert( T2_Sigma, "^^", 2 ) != 0
+            || T2_insert( T2_Sigma, "-|", 2 ) != 1 )
                 Error( "A_load: BOTCH 1" );
 
     TQ = Tn_create();
@@ -192,7 +192,7 @@ NEXT_ROW:
     }
 
     buffer[ l ] = '\0';
-    transition_label = Tn_insert( Tn_Sigma, buffer, l );
+    transition_label = T2_insert( T2_Sigma, buffer, l );
 
 /* To state */
 /* Here c must be a delimiter. */

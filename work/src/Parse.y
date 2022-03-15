@@ -109,7 +109,7 @@ reg_0 SEMI
 | NAME EQUAL COLON NAME SEMI
 {
     if ( !strcmp("read",P_cstr($4)) || !strcmp("load",P_cstr($4)) )
-        A = A_load(P_cstr($1),TT);
+        A = A_load(P_cstr($1),TT2);
     else {
         Warning( "Unknown function" );
         A = A_create();
