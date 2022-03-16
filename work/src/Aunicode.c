@@ -40,7 +40,7 @@ A_OBJECT A_slurp_octets( char *file, T2_OBJECT T2_Sigma )
     }
 
     assert( T2_Sigma != NULL );
-    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
     A = A_create();
     c = getc( fp );
@@ -80,8 +80,8 @@ A_OBJECT A_slurp_nibbles( char *file, T2_OBJECT T2_Sigma )
     state2 = 3;
     while ( c != EOF ) {
         assert( state2 <= MAXSHORT );
-        A = A_add( A, state,  ( c >> 4 ) + 2 + 256, state1 );
-        A = A_add( A, state1, ( c & 0xf) + 2 + 256 + 16, state2 );
+        A = A_add( A, state,  ( c >> 4 ) + 2, state1 );
+        A = A_add( A, state1, ( c & 0xf) + 2 + 16, state2 );
         state = state2;
         state1 = state + 1;
         state2 = state + 2;
@@ -107,7 +107,7 @@ A_OBJECT A_slurp_utf8( char *file, T2_OBJECT T2_Sigma )
     }
 
     assert( T2_Sigma != NULL );
-    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
     A = A_slurp_octets( file, T2_Sigma );
     A = A_open( A );
@@ -190,7 +190,7 @@ A_OBJECT A_spit_octets( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
     }
 
     assert( T2_Sigma != NULL );
-    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
     A = A_min( A );
 
@@ -219,16 +219,16 @@ A_OBJECT A_spit_nibbles( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
     }
 
     assert( T2_Sigma != NULL );
-    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
     A = A_min( A );
 
     for ( i = 0; i < A-> A_nrows; ++i ) {
         s1 = A-> A_t[ i ].A_b;
-        assert( s1 < 258 + 32 );
+        assert( s1 < 2 + 32 );
         if ( s1 >= 2 ) {
-            assert( s1 >= 258 );
-            c1 = s1 - 258;
+            assert( s1 >= 2 );
+            c1 = s1 - 2;
             if ( c1 < 16 ) {
                 assert( accum == -1 );
                 accum = c1 << 4;
@@ -258,7 +258,7 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
     }
 
     assert( T2_Sigma != NULL );
-    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
     A = A_min( A );
 
@@ -318,23 +318,23 @@ A_OBJECT A_utf8_nibble_map( char *arg, T2_OBJECT T2_Sigma )
     char *s;
 
     assert( T2_Sigma != NULL );
-    assert( T2_Sigma-> T2_int-> Tn_n >= 258 + 32 );
+    assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
     A = A_create();
     A-> A_nT = 2;
 
     state = 2;
-    for ( i = 258 + 32; i < T2_Sigma-> T2_int-> Tn_n; ++i ) {
+    for ( i = 258; i < T2_Sigma-> T2_int-> Tn_n; ++i ) {
         s = T2_name( T2_Sigma, i );
         A = A_add( A, 0, i * 2, state );
         len = strlen( s );
         for ( j = 0; j < len; ++j ) {
             c = s[ j ] & 0xff;
             A = A_add( A, state,
-                ( ( c >> 4 )  + 2 + 256 ) * 2 + 1,
+                ( ( c >> 4 )  + 2 ) * 2 + 1,
                 state + 1 );
             A = A_add( A, state + 1,
-                ( ( c & 0xf ) + 2 + 256 + 16 ) * 2 + 1,
+                ( ( c & 0xf ) + 2 + 16 ) * 2 + 1,
                 state + 2 );
             state += 2;
         }
