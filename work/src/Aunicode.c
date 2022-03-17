@@ -64,7 +64,7 @@ A_OBJECT A_slurp_nibbles( char *file, T2_OBJECT T2_Sigma )
     FILE *fp;
     int c;
     SHORT state, state1, state2, state3;
-    int T2index[] = { 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+    int T2idx[] = { 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
                     67, 68, 69, 70, 71, 72 };
     int T2idx_blk =  97;
 
@@ -84,8 +84,8 @@ A_OBJECT A_slurp_nibbles( char *file, T2_OBJECT T2_Sigma )
     state3 = 4;
     while ( c != EOF ) {
         assert( state3 <= MAXSHORT );
-        A = A_add( A, state,  T2index[ ( c >> 4 ) & 0xf ], state1 );
-        A = A_add( A, state1, T2index[ c & 0xf ], state2 );
+        A = A_add( A, state,  T2idx[ ( c >> 4 ) & 0xf ], state1 );
+        A = A_add( A, state1, T2idx[ c & 0xf ], state2 );
         A = A_add( A, state2, T2idx_blk, state3 );
         state = state3;
         state1 = state + 1;
@@ -213,7 +213,7 @@ A_OBJECT A_spit_octets( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
     assert( T2_Sigma != NULL );
     assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
-    A = A_min( A );
+    A = A_gen_min( A );
 
     for ( i = 0; i < A-> A_nrows; ++i ) {
         s1 = A-> A_t[ i ].A_b;
@@ -230,8 +230,10 @@ A_OBJECT A_spit_octets( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
 A_OBJECT A_spit_nibbles( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
 {
     FILE *fp;
-    int i, s1, c1;
-    int accum = -1;
+    int i, s1;
+    int accum = (-1);
+    int digit = 0;
+    int phase = 0;
 
     if ( file != NULL ) fp = fopen( file, "w" );
     if ( fp == NULL ) {
@@ -242,25 +244,54 @@ A_OBJECT A_spit_nibbles( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
     assert( T2_Sigma != NULL );
     assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
-    A = A_min( A );
+    A = A_gen_min( A );
 
     for ( i = 0; i < A-> A_nrows; ++i ) {
         s1 = A-> A_t[ i ].A_b;
-        assert( s1 < 2 + 32 );
-        if ( s1 >= 2 ) {
-            assert( s1 >= 2 );
-            c1 = s1 - 2;
-            if ( c1 < 16 ) {
-                assert( accum == -1 );
-                accum = c1 << 4;
-            } else {
-                assert( c1 < 32 );
-                fputc( accum + c1 - 16, fp );
-                accum = -1;
-            }
+
+        switch ( s1 ) {
+        case 50: case 51: case 52: case 53: case 54:
+        case 55: case 56: case 57: case 58: case 59:
+            digit = s1 - 50;
+            break;
+        case 67: case 68: case 69: case 70: case 71: case 72:
+            digit = s1 - 57;
+            break;
+        case 97:
+            digit = -1;
+            break;
+        case 1:
+            digit = -2;
+            break;
+        default:
+            printf( "%d\n", s1 );
+            Error( "Illegal character" );
+        }
+
+        if ( digit == -2 ) { break; }
+
+        switch ( phase ) {
+        case 0:
+            assert( digit >= 0 );
+            accum = digit * 16;
+            phase = 1;
+            break;
+        case 1:
+            assert( digit >= 0 );
+            accum += digit;
+            phase = 2;
+            break;
+        case 2:
+            assert( digit == -1 );
+            fputc( accum, fp );
+            accum = (-1);
+            phase = 0;
+            break;
         }
     }
     assert( accum == -1 );
+    assert( digit == -2 );
+    assert( phase == 0 );
     fclose( fp );
     return( A );
 }
@@ -281,7 +312,7 @@ A_OBJECT A_spit_utf8( A_OBJECT A, char *file, T2_OBJECT T2_Sigma )
     assert( T2_Sigma != NULL );
     assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
 
-    A = A_min( A );
+    A = A_gen_min( A );
 
     for ( i = 0; i < A-> A_nrows; ++i ) {
         s1 = A-> A_t[ i ].A_b;
