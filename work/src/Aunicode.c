@@ -63,7 +63,10 @@ A_OBJECT A_slurp_nibbles( char *file, T2_OBJECT T2_Sigma )
     A_OBJECT A;
     FILE *fp;
     int c;
-    SHORT state, state1, state2;
+    SHORT state, state1, state2, state3;
+    int T2index[] = { 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+                    67, 68, 69, 70, 71, 72 };
+    int T2idx_blk =  97;
 
     if ( file != NULL ) fp = fopen( file, "r" );
     if ( fp == NULL ) {
@@ -78,13 +81,16 @@ A_OBJECT A_slurp_nibbles( char *file, T2_OBJECT T2_Sigma )
     state = 0;
     state1 = 2;
     state2 = 3;
+    state3 = 4;
     while ( c != EOF ) {
-        assert( state2 <= MAXSHORT );
-        A = A_add( A, state,  ( c >> 4 ) + 2, state1 );
-        A = A_add( A, state1, ( c & 0xf) + 2 + 16, state2 );
-        state = state2;
+        assert( state3 <= MAXSHORT );
+        A = A_add( A, state,  T2index[ ( c >> 4 ) & 0xf ], state1 );
+        A = A_add( A, state1, T2index[ c & 0xf ], state2 );
+        A = A_add( A, state2, T2idx_blk, state3 );
+        state = state3;
         state1 = state + 1;
         state2 = state + 2;
+        state3 = state + 3;
         c = getc( fp );
     }
     A = A_add( A, state, 1, 1 );
@@ -97,7 +103,7 @@ A_OBJECT A_slurp_utf8( char *file, T2_OBJECT T2_Sigma )
 {
     A_OBJECT A;
     FILE *fp;
-    int i, c1, c2, c3, c4, type;
+    int i, c1, c2, c3, c4, cp, type;
     char ts[ 5 ];
 
     if ( file != NULL ) fp = fopen( file, "r" );
@@ -124,8 +130,11 @@ A_OBJECT A_slurp_utf8( char *file, T2_OBJECT T2_Sigma )
         switch ( type ) {
 
             case 2:
+                assert( i + 1 < A-> A_nrows );
                 c2 = A-> A_t[ i + 1 ].A_b - 2;
-                if ( ( c2 & 0xc0 ) == 0x80 ) {
+                cp = ( c1 & 0x1f ) + ( c2 & 0x3f );
+                if ( ( c2 & 0xc0 ) == 0x80
+                  &&   cp > 0x7f ) {
                     ts[ 0 ] = c1;
                     ts[ 1 ] = c2;
                     ts[ 2 ] = '\0';
@@ -135,10 +144,16 @@ A_OBJECT A_slurp_utf8( char *file, T2_OBJECT T2_Sigma )
                 break;
 
             case 3:
+                assert( i + 2 < A-> A_nrows );
                 c2 = A-> A_t[ i + 1 ].A_b - 2;
                 c3 = A-> A_t[ i + 2 ].A_b - 2;
+                cp = ( ( c1 & 0x0f ) << 12 )
+                   + ( ( c2 & 0x3f ) <<  6 )
+                   +   ( c3 & 0x3f );
                 if (    ( c2 & 0xc0 ) == 0x80
-                     && ( c3 & 0xc0 ) == 0x80 ) {
+                     && ( c3 & 0xc0 ) == 0x80
+                     && (    ( 0x03ff < cp && cp <= 0xd800 )
+                          || ( 0xdfff < cp ) ) ) {
                     ts[ 0 ] = c1;
                     ts[ 1 ] = c2;
                     ts[ 2 ] = c3;
@@ -149,12 +164,18 @@ A_OBJECT A_slurp_utf8( char *file, T2_OBJECT T2_Sigma )
                 break;
 
             case 4:
+                assert( i + 3 < A-> A_nrows );
                 c2 = A-> A_t[ i + 1 ].A_b - 2;
                 c3 = A-> A_t[ i + 2 ].A_b - 2;
                 c4 = A-> A_t[ i + 3 ].A_b - 2;
+                cp = ( ( c1 & 0x0f ) << 18 )
+                   + ( ( c2 & 0x3f ) << 12 )
+                   + ( ( c3 & 0x3f ) <<  6 )
+                   +   ( c4 & 0x3f );
                 if (    ( c2 & 0xc0 ) == 0x80
                      && ( c3 & 0xc0 ) == 0x80
-                     && ( c4 & 0xc0 ) == 0x80 ) {
+                     && ( c4 & 0xc0 ) == 0x80
+                     &&   0xffff < cp && cp <= 0x10ffff ) {
                     ts[ 0 ] = c1;
                     ts[ 1 ] = c2;
                     ts[ 2 ] = c3;
@@ -307,41 +328,6 @@ A_OBJECT A_gen_min( A_OBJECT A )
         }
         last_state = state;
     }
-    A = A_min( A );
-    return( A );
-}
-
-A_OBJECT A_utf8_nibble_map( char *arg, T2_OBJECT T2_Sigma )
-{
-    A_OBJECT A;
-    int i, j, c, state, len;
-    char *s;
-
-    assert( T2_Sigma != NULL );
-    assert( T2_Sigma-> T2_int-> Tn_n >= 258 );
-
-    A = A_create();
-    A-> A_nT = 2;
-
-    state = 2;
-    for ( i = 258; i < T2_Sigma-> T2_int-> Tn_n; ++i ) {
-        s = T2_name( T2_Sigma, i );
-        A = A_add( A, 0, i * 2, state );
-        len = strlen( s );
-        for ( j = 0; j < len; ++j ) {
-            c = s[ j ] & 0xff;
-            A = A_add( A, state,
-                ( ( c >> 4 )  + 2 ) * 2 + 1,
-                state + 1 );
-            A = A_add( A, state + 1,
-                ( ( c & 0xf ) + 2 + 16 ) * 2 + 1,
-                state + 2 );
-            state += 2;
-        }
-        A = A_add( A, state, 1, 1 );
-        ++state;
-    }
-
     A = A_min( A );
     return( A );
 }

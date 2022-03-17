@@ -59,15 +59,12 @@ Q_OBJECT Q_fromP( P_OBJECT P )
 /* have seen ( i - 1 ) digits */
 /* c is s[ i - 1 ] is not a digit */
 
-    if ( i < l && c == '.' ) {
-/* prefix is i characters: i - 1 digits plus '.' */
-        if ( s[ 0 ] != '0' || i <= 2 ) {
-            l -= i;
-            copymem( l, s + i, s );
-            s[ l ] = '\0';
-        } else {
-            tapeno = -1;
-        }
+    if ( i < l && c == '.' && ( s[ 0 ] != '0' || i <= 2 ) ) {
+        l -= i;
+        copymem( l, s + i, s );
+        s[ l ] = '\0';
+    } else {
+        tapeno = -1;
     }
 
     Q-> Q_tapeno = tapeno;
