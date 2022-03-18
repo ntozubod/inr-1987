@@ -1,5 +1,29 @@
 # INR Changelog
 
+## 2.1.0c6 (2022-03-18)
+
+#### src
+
+T2.c
+
+:pr format
+-- consolidation of printable form of tokens
+-- handling of more than 10 tapes
+-- valid (?) UTF-8 tokens treated as printable
+
+removal of nibbles
+
+slurp_utf8 more accurate parsing of UTF-8
+
+`0.0` vs 0.0
+
+#### doc
+
+corrections of unicode docs
+
+documentation of pr format
+
+
 ## 2.1.0c5 (2022-03-08)
 
 #### src

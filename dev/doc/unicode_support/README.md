@@ -161,30 +161,31 @@ a little longer
 
 `'ἀπὸ';`
 
-    (START) E1 2
-    2 BC 3
-    3 80 4
-    4 CF 5
-    5 80 6
-    6 E1 7
-    7 BD 8
-    8 B8 9
+    (START) \xE1 2
+    2 \xBC 3
+    3 \x80 4
+    4 \xCF 5
+    5 \x80 6
+    6 \xE1 7
+    7 \xBD 8
+    8 \xB8 9
     9 -| (FINAL)
 
 octet form
 
 `` `ἀπὸ`;``
 
-    (START) ἀπὸ 2
+    (START) \xE1\xBC\x80\xCF\x80\xE1\xBD\xB8 2
     2 -| (FINAL)
 
 unsurprising
 
+
 ``( `ἀ` `π` `ὸ` );``
 
-    (START) ἀ 2
-    2 π 3
-    3 ὸ 4
+    (START) \xE1\xBC\x80 2
+    2 \xCF\x80 3
+    3 \xE1\xBD\xB8 4
     4 -| (FINAL)
 
 broken apart

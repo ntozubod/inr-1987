@@ -28,7 +28,10 @@
 #include "O.h"
 
     int             i, num;
-    char *          t;
+    P_OBJECT P;
+    Q_OBJECT Q;
+    char *t;
+    int l, i_var, tapeno, i_tok;
 
 #define PROMT   if(isatty(fileno(fpin))&&isatty(fileno(fpout)))printf("--* ");
 
@@ -46,7 +49,7 @@
 %token          AT
 %token          LBRACK BSLASH RBRACK    CIRCUMFLEX
 %token          LBRACE VBAR   RBRACE
-%token  <up>    NAME
+%token  <up>    LNAME NAME
 
 %%
 
@@ -69,7 +72,7 @@ reg_0 SEMI
     if ( disp_flag ) {
         (void) A_rept( A );
         fprintf( fpout, "\n" );
-        (void) A_store( A, (char *) NULL, TT );
+        (void) A_pr( A, (char *) NULL, TT2 );
         fprintf( fpout, "\n" );
     }
     A_destroy( Alist[ 0 ] );
@@ -79,7 +82,7 @@ reg_0 SEMI
 }
 | reg_0 COLON SEMI
 {
-    A = A_enum( $1, TT, 1000 );
+    A = A_enum( $1, TT2, 1000 );
     A_destroy( Alist[ 0 ] );
     Alist[ 0 ] = A;
     if ( A_report ) pr_time_diff();
@@ -96,7 +99,7 @@ reg_0 SEMI
     if ( (i = Tn_member( TAlist, P_cstr( $1 ), P_length( $1 ) )) >= 0 )
         A_destroy( Alist[ i ] );
     Alist[ Tn_insert( TAlist, P_cstr( $1 ), P_length( $1 ) ) ] = A;
-    if ( Tn_member( TT, P_cstr( $1 ), P_length( $1 ) ) >= 0 )
+    if ( T2_member( TT2, P_cstr( $1 ), P_length( $1 ) ) >= 0 )
         fprintf( fpout,
                  "Warning: %s is also a token\n", P_cstr( $1 ) );
     P_destroy( $1 );
@@ -106,7 +109,7 @@ reg_0 SEMI
 | NAME EQUAL COLON NAME SEMI
 {
     if ( !strcmp("read",P_cstr($4)) || !strcmp("load",P_cstr($4)) )
-        A = A_load(P_cstr($1),TT);
+        A = A_load(P_cstr($1),TT2);
     else {
         Warning( "Unknown function" );
         A = A_create();
@@ -116,7 +119,7 @@ reg_0 SEMI
     if ( (i = Tn_member( TAlist, P_cstr($1), P_length( $1 ) )) >= 0 )
         A_destroy( Alist[ i ] );
     Alist[ Tn_insert( TAlist, P_cstr($1), P_length( $1 ) ) ] = A;
-    if ( Tn_member( TT, P_cstr($1), P_length( $1 ) ) >= 0 )
+    if ( T2_member( TT2, P_cstr($1), P_length( $1 ) ) >= 0 )
         fprintf( fpout,
                  "Warning: %s is also a token\n", P_cstr($1) );
     P_destroy( $1 );
@@ -191,7 +194,7 @@ reg_2   :
 reg_2 DOLLAR reg_3
 {
     if ( A_report ) fprintf( fpout, "($)\n" );
-    $$ = A_retape( $1, $3, TT );
+    $$ = A_retape( $1, $3, TT2 );
 }
 | reg_2 PERCENT reg_3
 {
@@ -218,10 +221,10 @@ reg_3 VBAR reg_4
     if ( $1-> A_nT > 1 || $4-> A_nT > 1 ) {
         Atemp = A_differ(
             A_retape( A_copy( $4 ),
-                      A_letter( 0, Tn_insert( TT, "0", 1 ) ), TT
+                      A_letter( 0, T2_insert( TT2, "0", 1 ) ), TT2
                     ),
             A_retape( A_copy( $1 ),
-                      A_letter( 0, Tn_insert( TT, "0", 1 ) ), TT
+                      A_letter( 0, T2_insert( TT2, "0", 1 ) ), TT2
                     )
         );
         $$ = A_union( $1, A_join( Atemp, $4 ) );
@@ -262,9 +265,9 @@ reg_5 BSLASH reg_6
     } else {
         Atemp = A_retape( A_star( A_alph( A_copy( $3 ) ) ),
                           A_comma(
-                              A_letter( 0, Tn_insert( TT, "0", 1 ) ),
-                              A_letter( 0, Tn_insert( TT, "0", 1 ) ) ),
-                          TT );
+                              A_letter( 0, T2_insert( TT2, "0", 1 ) ),
+                              A_letter( 0, T2_insert( TT2, "0", 1 ) ) ),
+                          TT2 );
         $$ = A_compose( $3, A_concat( $1, Atemp ) );
     }
 }
@@ -284,9 +287,9 @@ reg_6 SLASH reg_7
     } else {
         Atemp = A_retape( A_star( A_alph( A_copy( $1 ) ) ),
                           A_comma(
-                              A_letter( 0, Tn_insert( TT, "0", 1 ) ),
-                              A_letter( 0, Tn_insert( TT, "0", 1 ) ) ),
-                          TT );
+                              A_letter( 0, T2_insert( TT2, "0", 1 ) ),
+                              A_letter( 0, T2_insert( TT2, "0", 1 ) ) ),
+                          TT2);
         $$ = A_compose( $1, A_concat( Atemp, $3 ) );
     }
 }
@@ -322,22 +325,62 @@ reg_8 PLUS
 {
     $$ = A_lambda();
 }
-| NAME
+| LNAME
 {
     t = P_cstr( $1 );
-    if ( t[1] == '.' && t[0] >= '0' && t[0] <= '9' )
-        $$ = A_letter( t[0] - '0',
-            Tn_insert( TT, t + 2, P_length( $1 ) - 2 ) );
-    else if ( (i = Tn_member( TAlist, t, P_length( $1 ) )) >= 0
-              && Tn_member( TT, t, P_length( $1 ) ) < 0 )
+    if ( (i = Tn_member( TAlist, t, P_length( $1 ) )) >= 0
+              && T2_member( TT2, t, P_length( $1 ) ) < 0 )
         $$ = A_copy( Alist[ i ] );
     else {
-        $$ = A_letter( 0, Tn_insert( TT, t, P_length( $1 ) ) );
+        $$ = A_letter( 0, T2_insert( TT2, t, P_length( $1 ) ) );
         if ( i >= 0 )
             fprintf( fpout,
                      "Warning: %s is a variable and a token\n", t );
     }
     P_destroy( $1 );
+}
+| NAME
+{
+    P = $1;
+    t = P_cstr( P );
+    l = P_length( P );
+    i_var = Tn_member( TAlist, t, l );
+
+    Q = Q_fromP( P );
+    t = Q_cstr( Q );
+    l = Q_length( Q );
+    tapeno = Q_tapeno( Q );
+    i_tok = T2_member( TT2, t, l );
+
+    if ( i_var >= 0 && i_tok >= 0 ) {
+        fprintf( fpout, "Warning: %s is a variable and a token\n", t );
+    }
+
+    if ( i_var < 0 ) {
+        if ( tapeno < 0 ) { tapeno = 0; }
+        i_tok = T2_insert( TT2, t, l );
+        $$ = A_letter( tapeno, i_tok );
+    } else {
+        $$ = A_copy( Alist[ i_var ] );
+    }
+    Q_destroy( Q );
+
+/*
+    t = P_cstr( $1 );
+    if ( t[1] == '.' && t[0] >= '0' && t[0] <= '9' )
+        $$ = A_letter( t[0] - '0',
+            T2_insert( TT2, t + 2, P_length( $1 ) - 2 ) );
+    else if ( (i = Tn_member( TAlist, t, P_length( $1 ) )) >= 0
+              && T2_member( TT2, t, P_length( $1 ) ) < 0 )
+        $$ = A_copy( Alist[ i ] );
+    else {
+        $$ = A_letter( 0, T2_insert( TT2, t, P_length( $1 ) ) );
+        if ( i >= 0 )
+            fprintf( fpout,
+                     "Warning: %s is a variable and a token\n", t );
+    }
+    P_destroy( $1 );
+*/
 }
 | LBRACK reg_0 RBRACK
 {
