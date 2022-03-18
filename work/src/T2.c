@@ -95,7 +95,7 @@ void T2_stats()
 
 int valid_utf8_at( char *s, int i, int l ) {
     int c1 = s[ i ];
-    int type, c2, c3, c4;
+    int type, c2, c3, c4, cp;
 
          if ( ( c1 & 0x80 ) == 0x00 ) { type = 0; }
     else if ( ( c1 & 0xc0 ) == 0x80 ) { type = 1; }
@@ -109,7 +109,9 @@ int valid_utf8_at( char *s, int i, int l ) {
     case 2:
         if ( i + 1 >= l ) { return( 0 ); }
         c2 = s[ i + 1 ];
-        if (    ( c2 & 0xc0 ) == 0x80 ) {
+        cp = ( c1 & 0x1f ) + ( c2 & 0x3f );
+        if ( ( c2 & 0xc0 ) == 0x80
+          &&   cp > 0x7f ) {
             return( 2 );
         }
         break;
@@ -118,8 +120,13 @@ int valid_utf8_at( char *s, int i, int l ) {
         if ( i + 2 >= l ) { return( 0 ); }
         c2 = s[ i + 1 ];
         c3 = s[ i + 2 ];
+        cp = ( ( c1 & 0x0f ) << 12 )
+           + ( ( c2 & 0x3f ) <<  6 )
+           +   ( c3 & 0x3f );
         if (    ( c2 & 0xc0 ) == 0x80
-             && ( c3 & 0xc0 ) == 0x80 ) {
+             && ( c3 & 0xc0 ) == 0x80
+             && (    ( 0x03ff < cp && cp < 0xd800 )
+                  || ( 0xdfff < cp ) ) ) {
             return( 3 );
         }
         break;
@@ -129,9 +136,14 @@ int valid_utf8_at( char *s, int i, int l ) {
         c2 = s[ i + 1 ];
         c3 = s[ i + 2 ];
         c4 = s[ i + 3 ];
+        cp = ( ( c1 & 0x0f ) << 18 )
+           + ( ( c2 & 0x3f ) << 12 )
+           + ( ( c3 & 0x3f ) <<  6 )
+           +   ( c4 & 0x3f );
         if (    ( c2 & 0xc0 ) == 0x80
              && ( c3 & 0xc0 ) == 0x80
-             && ( c4 & 0xc0 ) == 0x80 ) {
+             && ( c4 & 0xc0 ) == 0x80
+             &&   0xffff < cp && cp <= 0x10ffff ) {
             return( 4 );
         }
         break;
