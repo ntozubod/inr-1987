@@ -152,7 +152,7 @@ A_OBJECT A_slurp_utf8( char *file, T2_OBJECT T2_Sigma )
                    +   ( c3 & 0x3f );
                 if (    ( c2 & 0xc0 ) == 0x80
                      && ( c3 & 0xc0 ) == 0x80
-                     && (    ( 0x03ff < cp && cp <= 0xd800 )
+                     && (    ( 0x03ff < cp && cp < 0xd800 )
                           || ( 0xdfff < cp ) ) ) {
                     ts[ 0 ] = c1;
                     ts[ 1 ] = c2;
