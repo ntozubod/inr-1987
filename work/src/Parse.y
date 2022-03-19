@@ -43,15 +43,17 @@
 }
 %type   <uA>    reg_0 reg_1 reg_2 reg_3 reg_4 reg_5 reg_6 reg_7 reg_8
 %type   <uA>    paren_reg brace_reg
+%type   <up>    name
 %token          EXCLAM DOLLAR PERCENT   AMPERSAND
 %token          LPAREN RPAREN STAR      PLUS       COMMA  MINUS  SLASH
 %token          COLON  SEMI   EQUAL     QUESTION
 %token          AT
 %token          LBRACK BSLASH RBRACK    CIRCUMFLEX
 %token          LBRACE VBAR   RBRACE
-%token  <up>    LNAME NAME
+%token  <up>    LNAME PNAME
 
 %%
+
 
 statseq :
 statseq statement
@@ -88,7 +90,7 @@ reg_0 SEMI
     if ( A_report ) pr_time_diff();
     PROMT
 }
-| NAME EQUAL reg_0 SEMI
+| name EQUAL reg_0 SEMI
 {
     A = $3;
     if ( disp_flag == 2 ) A = A_min( A );
@@ -106,7 +108,7 @@ reg_0 SEMI
     if ( A_report ) pr_time_diff();
     PROMT
 }
-| NAME EQUAL COLON NAME SEMI
+| name EQUAL COLON name SEMI
 {
     if ( !strcmp("read",P_cstr($4)) || !strcmp("load",P_cstr($4)) )
         A = A_load(P_cstr($1),TT2);
@@ -127,7 +129,7 @@ reg_0 SEMI
     if ( A_report ) pr_time_diff();
     PROMT
 }
-| COLON NAME SEMI
+| COLON name SEMI
 {
     i = do_n_i( P_cstr( $2 ) );
     P_destroy( $2 );
@@ -138,12 +140,12 @@ reg_0 SEMI
 ;
 
 reg_0   :
-reg_0 COLON NAME
+reg_0 COLON name
 {
     $$ = do_an_a( $1, P_cstr( $3 ) );
     P_destroy( $3 );
 }
-| reg_0 COLON LPAREN NAME RPAREN
+| reg_0 COLON LPAREN name RPAREN
 {
     disp_flag = 0;
     A = $1;
@@ -155,14 +157,14 @@ reg_0 COLON NAME
     P_destroy( $4 );
     $$ = A;
 }
-| reg_0 COLON NAME NAME
+| reg_0 COLON name name
 {
     A = do_ann_a( $1, P_cstr($3), P_cstr($4) );
     P_destroy( $3 );
     P_destroy( $4 );
     $$ = A;
 }
-| COLON NAME NAME
+| COLON name name
 {
     A = do_nn_a( P_cstr($2), P_cstr($3) );
     P_destroy( $2 );
@@ -339,7 +341,7 @@ reg_8 PLUS
     }
     P_destroy( $1 );
 }
-| NAME
+| PNAME
 {
     P = $1;
     t = P_cstr( P );
@@ -436,6 +438,11 @@ brace_reg COMMA reg_0
     $$ = A_union( $1, $3 );
 }
 | reg_0
+;
+
+name :
+LNAME
+| PNAME
 ;
 
 %%

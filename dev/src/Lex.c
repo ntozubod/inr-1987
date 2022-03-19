@@ -99,7 +99,7 @@ int yylex()
         if ( ch == EOF ) Error( "End of file in string" );
         yylval.up = P_create( T2_length( TT2, ch + 2 ),
                               T2_name( TT2, ch + 2 ) );
-        return( NAME );
+        return( PNAME );
     }
     in_comment = 0;
     while( ch == ' ' || ch == '\t' || ch == '\n' || ch == '#'
@@ -313,7 +313,7 @@ int yylex()
     }
     token[ li ] = 0;
     yylval.up = P_create( li, token );
-    return( NAME );
+    return( PNAME );
 }
 
 char Notice[]
