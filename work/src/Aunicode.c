@@ -362,3 +362,96 @@ A_OBJECT A_gen_min( A_OBJECT A )
     A = A_min( A );
     return( A );
 }
+
+A_OBJECT A_octet_tokens( T2_OBJECT T2_Sigma )
+{
+    int i;
+    A_OBJECT A;
+
+    A = A_create();
+    for ( i = 0; i <= 0xff; ++i ) {
+        A = A_add( A, 0, i + 2, 2 );
+    }
+    A = A_add( A, 2, 1, 1 );
+    return( A_close( A ) );
+}
+
+A_OBJECT A_valid_utf8_tokens( T2_OBJECT T2_Sigma )
+{
+    int cp, l;
+    char ts[ 5 ];
+    A_OBJECT A;
+
+    A = A_create();
+    for ( cp = 0; cp <= 0x10ffff; ++cp ) {
+        if ( cp < 0xd800 || 0xdfff < cp ) {
+            if ( cp <= 0x7f ) {
+                ts[ 0 ] = cp;
+                ts[ 1 ] = '\0';
+                l = 1;
+            } else if ( cp <= 0x7ff ) {
+                ts[ 0 ] = 0xc0 + ( ( cp >>  6 ) & 0x1f );
+                ts[ 1 ] = 0x80 + ( cp & 0x3f );
+                ts[ 2 ] = '\0';
+                l = 2;
+            } else if ( cp <= 0xffff ) {
+                ts[ 0 ] = 0xe0 + ( ( cp >> 12 ) &  0xf );
+                ts[ 1 ] = 0x80 + ( ( cp >>  6 ) & 0x3f );
+                ts[ 2 ] = 0x80 + ( cp & 0x3f );
+                ts[ 3 ] = '\0';
+                l = 3;
+            } else {
+                ts[ 0 ] = 0xf0 + ( ( cp >> 18 ) &  0x7 );
+                ts[ 1 ] = 0x80 + ( ( cp >> 12 ) & 0x3f );
+                ts[ 2 ] = 0x80 + ( ( cp >>  6 ) & 0x3f );
+                ts[ 3 ] = 0x80 + ( cp & 0x3f );
+                ts[ 4 ] = '\0';
+                l = 4;
+            }
+            A = A_add( A, 0, T2_insert( T2_Sigma, ts, l ), 2 );
+        }
+    }
+    A = A_add( A, 2, 1, 1 );
+    return( A_close( A ) );
+}
+
+A_OBJECT A_token_exploder( A_OBJECT A, T2_OBJECT T2_Sigma )
+{
+    A_OBJECT A1;
+    int n_tokens, next_state, from, token, to, len, octet, i, j;
+    char *cstr;
+
+    A1 = A_create();
+    A1-> A_nT = 2;
+
+    A = A_alph( A );
+    A = A_open( A );
+
+    n_tokens = A-> A_nrows - 1;
+    next_state = 2;
+
+    for ( i = 0; i < n_tokens; ++i ) {
+        from  = A-> A_t[ i ].A_a;
+        token = A-> A_t[ i ].A_b;
+        to    = A-> A_t[ i ].A_c;
+
+        assert( from == 0 );
+        assert( to == 2 );
+
+        A1 = A_add( A1, 0, token * 2, next_state );
+
+        cstr = T2_name( T2_Sigma, token );
+        len  = T2_length( T2_Sigma, token );
+        for ( j = 0; j < len; ++j ) {
+            octet = ( cstr[ j ] & 0xff ) + 2;
+            A1 = A_add( A1, next_state, octet * 2 + 1, next_state + 1 );
+            ++next_state;
+        }
+        A1 = A_add( A1, next_state, 1 , 1 );
+        ++next_state;
+    }
+
+    A_destroy( A );
+    A1 = A_close( A1 );
+    return( A1 );
+}

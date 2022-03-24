@@ -380,3 +380,6 @@ A_OBJECT    A_spit_octets( A_OBJECT, char *, T2_OBJECT );
 A_OBJECT    A_spit_nibbles( A_OBJECT, char *, T2_OBJECT );
 A_OBJECT    A_spit_utf8( A_OBJECT, char *, T2_OBJECT );
 A_OBJECT    A_gen_min( A_OBJECT );
+A_OBJECT    A_octet_tokens( T2_OBJECT );
+A_OBJECT    A_valid_utf8_tokens( T2_OBJECT );
+A_OBJECT    A_token_exploder( A_OBJECT, T2_OBJECT );

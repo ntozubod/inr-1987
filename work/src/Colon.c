@@ -234,6 +234,9 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
     } else if ( !strcmp("update",op) ) {
         A = A_open( A );
         disp_flag = 1;
+    } else if ( !strcmp("token_exploder",op) ) {
+        A = A_token_exploder( A, TT2 );
+        disp_flag = 1;
     } else if ( (num = tonum(op)) >= 0 ) {
         if ( A_report ) fprintf( fpout, "(pow)\n" );
         A = A_catpow( A, num );
@@ -301,6 +304,16 @@ A_OBJECT do_nn_a( char *op, char *arg )
     } else if ( !strcmp("slurp_utf8",op) ) {
         A = A_slurp_utf8( arg, TT2 );
         disp_flag = 1;
+    } else if ( !strcmp("tokens",op) ) {
+        if ( !strcmp("octets",arg) ) {
+            A = A_octet_tokens( TT2 );
+            disp_flag = 1;
+        } else if ( !strcmp("utf8",arg) ) {
+            A = A_valid_utf8_tokens( TT2 );
+            disp_flag = 1;
+        } else {
+            Error( "Illegal :tokens usage" );
+        }
     } else if ( !strcmp("save",op) ) {
         if ( (i = Tn_member( TAlist, arg, strlen( arg ) )) >= 0 )
             A = A_save( A_copy( Alist[i] ), arg, TT2 );

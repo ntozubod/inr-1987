@@ -87,7 +87,7 @@ typedef struct S_f {
 
 #define U(p)            ((unsigned long)(p))
 
-#define S_m             28
+#define S_m             30
 /* S_m = 26 allows objects of up to 2 gigabytes 2^(5+26)*/
 /* S_m = 28 allows objects of up to 8 gigabytes 2^(5+28)*/
 
@@ -105,7 +105,7 @@ void S_init()
     int i;
     if ( S_lo == 0 ) {
         long mem;
-        for( mem = 512 * 1024 * 1024; S_lo == 0; mem /= 2 ) {
+        for( mem = 4L * 1024 * 1024 * 1024; S_lo == 0; mem /= 2 ) {
             LINUXmem = mem;
             S_lo = S_hi = (S_ft *) malloc( mem + 16 );
         }
