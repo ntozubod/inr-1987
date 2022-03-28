@@ -400,6 +400,11 @@ fprintf( fpout, "\n" );
     assert( result == 0 );
     Alist[ 0 ] = A_create();
 
+
+printf( "Testing\n" );
+B4_test();
+printf( "Done Testing\n" );
+
     pr_time_diff();
     PROMT
     if ( yyparse() != 0 )

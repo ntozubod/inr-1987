@@ -455,3 +455,101 @@ A_OBJECT A_token_exploder( A_OBJECT A, T2_OBJECT T2_Sigma )
     A1 = A_close( A1 );
     return( A1 );
 }
+
+A_OBJECT A_blast( A_OBJECT A, T2_OBJECT T2_Sigma )
+{
+    A_OBJECT A1;
+    int state, next_state, from, label, to, symbol, len, i, j, k;
+    int ntapes, bit, ch, tapeno;
+    char *cstr;
+ 
+    A1 = A_create();
+    A = A_open( A );
+
+    A1-> A_nT = ntapes = A-> A_nT;
+    next_state = A-> A_nQ;
+
+    for ( i = 0; i < A-> A_nrows; ++i ) {
+        from  = A-> A_t[ i ].A_a;
+        label = A-> A_t[ i ].A_b;
+        to    = A-> A_t[ i ].A_c;
+
+        symbol = label / ntapes;
+        tapeno = label % ntapes;
+
+        if ( symbol <= 1 ) {
+            A1 = A_add( A1, from, label, to );
+        } else {
+            cstr = T2_name( T2_Sigma, symbol );
+            len  = T2_length( T2_Sigma, symbol );
+
+            state = from;
+            for ( j = 0; j < len; ++j ) {
+                ch = cstr[ j ] & 0xff;
+                for ( k = 0; k < 8; ++k ) {
+                    bit = ( ch >> ( 7 - k ) ) & 1;
+                    A1 = A_add( A1,
+                        state, ( 50 + bit ) * ntapes + tapeno, ++next_state );
+                    state = next_state;
+                }
+            }
+            A1 = A_add( A1, state, 97 * ntapes + tapeno, to );
+            ++next_state;
+        }
+    }
+
+    A_destroy( A );
+    A1 = A_close( A1 );
+    return( A1 );
+}
+
+A_OBJECT A_blast4( A_OBJECT A, T2_OBJECT T2_Sigma )
+{
+    A_OBJECT A1;
+    int state, next_state, from, label, to, symbol, len, i, j;
+    int ntapes, ch, tapeno, nib1, nib2;
+    char *cstr;
+    int T2idx[] = { 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+                    67, 68, 69, 70, 71, 72 };
+ 
+    A1 = A_create();
+    A = A_open( A );
+
+    A1-> A_nT = ntapes = A-> A_nT;
+    next_state = A-> A_nQ;
+
+    for ( i = 0; i < A-> A_nrows; ++i ) {
+        from  = A-> A_t[ i ].A_a;
+        label = A-> A_t[ i ].A_b;
+        to    = A-> A_t[ i ].A_c;
+
+        symbol = label / ntapes;
+        tapeno = label % ntapes;
+
+        if ( symbol <= 1 ) {
+            A1 = A_add( A1, from, label, to );
+        } else {
+            cstr = T2_name( T2_Sigma, symbol );
+            len  = T2_length( T2_Sigma, symbol );
+
+            state = from;
+            for ( j = 0; j < len; ++j ) {
+                ch = cstr[ j ] & 0xff;
+                nib1 = ( ch >> 4 ) & 0xf;
+                nib2 =   ch        & 0xf;
+                A1 = A_add( A1, state,
+                    ( T2idx[ nib1 ] ) * ntapes + tapeno, ++next_state );
+                state = next_state;
+                A1 = A_add( A1, state,
+                    ( T2idx[ nib2 ] ) * ntapes + tapeno, ++next_state );
+                state = next_state;
+            }
+            A1 = A_add( A1, state, 97 * ntapes + tapeno, to );
+            ++next_state;
+        }
+    }
+
+    A_destroy( A );
+    A1 = A_close( A1 );
+    return( A1 );
+}

@@ -42,6 +42,7 @@ int fileno( FILE * );
 #define P_Object        6
 #define Q_Object        7
 #define T2_Object       8
+#define B4_Object       9
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -126,6 +127,11 @@ typedef struct Q_desc {
     int             Q_length;
     char *          Q_cstr;
 } *     Q_OBJECT;
+
+typedef struct B4_desc {
+    int             Type;
+    Tn_OBJECT       B4_ptok;
+} *     B4_OBJECT;
 
 #define OPEN            0
 #define NFA             1
@@ -348,6 +354,14 @@ A_OBJECT    A_GMsseq( A_OBJECT );
 /* Aclsseq.c */
 A_OBJECT    A_clsseq( A_OBJECT );
 
+/* B4.c */
+B4_OBJECT   B4_create( );
+void        B4_destroy( B4_OBJECT );
+SHORT       B4_get_trans_to( B4_OBJECT, SHORT, SHORT, T2_OBJECT );
+SHORT       B4_get_trans_output( B4_OBJECT, SHORT, SHORT, T2_OBJECT );
+
+void        B4_test( );
+
 /* Colon.c */
 extern int  disp_flag;
 int         do_n_i( char * );
@@ -383,3 +397,5 @@ A_OBJECT    A_gen_min( A_OBJECT );
 A_OBJECT    A_octet_tokens( T2_OBJECT );
 A_OBJECT    A_valid_utf8_tokens( T2_OBJECT );
 A_OBJECT    A_token_exploder( A_OBJECT, T2_OBJECT );
+A_OBJECT    A_blast( A_OBJECT, T2_OBJECT );
+A_OBJECT    A_blast4( A_OBJECT, T2_OBJECT );

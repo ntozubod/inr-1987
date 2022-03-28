@@ -237,6 +237,12 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
     } else if ( !strcmp("token_exploder",op) ) {
         A = A_token_exploder( A, TT2 );
         disp_flag = 1;
+    } else if ( !strcmp("blast",op) ) {
+        A = A_blast( A, TT2 );
+        disp_flag = 1;
+    } else if ( !strcmp("blast4",op) ) {
+        A = A_blast4( A, TT2 );
+        disp_flag = 1;
     } else if ( (num = tonum(op)) >= 0 ) {
         if ( A_report ) fprintf( fpout, "(pow)\n" );
         A = A_catpow( A, num );
