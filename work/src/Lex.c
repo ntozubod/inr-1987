@@ -319,7 +319,7 @@ int yylex()
 char Notice[]
    = "Copyright (c) 1985, 1988, J Howard Johnson, University of Waterloo";
 
-int main( int argc, char *argv[] )
+int smain( int argc, char *argv[] )
 {
     int ti, result;
     char tstr[3];
@@ -399,11 +399,6 @@ fprintf( fpout, "\n" );
     result = Tn_insert( TAlist, "_Last_", 6 );
     assert( result == 0 );
     Alist[ 0 ] = A_create();
-
-
-printf( "Testing\n" );
-B4_test();
-printf( "Done Testing\n" );
 
     pr_time_diff();
     PROMT

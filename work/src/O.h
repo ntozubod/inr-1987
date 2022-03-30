@@ -130,7 +130,12 @@ typedef struct Q_desc {
 
 typedef struct B4_desc {
     int             Type;
+    SHORT           B4_from;
+    SHORT           B4_input;
+    SHORT *         B4_output;
+    SHORT           B4_to;
     Tn_OBJECT       B4_ptok;
+    char *          B4_ts;
 } *     B4_OBJECT;
 
 #define OPEN            0
@@ -357,10 +362,7 @@ A_OBJECT    A_clsseq( A_OBJECT );
 /* B4.c */
 B4_OBJECT   B4_create( );
 void        B4_destroy( B4_OBJECT );
-SHORT       B4_get_trans_to( B4_OBJECT, SHORT, SHORT, T2_OBJECT );
-SHORT       B4_get_trans_output( B4_OBJECT, SHORT, SHORT, T2_OBJECT );
-
-void        B4_test( );
+B4_OBJECT   B4_set_trans( B4_OBJECT, SHORT, SHORT, T2_OBJECT );
 
 /* Colon.c */
 extern int  disp_flag;
@@ -399,3 +401,6 @@ A_OBJECT    A_valid_utf8_tokens( T2_OBJECT );
 A_OBJECT    A_token_exploder( A_OBJECT, T2_OBJECT );
 A_OBJECT    A_blast( A_OBJECT, T2_OBJECT );
 A_OBJECT    A_blast4( A_OBJECT, T2_OBJECT );
+
+/* INR_main.c */
+int         smain( int argc, char *argv[] );

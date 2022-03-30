@@ -30,23 +30,21 @@ B4_OBJECT B4_create()
 {
     B4_OBJECT B4;
     Tn_OBJECT Tn;
-    int result, ti;
-    char tstr[ 2 ];
+    int result;
 
     B4 = (B4_OBJECT) Salloc( sizeof(struct B4_desc) );
     B4-> Type    = B4_Object;
+    B4-> B4_from = -1;
+    B4-> B4_input = -1;
+    B4-> B4_output = s_alloc( 2 );
+    B4-> B4_output[ 0 ] = MAXSHORT;
+    B4-> B4_output[ 1 ] = MAXSHORT;
+    B4-> B4_to = -1;
     B4-> B4_ptok = Tn = Tn_create();
+    B4-> B4_ts = Salloc( 100 );
 
-    result = Tn_insert( Tn, "^^", 2 );
+    result = Tn_insert( Tn, "", 0 );
     assert( result == 0 );
-    result = Tn_insert( Tn, "-|", 2 );
-    assert( result == 1 );
-    for( ti = 0; ti < 256; ti++ ) {
-        tstr[ 0 ] = ti;
-        tstr[ 1 ] = '\0';
-        result = Tn_insert( Tn, tstr, 1 );
-        assert( result == ti + 2 );
-    }
 
     return( B4 );
 }
@@ -54,40 +52,69 @@ B4_OBJECT B4_create()
 void B4_destroy( B4_OBJECT B4 )
 {
     if ( B4 != NULL ) {
+        Sfree( (char *) B4-> B4_output );
         Tn_destroy( B4-> B4_ptok );
+        Sfree( B4-> B4_ts );
     }
     Sfree( (char *) B4 );
 }
 
-SHORT B4_get_trans_to( B4_OBJECT B4, SHORT from, SHORT symb,
-    T2_OBJECT T2_Sigma )
+B4_OBJECT B4_set_trans( B4_OBJECT B4,
+    SHORT from, SHORT symb, T2_OBJECT T2_Sigma )
 {
-/*
     Tn_OBJECT Tn;
-    char *cstr_from, *cstr_symb;
-    int leng_from, leng_symb;
+    int nibble = 18;
+    char *cstr_from, *ts;
+    int leng_from, i, k;
 
-    Tn = B4-> B4_ptok;
-    cstr_from = Tn_name( Tn, from );
-    leng_from = Tn_length( Tn, from );
+    B4-> B4_from = from;
+    B4-> B4_input = symb;
 
-    cstr_symb = T2_name( T2_Sigma, symb );
-    leng_symb = T2_length( T2_Sigma, symb );
-*/
+    if ( symb >= 50 && symb <= 59 ) {
+        nibble = symb - 50;
+    } else if ( symb >= 67 && symb <= 72 ) {
+        nibble = symb - 57;
+    } else if ( symb == 97 ) {
+        nibble = 17;
+    }
 
-    return( 1 );
-}
+    if ( nibble <= 16 ) {
+        Tn = B4-> B4_ptok;
+        cstr_from = Tn_name( Tn, from );
+        leng_from = Tn_length( Tn, from );
+        if ( Ssize( B4-> B4_ts ) < leng_from + 2 ) {
+            B4-> B4_ts = Srealloc( B4-> B4_ts, leng_from + 2 );
+        }
+        ts = B4-> B4_ts;
 
-SHORT B4_get_trans_output( B4_OBJECT B4, SHORT from, SHORT symb,
-    T2_OBJECT T2_Sigma )
-{
-    return( 1 );
-}
-
-void B4_test()
-{
-    B4_OBJECT B4;
-
-    B4 = B4_create();
-    B4_destroy( B4 );
+        for ( i = 0; i < leng_from; ++i ) {
+            ts[ i ] = cstr_from[ i ];
+        }
+        ts[ leng_from ] = nibble;
+        ts[ leng_from + 1 ] = '\0';
+        B4-> B4_to = Tn_insert( Tn, ts, leng_from + 1 );
+        B4-> B4_output[ 0 ] = MAXSHORT;
+    } else if ( nibble == 17 ) {
+        Tn = B4-> B4_ptok;
+        cstr_from = Tn_name( Tn, from );
+        leng_from = Tn_length( Tn, from );
+        if ( leng_from % 2 != 0 ) { Error( "Parity error in B4" ); }
+        if ( Ssize( B4-> B4_ts ) < leng_from / 2 + 1 ) {
+            B4-> B4_ts = Srealloc( B4-> B4_ts, leng_from / 2 + 1 );
+        }
+        ts = B4-> B4_ts;
+        for ( i = 0; i < leng_from; i += 2 ) {
+            k = i / 2;
+            ts[ k ] = ( cstr_from[ k ] << 4 ) + cstr_from[ k + 1 ];
+        }
+        k = leng_from / 2;
+        ts[ k ] = '\0';
+        B4-> B4_output[ 0 ] = T2_insert( T2_Sigma, ts, k );
+        B4-> B4_output[ 1 ] = MAXSHORT;
+        B4-> B4_to = 0;
+    } else {
+        Error( "Erroneous input in B4" );
+    }
+    Sfree( ts );
+    return( B4 );
 }
