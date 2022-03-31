@@ -32,6 +32,25 @@ A_OBJECT    Alist[1000];
 
 T2_OBJECT   TT2;
 
+void TT2_init( )
+{
+    int result, ti;
+    char tstr[3];
+
+    TT2 = T2_create();
+
+    result = T2_insert( TT2, "^^", 2 );
+    assert( result == 0 );
+    result = T2_insert( TT2, "-|", 2 );
+    assert( result == 1 );
+    for( ti = 0; ti < 256; ti++ ) {
+        tstr[ 0 ] = ti;
+        tstr[ 1 ] = '\0';
+        result = T2_insert( TT2, tstr, 1 );
+        assert( result == ti + 2 );
+    }
+}
+
 char * pad20( char *s )
 {
     static char tmp[ 41 ];
@@ -321,8 +340,7 @@ char Notice[]
 
 int smain( int argc, char *argv[] )
 {
-    int ti, result;
-    char tstr[3];
+    int result;
     char file_in[50], file_out[50], rpt_out[50];
 
     fpin  = stdin;
@@ -382,18 +400,7 @@ fprintf( fpout, "\n" );
         fprintf( fpout, "\n\n\n" );
     }
 
-    TT2 = T2_create();
-
-    result = T2_insert( TT2, "^^", 2 );
-    assert( result == 0 );
-    result = T2_insert( TT2, "-|", 2 );
-    assert( result == 1 );
-    for( ti = 0; ti < 256; ti++ ) {
-        tstr[ 0 ] = ti;
-        tstr[ 1 ] = '\0';
-        result = T2_insert( TT2, tstr, 1 );
-        assert( result == ti + 2 );
-    }
+    TT2_init();
 
     TAlist = Tn_create();
     result = Tn_insert( TAlist, "_Last_", 6 );

@@ -363,6 +363,7 @@ A_OBJECT    A_clsseq( A_OBJECT );
 B4_OBJECT   B4_create( );
 void        B4_destroy( B4_OBJECT );
 B4_OBJECT   B4_set_trans( B4_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        B4_print_trans( B4_OBJECT, T2_OBJECT );
 
 /* Colon.c */
 extern int  disp_flag;
@@ -378,8 +379,9 @@ extern A_OBJECT Alist[1000];
 extern Tn_OBJECT TAlist;
 
 extern T2_OBJECT TT2;
-
 extern char Notice[];
+
+void        TT2_init( );
 char *      pad20( char * );
 int         yylex();
 void        yyerror( char * );

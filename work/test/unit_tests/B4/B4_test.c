@@ -26,12 +26,35 @@
 
 #include "O.h"
 
+SHORT do_trans( B4_OBJECT B4, SHORT from, char input ) {
+    char ts[ 2 ];
+
+    ts[ 0 ] = input & 0xff;
+    ts[ 1 ] = '\0';
+    B4 = B4_set_trans( B4, from, T2_insert( TT2, ts, 1 ), TT2 );
+    B4_print_trans( B4, TT2 );
+    return( B4-> B4_to );
+}
+
 int main( int argc, char *argv[] )
 {
     B4_OBJECT B4;
+    int state = 0;
 
+    TT2_init();
     B4 = B4_create();
+
+    state = do_trans( B4, state, '2' );
+    state = do_trans( B4, state, '3' );
+    state = do_trans( B4, state, '_' );
+
+    state = do_trans( B4, state, '2' );
+    state = do_trans( B4, state, '5' );
+    state = do_trans( B4, state, '2' );
+    state = do_trans( B4, state, '7' );
+    state = do_trans( B4, state, '_' );
+
     B4_destroy( B4 );
     printf( "done\n" );
-    return( 1 );
+    return( 0 );
 }

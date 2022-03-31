@@ -115,6 +115,23 @@ B4_OBJECT B4_set_trans( B4_OBJECT B4,
     } else {
         Error( "Erroneous input in B4" );
     }
-    Sfree( ts );
     return( B4 );
+}
+
+void B4_print_trans( B4_OBJECT B4, T2_OBJECT T2_Sigma )
+{
+/*
+    Tn_OBJECT Tn;
+    int nibble = 18;
+    char *cstr_from, *ts;
+    int leng_from, i, k;
+*/
+    int i;
+
+    printf( "%d\t", B4-> B4_from );
+    printf( "%s\t[ ", T2_name_pr( T2_Sigma, B4-> B4_input ) );
+    for ( i = 0; B4-> B4_output[ i ] < MAXSHORT; ++i ) {
+      printf( "%s ", T2_name_pr( T2_Sigma, B4-> B4_output[ i ] ) );
+    }
+    printf( "]\t%d\n", B4-> B4_to );
 }
