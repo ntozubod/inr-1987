@@ -70,50 +70,57 @@ B4_OBJECT B4_set_trans( B4_OBJECT B4,
     B4-> B4_from = from;
     B4-> B4_input = symb;
 
-    if ( symb >= 50 && symb <= 59 ) {
-        nibble = symb - 50;
-    } else if ( symb >= 67 && symb <= 72 ) {
-        nibble = symb - 57;
-    } else if ( symb == 97 ) {
-        nibble = 17;
-    }
-
-    if ( nibble <= 16 ) {
-        Tn = B4-> B4_ptok;
-        cstr_from = Tn_name( Tn, from );
-        leng_from = Tn_length( Tn, from );
-        if ( Ssize( B4-> B4_ts ) < leng_from + 2 ) {
-            B4-> B4_ts = Srealloc( B4-> B4_ts, leng_from + 2 );
-        }
-        ts = B4-> B4_ts;
-
-        for ( i = 0; i < leng_from; ++i ) {
-            ts[ i ] = cstr_from[ i ];
-        }
-        ts[ leng_from ] = nibble;
-        ts[ leng_from + 1 ] = '\0';
-        B4-> B4_to = Tn_insert( Tn, ts, leng_from + 1 );
-        B4-> B4_output[ 0 ] = MAXSHORT;
-    } else if ( nibble == 17 ) {
-        Tn = B4-> B4_ptok;
-        cstr_from = Tn_name( Tn, from );
-        leng_from = Tn_length( Tn, from );
-        if ( leng_from % 2 != 0 ) { Error( "Parity error in B4" ); }
-        if ( Ssize( B4-> B4_ts ) < leng_from / 2 + 1 ) {
-            B4-> B4_ts = Srealloc( B4-> B4_ts, leng_from / 2 + 1 );
-        }
-        ts = B4-> B4_ts;
-        for ( i = 0; i < leng_from; i += 2 ) {
-            k = i / 2;
-            ts[ k ] = ( cstr_from[ k ] << 4 ) + cstr_from[ k + 1 ];
-        }
-        k = leng_from / 2;
-        ts[ k ] = '\0';
-        B4-> B4_output[ 0 ] = T2_insert( T2_Sigma, ts, k );
+    if ( from == START && symb == 1 ) {
+        B4-> B4_output[ 0 ] = symb;
         B4-> B4_output[ 1 ] = MAXSHORT;
-        B4-> B4_to = 0;
+        B4-> B4_to = FINAL;
     } else {
-        Error( "Erroneous input in B4" );
+        if ( symb >= 50 && symb <= 59 ) {
+            nibble = symb - 50;
+        } else if ( symb >= 67 && symb <= 72 ) {
+            nibble = symb - 57;
+        } else if ( symb == 97 ) {
+            nibble = 17;
+        }
+
+        if ( nibble <= 16 ) {
+            Tn = B4-> B4_ptok;
+            cstr_from = Tn_name( Tn, from );
+            leng_from = Tn_length( Tn, from );
+            if ( Ssize( B4-> B4_ts ) < leng_from + 2 ) {
+                B4-> B4_ts = Srealloc( B4-> B4_ts, leng_from + 2 );
+            }
+            ts = B4-> B4_ts;
+
+            for ( i = 0; i < leng_from; ++i ) {
+                ts[ i ] = cstr_from[ i ];
+            }
+            ts[ leng_from ] = nibble;
+            ts[ leng_from + 1 ] = '\0';
+            B4-> B4_to = Tn_insert( Tn, ts, leng_from + 1 );
+            B4-> B4_output[ 0 ] = MAXSHORT;
+        } else if ( nibble == 17 ) {
+            Tn = B4-> B4_ptok;
+            cstr_from = Tn_name( Tn, from );
+            leng_from = Tn_length( Tn, from );
+            if ( leng_from % 2 != 0 ) { Error( "Parity error in B4" ); }
+            if ( Ssize( B4-> B4_ts ) < leng_from / 2 + 1 ) {
+                B4-> B4_ts = Srealloc( B4-> B4_ts, leng_from / 2 + 1 );
+            }
+            ts = B4-> B4_ts;
+            for ( i = 0; i < leng_from; i += 2 ) {
+                k = i / 2;
+                ts[ k ] = ( cstr_from[ k ] << 4 ) + cstr_from[ k + 1 ];
+            }
+            k = leng_from / 2;
+            ts[ k ] = '\0';
+            B4-> B4_output[ 0 ] = T2_insert( T2_Sigma, ts, k );
+            B4-> B4_output[ 1 ] = MAXSHORT;
+            B4-> B4_to = 0;
+        } else {
+            B4-> B4_to = MAXSHORT;
+            B4-> B4_output[ 0 ] = MAXSHORT;
+        }
     }
     return( B4 );
 }
