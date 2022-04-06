@@ -405,7 +405,6 @@ A_OBJECT    A_blast( A_OBJECT, T2_OBJECT );
 A_OBJECT    A_blast4( A_OBJECT, T2_OBJECT );
 
 /* ABcomp.c */
-A_OBJECT    AB_comp_1( A_OBJECT, B4_OBJECT, T2_OBJECT );
 A_OBJECT    AB_comp( A_OBJECT, B4_OBJECT, T2_OBJECT );
 
 /* INR_main.c */
