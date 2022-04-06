@@ -81,7 +81,7 @@ A_OBJECT AB_comp_1( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
                 if ( output1 == MAXSHORT ) {
                     A = A_add( A, cur_c, 0, next_c );
                 } else {
-                    iz = Ssize( (char *) B2-> B4_output ) / 2;
+                    iz = Ssize( (char *) B2-> B4_output ) / sizeof(SHORT);
                     state1 = cur_c;
                     i = 1;
                     output2 = B2-> B4_output[ i ];
@@ -112,7 +112,7 @@ A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
     A_OBJECT A;
     R_OBJECT R1;
     R_OBJECT R2;
-    int current, cur_a, cur_b, cur_c, next_c, s1, t1;
+    int current, cur_a, cur_b, cur_c, next_c, s1, t1, nt, lt;
     int state1, state2, i, iz;
     SHORT output1, output2;
     A_row *p1, *p1z;
@@ -126,13 +126,12 @@ A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
         if ( A1-> A_ems ) A1 = A_deems( A1 );
     }
 
-    if ( A1-> A_nT > 2 ) {
-        Error( "not implemented" );
-    }
-
     A1 = A_min( A1 );
+    nt = A1-> A_nT;
+
     A = A_create();
-    A-> A_nT = 2;
+    A-> A_nT = nt;
+    lt = nt - 1;
     R1 = R_create();
     R2 = R_create();
 
@@ -151,25 +150,24 @@ A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
         cur_a = cur_st-> R_a;
         cur_b = cur_st-> R_b;
         cur_c = R_insert( R2, current, 0 );
-/* printf( "for: %d %d %d\n", cur_a, cur_b, cur_c ); */
 
         p1  = A1-> A_p[ cur_a ];
         p1z = A1-> A_p[ cur_a + 1 ];
 
         while( p1 < p1z ) {
-            s1 = ( p1-> A_b ) >> 1;
-            t1 = ( p1-> A_b ) % 2;
-            if ( t1 == 0 ) {
+            if ( p1-> A_b == 1 ) {  /* force an endmarker on last tape */
+                assert( p1-> A_c == 1 );
+                s1 = 1;
+                t1 = lt;
+            } else {
+                s1 = ( p1-> A_b ) / nt;
+                t1 = ( p1-> A_b ) % nt;
+            }
+            if ( t1 < lt ) {
                 next_c =
                     R_insert( R2, R_insert( R1, p1-> A_c, cur_b ), 0 );
                 A = A_add( A, cur_c, p1-> A_b, next_c );
-/* printf( "gen1: %d %d %d\n", cur_c, p1-> A_b, next_c ); */
             } else {
-                if ( s1 == 0 ) {
-                    assert( p1-> A_b == 1 );
-                    assert( p1-> A_c == 1 );
-                    s1 = 1;  /* force an endmarker 1.-| */
-                }
                 B2 = B4_set_trans( B2, cur_b, s1, T2_Sigma );
                 if ( B2-> B4_to != MAXSHORT ) {
                     next_c =
@@ -178,18 +176,15 @@ A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
                     output1 = B2-> B4_output[ 0 ];
                     if ( output1 == MAXSHORT ) {
                         A = A_add( A, cur_c, 0, next_c );
-/* printf( "gen2: %d %d %d\n", cur_c, 0, next_c ); */
                     } else {
-                        iz = Ssize( (char *) B2-> B4_output ) / 2;
+                        iz = Ssize( (char *) B2-> B4_output ) / sizeof(SHORT);
                         state1 = cur_c;
                         i = 1;
                         output2 = B2-> B4_output[ i ];
                         while ( output2 != MAXSHORT ) {
                             assert( i < iz );
                             state2 = R_insert( R2, current, i );
-                            A = A_add( A, state1,
-                                ( output1 << 1 ) + 1, state2 );
-/* printf( "gen3: %d %d %d\n", state1, (output1<<1)+1, state2 ); */
+                            A = A_add( A, state1, output1 * nt + lt, state2 );
                             state1 = state2;
                             output1 = output2;
                             ++i;
@@ -197,12 +192,9 @@ A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
                         }
                         if ( output1 == 1 ) {
                             A = A_add( A, state1, 1, next_c );
-/* printf( "gen4: %d %d %d\n", state1, 1, next_c ); */
                         } else {
-                            A = A_add( A, state1,
-                                ( output1 << 1 ) + 1, next_c );
+                            A = A_add( A, state1, output1 * nt + lt, next_c );
                         }
-/* printf( "gen5: %d %d %d\n", state1, (output1<<1)+1, next_c ); */
                     }
                 }
             }

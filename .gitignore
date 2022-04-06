@@ -55,5 +55,5 @@ Mkfile.old
 dkms.conf
 
 # yacc output
-# y.tab.h
-# y.tab.c
+y.tab.h
+y.tab.c
