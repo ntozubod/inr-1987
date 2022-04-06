@@ -26,7 +26,7 @@
 
 #include "O.h"
 
-A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
+A_OBJECT AB_comp( A_OBJECT A1, B_OBJECT B2, T2_OBJECT T2_Sigma )
 {
     A_OBJECT A;
     R_OBJECT R1;
@@ -83,19 +83,19 @@ A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
                     R_insert( R2, R_insert( R1, p1-> A_c, cur_b ), 0 );
                 A = A_add( A, cur_c, p1-> A_b, next_c );
             } else {
-                B2 = B4_set_trans( B2, cur_b, s1, T2_Sigma );
-                if ( B2-> B4_to != MAXSHORT ) {
+                B2 = B_set_trans( B2, cur_b, s1, T2_Sigma );
+                if ( B2-> B_to != MAXSHORT ) {
                     next_c =
                         R_insert( R2,
-                            R_insert( R1, p1-> A_c, B2-> B4_to ), 0 );
-                    output1 = B2-> B4_output[ 0 ];
+                            R_insert( R1, p1-> A_c, B2-> B_to ), 0 );
+                    output1 = B2-> B_output[ 0 ];
                     if ( output1 == MAXSHORT ) {
                         A = A_add( A, cur_c, 0, next_c );
                     } else {
-                        iz = Ssize( (char *) B2-> B4_output ) / sizeof(SHORT);
+                        iz = Ssize( (char *) B2-> B_output ) / sizeof(SHORT);
                         state1 = cur_c;
                         i = 1;
-                        output2 = B2-> B4_output[ i ];
+                        output2 = B2-> B_output[ i ];
                         while ( output2 != MAXSHORT ) {
                             assert( i < iz );
                             state2 = R_insert( R2, current, i );
@@ -103,7 +103,7 @@ A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
                             state1 = state2;
                             output1 = output2;
                             ++i;
-                            output2 = B2-> B4_output[ i ];
+                            output2 = B2-> B_output[ i ];
                         }
                         if ( output1 == 1 ) {
                             A = A_add( A, state1, 1, next_c );
@@ -117,7 +117,7 @@ A_OBJECT AB_comp( A_OBJECT A1, B4_OBJECT B2, T2_OBJECT T2_Sigma )
         }
     }
     A_destroy( A1 );
-    B4_destroy( B2 );
+    B_destroy( B2 );
     R_destroy( R1 );
     R_destroy( R2 );
     return( A );

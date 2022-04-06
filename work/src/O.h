@@ -42,7 +42,8 @@ int fileno( FILE * );
 #define P_Object        6
 #define Q_Object        7
 #define T2_Object       8
-#define B4_Object       9
+#define B_Object        9
+#define B4_Object      10 
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -127,6 +128,14 @@ typedef struct Q_desc {
     int             Q_length;
     char *          Q_cstr;
 } *     Q_OBJECT;
+
+typedef struct B_desc {
+    int             Type;
+    SHORT           B_from;
+    SHORT           B_input;
+    SHORT *         B_output;
+    SHORT           B_to;
+} *     B_OBJECT;
 
 typedef struct B4_desc {
     int             Type;
@@ -359,6 +368,12 @@ A_OBJECT    A_GMsseq( A_OBJECT );
 /* Aclsseq.c */
 A_OBJECT    A_clsseq( A_OBJECT );
 
+/* B.c */
+B_OBJECT    B_create_B4( );
+void        B_destroy( B_OBJECT );
+B_OBJECT    B_set_trans( B_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        B_print_trans( B_OBJECT, T2_OBJECT );
+
 /* B4.c */
 B4_OBJECT   B4_create( );
 void        B4_destroy( B4_OBJECT );
@@ -405,7 +420,7 @@ A_OBJECT    A_blast( A_OBJECT, T2_OBJECT );
 A_OBJECT    A_blast4( A_OBJECT, T2_OBJECT );
 
 /* ABcomp.c */
-A_OBJECT    AB_comp( A_OBJECT, B4_OBJECT, T2_OBJECT );
+A_OBJECT    AB_comp( A_OBJECT, B_OBJECT, T2_OBJECT );
 
 /* INR_main.c */
 int         smain( int argc, char *argv[] );

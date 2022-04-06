@@ -244,7 +244,7 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
         A = A_blast4( A, TT2 );
         disp_flag = 1;
     } else if ( !strcmp("unblast4",op) ) {
-        A = AB_comp( A, B4_create(), TT2 );
+        A = AB_comp( A, B_create_B4(), TT2 );
         disp_flag = 1;
     } else if ( (num = tonum(op)) >= 0 ) {
         if ( A_report ) fprintf( fpout, "(pow)\n" );
