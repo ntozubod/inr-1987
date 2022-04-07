@@ -132,7 +132,8 @@ A_OBJECT A_slurp_utf8( char *file, T2_OBJECT T2_Sigma )
             case 2:
                 assert( i + 1 < A-> A_nrows );
                 c2 = A-> A_t[ i + 1 ].A_b - 2;
-                cp = ( c1 & 0x1f ) + ( c2 & 0x3f );
+                cp = ( ( c1 & 0x1f ) << 6 )
+                   +   ( c2 & 0x3f );
                 if ( ( c2 & 0xc0 ) == 0x80
                   &&   cp > 0x7f ) {
                     ts[ 0 ] = c1;
