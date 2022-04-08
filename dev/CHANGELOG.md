@@ -1,5 +1,25 @@
 # INR Changelog
 
+## 2.1.0c8 (2022-04-11)
+
+##### Acompose.c
+
+The change made to compose in the last commit is necessary and proven to
+be worth while.
+However, I am considering a more complete overhaul of Acompose.c that will
+subsume these changes.
+As well, for a core component like this, thorough testing is required.
+
+The changes to Atrim.c are mainly syntactic and, by now, well exercised.
+There is also a conditional compile define USE_RECURSIVE_TRIM that can be
+selected at compile time to revert the behaviour to the older version.
+
+##### Aunicode.c
+
+All mentions of nibbles are removed.
+This functionality will be re-introduced later as part of a new
+abstraction (B).
+
 ## 2.1.0c7 (2022-03-19)
 
 This work was actually done in February and has been waiting for the
