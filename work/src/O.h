@@ -418,6 +418,8 @@ A_OBJECT    A_valid_utf8_tokens( T2_OBJECT );
 A_OBJECT    A_token_exploder( A_OBJECT, T2_OBJECT );
 A_OBJECT    A_blast( A_OBJECT, T2_OBJECT );
 A_OBJECT    A_blast4( A_OBJECT, T2_OBJECT );
+int         A_valid_utf8_at( char *, int, int, int * );
+int         A_unicode_printable( int );
 
 /* ABcomp.c */
 A_OBJECT    AB_comp( A_OBJECT, B_OBJECT, T2_OBJECT );
