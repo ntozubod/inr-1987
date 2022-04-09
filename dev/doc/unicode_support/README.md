@@ -28,7 +28,7 @@ UTF-16 also has this property as long as alignment on 16-bit short word
 is preserved.
 
 Thus, INR works with octet sequences.
-For now, three strategies can be imagined:
+For now, two strategies can be imagined:
 
 1. There are only 256 separate octet values providing a feasible, though
 large alphabet for INR processing.
@@ -38,12 +38,7 @@ control (i.e., the state) if different actions need to be distinguished.
 Whether this is too large an alphabet will, of course, depend on the
 application.
 
-2. An obvious solution to this state explosion just mentioned is to split
-each 8-bit octet into two 4-bit hex digits (nibbles).
-Such an alphabet has 16 values.
-This or other decompositions of octets may be considered in the future.
-
-3. Yet another approach considers that for any application only a small number
+2. Yet another approach considers that for any application only a small number
 of code points may actually be used.
 Any input can be split into tokens, each of which is a valid UTF-8 octet
 sequence corresponding to a single code point.
@@ -74,9 +69,7 @@ All of the printable characters have string value as before and
 unprintable characters are represented by a two digit hexadecimal number
 as a C string of length 2.
 
-Approach number 2 is not explicitly handled, for now.
-
-For approach number 3, no preloading is done.
+For approach number 2, no preloading is done.
 The internal index is assigned as each character is encountered.
 The external form is the UTF-8 sequence in its string form.
 Note that combining forms are treated as separate tokens.
