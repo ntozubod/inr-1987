@@ -4,8 +4,8 @@
 
 New functionality has been added to INR to allow for the full repertoire
 of Unicode to be available for use in tokens.
-Although INR itself assigns no particular meanings assigned to the actual
-strings used for tokens, there is an obvious convention that assigns the
+Although INR itself assigns no particular meanings to the actual strings
+used for tokens, there is an obvious convention that assigns the
 token `a` to refer to the lower case form of the first letter of the alphabet
 as in 7-bit ASCII.
 
@@ -107,21 +107,17 @@ A feature that will be added to INR at some future time under the name of
 Normalization / Denormalization.
 That is what it is referred to in the Unicode documentaton.
 
-## Current
+## Approach to be taken by INR
 
-At the present time, the focus is on Unicode as expressed as sequences
+At the present time, INR will focus is on Unicode as expressed as sequences
 of octets encoded as UTF-8 with no conversion to code point numbers or
 to other transfer formats.
 These may be provided at a later time.
-
 UTF-8 is quite suitable for Linux and various similar operating system
 environments.
-Nonetheless, UTF-16 support should be possible in the future.
-Most other encodings in use are reasonably close to one of these two
-although GB 18030 might require more work.
 
-Briefly, UTF-8 encoding represents Unicode code points as a series of one
-to four octets.
+Briefly, UTF-8 encoding represents Unicode code points as a series of 1
+to 4 octets.
 It is a variable length coding that encodes all 7-bit ASCII as itself in
 one octet (formerly called a byte) and larger code points appropriately
 using multiple continuation octets as needed.
@@ -129,26 +125,32 @@ It satisfies a synchronization property that allow text matching for any
 valid UTF-8 string query against a valid UTF-8 text by matching only octets.
 There can be no misaligned matches.
 
-UTF-16 also has this property as long as alignment on 16-bit short word
-is preserved.
-
-Thus, INR works with octet sequences.
+INR works with octet sequences.
 For now, two strategies can be imagined:
 
-1. There are only 256 separate octet values providing a feasible, though
+(1) There are only 256 separate octet values providing a feasible, though
 large alphabet for INR processing.
 Large alphabets may contribute to state explosion in multi-tape
 transducers since information read can only be stored in the finite
 control (i.e., the state) if different actions need to be distinguished.
-Whether this is too large an alphabet will, of course, depend on the
-application.
+This will be called the 'octet' approach.
+It is actually agnostic to the encoding and can be used for binary input
+as well.
 
-2. Yet another approach considers that for any application only a small number
-of code points may actually be used.
-Any input can be split into tokens, each of which is a valid UTF-8 octet
+(2) As second approach considers that the input is proper UTF-8 encoding and
+parses it as a sequence of valid encodings of valid Unicode code points.
+The input is be split into tokens, each of which is a valid UTF-8 octet
 sequence corresponding to a single code point.
 Although the alphabet size is potentially 1,114,112 (the number of valid
 code points), the size is expected to be much smaller in many cases.
+NB: If the input is not proper UTF-8 encoding, any anomalous octets are
+treated as just the octets they are as for (1).
+This will be called the 'utf8' approach.
+
+A third approach would attempt to combine any accents and combining marks
+into the tokens so that the two forms of *a acute* would be represented by
+two different single tokens.
+This is not implemented at the present time.
 
 ## Internal considerations
 
@@ -247,7 +249,7 @@ broken apart
 ## Changes to Aload.c:
 
 `:readwords` will admit all octets as does Lex.c.
-Only approach 1 is currently supported.
+Only the octet approach is currently supported.
 
 ## New code in Aunicode.c:
 
