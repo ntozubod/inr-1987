@@ -2,8 +2,113 @@
 
 ## Introduction
 
-New functionality has been added to version 2.1.0c in Feb 2022 to support
-the use of Unicode processing in UTF-8 format.
+New functionality has been added to INR to allow for the full repertoire
+of Unicode to be available for use in tokens.
+Although INR itself assigns no particular meanings assigned to the actual
+strings used for tokens, there is an obvious convention that assigns the
+token `a` to refer to the lower case form of the first letter of the alphabet
+as in 7-bit ASCII.
+
+Note that several concepts are being mashed together into one with the
+possibility of confusion:
+
+(1) the abstract symbol *a* used to represent a specific letter in an
+otherwise unspecified alphabet.
+This is the usage that occurs in mathematics where *a* might mean a
+unknown but specific constant that is different from other symbols such
+as *b*, *c*, etc.
+This is very common in texts on Formal Language Theory and Automata Theory.
+
+(2) the programming equivalent where *a* is a label for something that can
+be interpreted specific in a later context.
+The downstream application of any automaton will give meaning to *a*.
+Note that *a* may mean real-life actions such as 'apply the brakes', or
+'save the file', or 'fire the rocket'.
+INR will not know or care what this meaning is.
+
+(3) the abstract idea of the letter *a* as used in the written for of
+natural languages such as English, French, Swahili, Maori, etc.
+This is still abstract as there is no specific bit pattern assigned to it
+and it might appear very different in its various usages.
+NB: This is what Unicode identifies using a *code point*, a non-negative
+integer value that shows up in documentation as, for example, U+0061 but
+really is only the 97th assigned character.
+
+(4) the representation `a` (for code point U+0061) as it occurs in any
+particular encoding.
+In ASCII this is represented as the hex number 0x61, and it usually stored
+in an 8-bit *byte* on modern computers.
+NB: Unicode uses the term *octet* to specifically refer to an 8-bit quantity
+but usually avoids this discussion except when talking about representations.
+One such representation is called UTF-8, a variable length encoding that
+assigns between 1 and 4 octets to each code point.
+The letter *a* is represented as one octet containing the value 0x61.
+INR will use only UTF-8 encoding for the present time.
+
+(5) There is ONE more subtlety that occurs because of accents and other
+kinds of annotations.
+Here our example will shift to the *character* that we think of *a acute*,
+that is, the letter *a* with a mark above it that looks like a short line
+leaning to the right.
+The reason for this discussion is that this is also an abstraction that
+has conceptual and representation issues and leads to the need for some
+supporting technologies.
+Unicode calls this a *grapheme* that is made up of two *glyph*s.
+One glyph represents the glyph *a* (U+0061) and the second represents the
+acute accent (U+0301).
+Thus *a acute* in Unicode requires two code points.
+In UTF-8, this is encoded into a sequence of three octets ( 0x61 0xCC 0x81 ).
+
+These five different views of what is meant by the letter *a* represent
+why adding Unicode functionality to INR is subtle and difficult.
+The goal has been to preserve the feel of INR.
+Things that seem to be easy should still be easy.
+Things that worked before should still work.
+
+INR basically works at the level of (1) above with a little of (2).
+However, (3) and (4) are used in very common application domains of text
+processing and should be supported enough that they still appear natural
+without breaking the (1) and (2) usages.
+Level (5) usage involves support for more from the Unicode standard in order
+to feel natural and will be post-poned
+
+## Aside for masochists
+
+Actually, I lied (a little).
+The letter *a acute* in Unicode has a single code point ( U+00E1 ) and
+can be represented in UTF-8 using a sequence of two octets ( 0xC3 0xA1 ).
+This is correct and represents an engineering compromize made in the
+early days of Unicode.
+Because *a acute* occurred in a number of legacy encodings at the time
+of the creation of Unicode, this meaning was preserved.
+There are two distinct ways of representing *a acute* and in all real-world
+senses of the term are the same character / grapheme.
+This can create problems.
+INR is not going to address this at the present but it is important to be
+aware of:
+
+`` `\x61\xCC\x81`; ``
+
+    (START) á 2
+    2 -| (FINAL)
+
+`` `\xC3\xA1`; ``
+
+    (START) á 2
+    2 -| (FINAL)
+
+`` `\x61\xCC\x81` ! `\xC3\xA1`; ``
+
+    (START) á 2
+    (START) á 2
+    2 -| (FINAL)
+
+A feature that will be added to INR at some future time under the name of
+Normalization / Denormalization.
+That is what it is referred to in the Unicode documentaton.
+
+## Current
+
 At the present time, the focus is on Unicode as expressed as sequences
 of octets encoded as UTF-8 with no conversion to code point numbers or
 to other transfer formats.
