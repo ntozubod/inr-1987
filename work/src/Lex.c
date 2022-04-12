@@ -28,7 +28,7 @@
 
 A_OBJECT    A, Atemp;
 Tn_OBJECT   TAlist;
-A_OBJECT    Alist[1000];
+A_OBJECT    * Alist;
 
 T2_OBJECT   TT2;
 
@@ -402,6 +402,7 @@ fprintf( fpout, "\n" );
 
     TT2_init();
 
+    Alist = (A_OBJECT *) Salloc( 100 * sizeof( A_OBJECT ) );
     TAlist = Tn_create();
     result = Tn_insert( TAlist, "_Last_", 6 );
     assert( result == 0 );
