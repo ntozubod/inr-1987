@@ -31,12 +31,20 @@ B_OBJECT B_create_B4( )
     return( (B_OBJECT) B4_create() );
 }
 
+B_OBJECT B_create_B4i( )
+{
+    return( (B_OBJECT) B4i_create() );
+}
+
 void B_destroy( B_OBJECT B )
 {
     if ( B != NULL ) {
         switch( B-> Type ) {
         case B4_Object:
             B4_destroy( (B4_OBJECT) B );
+            break;
+        case B4i_Object:
+            B4i_destroy( (B4i_OBJECT) B );
             break;
         }
     }
@@ -51,6 +59,9 @@ B_OBJECT B_set_trans( B_OBJECT B,
     case B4_Object:
         B4_set_trans( (B4_OBJECT) B, from, symb, T2_Sigma );
         break;
+    case B4i_Object:
+        B4i_set_trans( (B4i_OBJECT) B, from, symb, T2_Sigma );
+        break;
     }
     return( B );
 }
@@ -62,6 +73,9 @@ void B_print_trans( B_OBJECT B, T2_OBJECT T2_Sigma )
     switch( B-> Type ) {
     case B4_Object:
         B4_print_trans( (B4_OBJECT) B, T2_Sigma );
+        break;
+    case B4i_Object:
+        B4i_print_trans( (B4i_OBJECT) B, T2_Sigma );
         break;
     }
 }

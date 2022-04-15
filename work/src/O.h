@@ -44,6 +44,7 @@ int fileno( FILE * );
 #define T2_Object       8
 #define B_Object        9
 #define B4_Object      10 
+#define B4i_Object     11 
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -146,6 +147,16 @@ typedef struct B4_desc {
     Tn_OBJECT       B4_ptok;
     char *          B4_ts;
 } *     B4_OBJECT;
+
+typedef struct B4i_desc {
+    int             Type;
+    SHORT           B4i_from;
+    SHORT           B4i_input;
+    SHORT *         B4i_output;
+    SHORT           B4i_to;
+    Tn_OBJECT       B4i_ptok;
+    char *          B4i_ts;
+} *     B4i_OBJECT;
 
 #define OPEN            0
 #define NFA             1
@@ -370,6 +381,7 @@ A_OBJECT    A_clsseq( A_OBJECT );
 
 /* B.c */
 B_OBJECT    B_create_B4( );
+B_OBJECT    B_create_B4i( );
 void        B_destroy( B_OBJECT );
 B_OBJECT    B_set_trans( B_OBJECT, SHORT, SHORT, T2_OBJECT );
 void        B_print_trans( B_OBJECT, T2_OBJECT );
@@ -379,6 +391,11 @@ B4_OBJECT   B4_create( );
 void        B4_destroy( B4_OBJECT );
 B4_OBJECT   B4_set_trans( B4_OBJECT, SHORT, SHORT, T2_OBJECT );
 void        B4_print_trans( B4_OBJECT, T2_OBJECT );
+
+B4i_OBJECT  B4i_create( );
+void        B4i_destroy( B4i_OBJECT );
+B4i_OBJECT  B4i_set_trans( B4i_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        B4i_print_trans( B4i_OBJECT, T2_OBJECT );
 
 /* Colon.c */
 extern int  disp_flag;
