@@ -26,11 +26,14 @@
 
 #include "O.h"
 
+/*
+ * B4 translates from octet form to nibbles
+ * B4i translates from nibble form to octets (far harder)
+ */
+
 B4_OBJECT B4_create()
 {
     B4_OBJECT B4;
-    Tn_OBJECT Tn;
-    int result;
 
     B4 = (B4_OBJECT) Salloc( sizeof(struct B4_desc) );
     B4-> Type    = B4_Object;
@@ -40,11 +43,6 @@ B4_OBJECT B4_create()
     B4-> B4_output[ 0 ] = MAXSHORT;
     B4-> B4_output[ 1 ] = MAXSHORT;
     B4-> B4_to = -1;
-    B4-> B4_ptok = Tn = Tn_create();
-    B4-> B4_ts = Salloc( 100 );
-
-    result = Tn_insert( Tn, "", 0 );
-    assert( result == 0 );
 
     return( B4 );
 }
@@ -53,8 +51,6 @@ void B4_destroy( B4_OBJECT B4 )
 {
     if ( B4 != NULL ) {
         Sfree( (char *) B4-> B4_output );
-        Tn_destroy( B4-> B4_ptok );
-        Sfree( B4-> B4_ts );
     }
     Sfree( (char *) B4 );
 }
@@ -62,10 +58,12 @@ void B4_destroy( B4_OBJECT B4 )
 B4_OBJECT B4_set_trans( B4_OBJECT B4,
     SHORT from, SHORT symb, T2_OBJECT T2_Sigma )
 {
-    Tn_OBJECT Tn;
-    int nibble = 18;
-    char *cstr_from, *ts;
-    int leng_from, i, k;
+    char *in_str;
+    int in_str_len, out_str_len, k, l, c;
+    SHORT *out_str;
+    int T2idx[] = { 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+                    67, 68, 69, 70, 71, 72 };
+    int T2idx_blk =  97;
 
     B4-> B4_from = from;
     B4-> B4_input = symb;
@@ -75,64 +73,31 @@ B4_OBJECT B4_set_trans( B4_OBJECT B4,
         B4-> B4_output[ 1 ] = MAXSHORT;
         B4-> B4_to = FINAL;
     } else {
-        if ( symb >= 50 && symb <= 59 ) {
-            nibble = symb - 50;
-        } else if ( symb >= 67 && symb <= 72 ) {
-            nibble = symb - 57;
-        } else if ( symb == 97 ) {
-            nibble = 17;
-        }
+        in_str = T2_name( T2_Sigma, symb );
+        in_str_len = T2_length( T2_Sigma, symb );
 
-        if ( nibble <= 16 ) {
-            Tn = B4-> B4_ptok;
-            cstr_from = Tn_name( Tn, from );
-            leng_from = Tn_length( Tn, from );
-            if ( Ssize( B4-> B4_ts ) < leng_from + 2 ) {
-                B4-> B4_ts = Srealloc( B4-> B4_ts, leng_from + 2 );
-            }
-            ts = B4-> B4_ts;
-
-            for ( i = 0; i < leng_from; ++i ) {
-                ts[ i ] = cstr_from[ i ];
-            }
-            ts[ leng_from ] = nibble;
-            ts[ leng_from + 1 ] = '\0';
-            B4-> B4_to = Tn_insert( Tn, ts, leng_from + 1 );
-            B4-> B4_output[ 0 ] = MAXSHORT;
-        } else if ( nibble == 17 ) {
-            Tn = B4-> B4_ptok;
-            cstr_from = Tn_name( Tn, from );
-            leng_from = Tn_length( Tn, from );
-            if ( leng_from % 2 != 0 ) { Error( "Parity error in B4" ); }
-            if ( Ssize( B4-> B4_ts ) < leng_from / 2 + 1 ) {
-                B4-> B4_ts = Srealloc( B4-> B4_ts, leng_from / 2 + 1 );
-            }
-            ts = B4-> B4_ts;
-            for ( i = 0; i < leng_from; i += 2 ) {
-                k = i / 2;
-                ts[ k ] = ( cstr_from[ k ] << 4 ) + cstr_from[ k + 1 ];
-            }
-            k = leng_from / 2;
-            ts[ k ] = '\0';
-            B4-> B4_output[ 0 ] = T2_insert( T2_Sigma, ts, k );
-            B4-> B4_output[ 1 ] = MAXSHORT;
-            B4-> B4_to = 0;
-        } else {
-            B4-> B4_to = MAXSHORT;
-            B4-> B4_output[ 0 ] = MAXSHORT;
+        out_str_len = Ssize( (char *) B4-> B4_output ) / sizeof( SHORT );
+        if ( out_str_len < in_str_len * 2 + 2 ) {
+            B4-> B4_output = (SHORT *)
+                Srealloc( (char *) B4-> B4_output,
+                    2 * ( in_str_len * 2 + 2 ) * sizeof( SHORT ) );
         }
+        out_str = B4-> B4_output;
+
+        l = 0;
+        for ( k = 0; k < in_str_len; ++k ) {
+            c = in_str[ k ];
+            out_str[ l++ ] = T2idx[ ( c >> 4 ) & 0xf ];
+            out_str[ l++ ] = T2idx[ c & 0xf ];
+        }
+        out_str[ l++ ] = T2idx_blk;
+        out_str[ l++ ] = MAXSHORT;
     }
     return( B4 );
 }
 
 void B4_print_trans( B4_OBJECT B4, T2_OBJECT T2_Sigma )
 {
-/*
-    Tn_OBJECT Tn;
-    int nibble = 18;
-    char *cstr_from, *ts;
-    int leng_from, i, k;
-*/
     int i;
 
     printf( "%d\t", B4-> B4_from );

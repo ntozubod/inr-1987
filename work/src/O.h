@@ -144,8 +144,6 @@ typedef struct B4_desc {
     SHORT           B4_input;
     SHORT *         B4_output;
     SHORT           B4_to;
-    Tn_OBJECT       B4_ptok;
-    char *          B4_ts;
 } *     B4_OBJECT;
 
 typedef struct B4i_desc {
