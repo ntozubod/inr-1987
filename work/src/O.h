@@ -45,6 +45,9 @@ int fileno( FILE * );
 #define B_Object        9
 #define B4_Object      10 
 #define B4i_Object     11 
+#define BU_Object      12 
+#define BZ_Object      13 
+#define BUi_Object     14 
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -155,6 +158,34 @@ typedef struct B4i_desc {
     Tn_OBJECT       B4i_ptok;
     char *          B4i_ts;
 } *     B4i_OBJECT;
+
+typedef struct BU_desc {
+    int             Type;
+    SHORT           BU_from;
+    SHORT           BU_input;
+    SHORT *         BU_output;
+    SHORT           BU_to;
+    Tn_OBJECT       BU_ptok;
+    char *          BU_ts;
+} *     BU_OBJECT;
+
+typedef struct BZ_desc {
+    int             Type;
+    SHORT           BZ_from;
+    SHORT           BZ_input;
+    SHORT *         BZ_output;
+    SHORT           BZ_to;
+    Tn_OBJECT       BZ_ptok;
+    char *          BZ_ts;
+} *     BZ_OBJECT;
+
+typedef struct BUi_desc {
+    int             Type;
+    SHORT           BUi_from;
+    SHORT           BUi_input;
+    SHORT *         BUi_output;
+    SHORT           BUi_to;
+} *     BUi_OBJECT;
 
 #define OPEN            0
 #define NFA             1
@@ -394,6 +425,22 @@ B4i_OBJECT  B4i_create( );
 void        B4i_destroy( B4i_OBJECT );
 B4i_OBJECT  B4i_set_trans( B4i_OBJECT, SHORT, SHORT, T2_OBJECT );
 void        B4i_print_trans( B4i_OBJECT, T2_OBJECT );
+
+/* BU.c */
+BU_OBJECT   BU_create( );
+void        BU_destroy( BU_OBJECT );
+BU_OBJECT   BU_set_trans( BU_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        BU_print_trans( BU_OBJECT, T2_OBJECT );
+
+BZ_OBJECT   BZ_create( );
+void        BZ_destroy( BZ_OBJECT );
+BZ_OBJECT   BZ_set_trans( BZ_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        BZ_print_trans( BZ_OBJECT, T2_OBJECT );
+
+BUi_OBJECT  BUi_create( );
+void        BUi_destroy( BUi_OBJECT );
+BUi_OBJECT  BUi_set_trans( BUi_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        BUi_print_trans( BUi_OBJECT, T2_OBJECT );
 
 /* Colon.c */
 extern int  disp_flag;
