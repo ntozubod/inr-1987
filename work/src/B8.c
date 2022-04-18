@@ -61,9 +61,6 @@ B8_OBJECT B8_set_trans( B8_OBJECT B8,
     char *in_str;
     int in_str_len, out_str_len, k, l, c;
     SHORT *out_str;
-    int T2idx[] = { 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-                    67, 68, 69, 70, 71, 72 };
-    int T2idx_blk =  97;
 
     B8-> B8_from = from;
     B8-> B8_input = symb;
@@ -77,20 +74,19 @@ B8_OBJECT B8_set_trans( B8_OBJECT B8,
         in_str_len = T2_length( T2_Sigma, symb );
 
         out_str_len = Ssize( (char *) B8-> B8_output ) / sizeof( SHORT );
-        if ( out_str_len < in_str_len * 2 + 2 ) {
+        if ( out_str_len < in_str_len + 2 ) {
             B8-> B8_output = (SHORT *)
                 Srealloc( (char *) B8-> B8_output,
-                    2 * ( in_str_len * 2 + 2 ) * sizeof( SHORT ) );
+                    2 * ( in_str_len + 2 ) * sizeof( SHORT ) );
         }
         out_str = B8-> B8_output;
 
         l = 0;
         for ( k = 0; k < in_str_len; ++k ) {
             c = in_str[ k ];
-            out_str[ l++ ] = T2idx[ ( c >> 4 ) & 0xf ];
-            out_str[ l++ ] = T2idx[ c & 0xf ];
+            out_str[ l++ ] = c + 2;
         }
-        out_str[ l++ ] = T2idx_blk;
+        out_str[ l++ ] = 258;
         out_str[ l++ ] = MAXSHORT;
     }
     return( B8 );
@@ -147,9 +143,9 @@ B8i_OBJECT B8i_set_trans( B8i_OBJECT B8i,
     SHORT from, SHORT symb, T2_OBJECT T2_Sigma )
 {
     Tn_OBJECT Tn;
-    int nibble = 18;
+    int octet = 257;
     char *cstr_from, *ts;
-    int leng_from, i, k;
+    int leng_from, i;
 
     B8i-> B8i_from = from;
     B8i-> B8i_input = symb;
@@ -159,46 +155,24 @@ B8i_OBJECT B8i_set_trans( B8i_OBJECT B8i,
         B8i-> B8i_output[ 1 ] = MAXSHORT;
         B8i-> B8i_to = FINAL;
     } else {
-        if ( symb >= 50 && symb <= 59 ) {
-            nibble = symb - 50;
-        } else if ( symb >= 67 && symb <= 72 ) {
-            nibble = symb - 57;
-        } else if ( symb == 97 ) {
-            nibble = 17;
+        if ( symb >= 2 && symb <= 258 ) {
+            octet = symb - 2;
         }
 
-        if ( nibble <= 16 ) {
+        if ( octet <= 255  ) {
             Tn = B8i-> B8i_ptok;
             cstr_from = Tn_name( Tn, from );
             leng_from = Tn_length( Tn, from );
-            if ( Ssize( B8i-> B8i_ts ) < leng_from + 2 ) {
-                B8i-> B8i_ts = Srealloc( B8i-> B8i_ts, leng_from + 2 );
+            if ( Ssize( B8i-> B8i_ts ) < leng_from + 1 ) {
+                B8i-> B8i_ts = Srealloc( B8i-> B8i_ts, leng_from + 1 );
             }
             ts = B8i-> B8i_ts;
-
             for ( i = 0; i < leng_from; ++i ) {
                 ts[ i ] = cstr_from[ i ];
             }
-            ts[ leng_from ] = nibble;
-            ts[ leng_from + 1 ] = '\0';
-            B8i-> B8i_to = Tn_insert( Tn, ts, leng_from + 1 );
-            B8i-> B8i_output[ 0 ] = MAXSHORT;
-        } else if ( nibble == 17 ) {
-            Tn = B8i-> B8i_ptok;
-            cstr_from = Tn_name( Tn, from );
-            leng_from = Tn_length( Tn, from );
-            if ( leng_from % 2 != 0 ) { Error( "Parity error in B8i" ); }
-            if ( Ssize( B8i-> B8i_ts ) < leng_from / 2 + 1 ) {
-                B8i-> B8i_ts = Srealloc( B8i-> B8i_ts, leng_from / 2 + 1 );
-            }
-            ts = B8i-> B8i_ts;
-            for ( i = 0; i < leng_from; i += 2 ) {
-                k = i / 2;
-                ts[ k ] = ( cstr_from[ k ] << 4 ) + cstr_from[ k + 1 ];
-            }
-            k = leng_from / 2;
-            ts[ k ] = '\0';
-            B8i-> B8i_output[ 0 ] = T2_insert( T2_Sigma, ts, k );
+            i = leng_from;
+            ts[ i ] = '\0';
+            B8i-> B8i_output[ 0 ] = T2_insert( T2_Sigma, ts, i );
             B8i-> B8i_output[ 1 ] = MAXSHORT;
             B8i-> B8i_to = 0;
         } else {
@@ -211,12 +185,6 @@ B8i_OBJECT B8i_set_trans( B8i_OBJECT B8i,
 
 void B8i_print_trans( B8i_OBJECT B8i, T2_OBJECT T2_Sigma )
 {
-/*
-    Tn_OBJECT Tn;
-    int nibble = 18;
-    char *cstr_from, *ts;
-    int leng_from, i, k;
-*/
     int i;
 
     printf( "%d\t", B8i-> B8i_from );
