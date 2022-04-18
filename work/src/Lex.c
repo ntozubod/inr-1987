@@ -49,6 +49,8 @@ void TT2_init( )
         result = T2_insert( TT2, tstr, 1 );
         assert( result == ti + 2 );
     }
+    result = T2_insert( TT2, "__", 2 );
+    assert( result == 258 );
 }
 
 char * pad20( char *s )

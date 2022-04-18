@@ -45,9 +45,8 @@ int fileno( FILE * );
 #define B_Object        9
 #define B4_Object      10 
 #define B4i_Object     11 
-#define BU_Object      12 
-#define BZ_Object      13 
-#define BUi_Object     14 
+#define B8_Object      12 
+#define B8i_Object     13 
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -159,33 +158,23 @@ typedef struct B4i_desc {
     char *          B4i_ts;
 } *     B4i_OBJECT;
 
-typedef struct BU_desc {
+typedef struct B8_desc {
     int             Type;
-    SHORT           BU_from;
-    SHORT           BU_input;
-    SHORT *         BU_output;
-    SHORT           BU_to;
-    Tn_OBJECT       BU_ptok;
-    char *          BU_ts;
-} *     BU_OBJECT;
+    SHORT           B8_from;
+    SHORT           B8_input;
+    SHORT *         B8_output;
+    SHORT           B8_to;
+} *     B8_OBJECT;
 
-typedef struct BZ_desc {
+typedef struct B8i_desc {
     int             Type;
-    SHORT           BZ_from;
-    SHORT           BZ_input;
-    SHORT *         BZ_output;
-    SHORT           BZ_to;
-    Tn_OBJECT       BZ_ptok;
-    char *          BZ_ts;
-} *     BZ_OBJECT;
-
-typedef struct BUi_desc {
-    int             Type;
-    SHORT           BUi_from;
-    SHORT           BUi_input;
-    SHORT *         BUi_output;
-    SHORT           BUi_to;
-} *     BUi_OBJECT;
+    SHORT           B8i_from;
+    SHORT           B8i_input;
+    SHORT *         B8i_output;
+    SHORT           B8i_to;
+    Tn_OBJECT       B8i_ptok;
+    char *          B8i_ts;
+} *     B8i_OBJECT;
 
 #define OPEN            0
 #define NFA             1
@@ -426,21 +415,16 @@ void        B4i_destroy( B4i_OBJECT );
 B4i_OBJECT  B4i_set_trans( B4i_OBJECT, SHORT, SHORT, T2_OBJECT );
 void        B4i_print_trans( B4i_OBJECT, T2_OBJECT );
 
-/* BU.c */
-BU_OBJECT   BU_create( );
-void        BU_destroy( BU_OBJECT );
-BU_OBJECT   BU_set_trans( BU_OBJECT, SHORT, SHORT, T2_OBJECT );
-void        BU_print_trans( BU_OBJECT, T2_OBJECT );
+/* B8.c */
+B8_OBJECT   B8_create( );
+void        B8_destroy( B8_OBJECT );
+B8_OBJECT   B8_set_trans( B8_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        B8_print_trans( B8_OBJECT, T2_OBJECT );
 
-BZ_OBJECT   BZ_create( );
-void        BZ_destroy( BZ_OBJECT );
-BZ_OBJECT   BZ_set_trans( BZ_OBJECT, SHORT, SHORT, T2_OBJECT );
-void        BZ_print_trans( BZ_OBJECT, T2_OBJECT );
-
-BUi_OBJECT  BUi_create( );
-void        BUi_destroy( BUi_OBJECT );
-BUi_OBJECT  BUi_set_trans( BUi_OBJECT, SHORT, SHORT, T2_OBJECT );
-void        BUi_print_trans( BUi_OBJECT, T2_OBJECT );
+B8i_OBJECT  B8i_create( );
+void        B8i_destroy( B8i_OBJECT );
+B8i_OBJECT  B8i_set_trans( B8i_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        B8i_print_trans( B8i_OBJECT, T2_OBJECT );
 
 /* Colon.c */
 extern int  disp_flag;
