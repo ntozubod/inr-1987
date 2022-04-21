@@ -434,19 +434,8 @@ A_OBJECT    do_ann_a( A_OBJECT, char *, char * );
 A_OBJECT    do_nn_a( char *, char * );
 
 /* Lex.c */
-extern A_OBJECT A;
-extern A_OBJECT Atemp;
-extern A_OBJECT * Alist;
-extern Tn_OBJECT TAlist;
-
-extern T2_OBJECT TT2;
-extern char Notice[];
-
-void        TT2_init( );
-char *      pad20( char * );
 int         yylex();
 void        yyerror( char * );
-int         tonum( char * );
 
 /* Parse.y */
 int         yyparse( void );
@@ -469,6 +458,17 @@ int         A_unicode_printable( int );
 
 /* ABcomp.c */
 A_OBJECT    AB_comp( A_OBJECT, B_OBJECT, T2_OBJECT );
+
+/* INR_smain.c */
+extern A_OBJECT A;
+extern A_OBJECT Atemp;
+extern A_OBJECT * Alist;
+extern Tn_OBJECT TAlist;
+extern T2_OBJECT TT2;
+extern char Notice[];
+void        TT2_init( );
+char *      pad20( char * );
+int         tonum( char * );
 
 /* INR_main.c */
 int         smain( int argc, char *argv[] );
