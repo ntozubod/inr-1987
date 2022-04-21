@@ -38,6 +38,7 @@ a.out
 *.hex
 tinr
 ginr
+xinr
 
 # Debug files
 *.dSYM/
