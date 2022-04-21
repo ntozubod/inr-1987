@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-ginr < md.inr > md.out
