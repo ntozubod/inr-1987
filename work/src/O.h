@@ -47,6 +47,7 @@ int fileno( FILE * );
 #define B4i_Object     11 
 #define B8_Object      12 
 #define B8i_Object     13 
+#define BU_Object      14 
 
 typedef int             SHORT;
 #define MAXSHORT        017777777777
@@ -175,6 +176,16 @@ typedef struct B8i_desc {
     Tn_OBJECT       B8i_ptok;
     char *          B8i_ts;
 } *     B8i_OBJECT;
+
+typedef struct BU_desc {
+    int             Type;
+    SHORT           BU_from;
+    SHORT           BU_input;
+    SHORT *         BU_output;
+    SHORT           BU_to;
+    Tn_OBJECT       BU_ptok;
+    char *          BU_ts;
+} *     BU_OBJECT;
 
 #define OPEN            0
 #define NFA             1
@@ -425,6 +436,12 @@ B8i_OBJECT  B8i_create( );
 void        B8i_destroy( B8i_OBJECT );
 B8i_OBJECT  B8i_set_trans( B8i_OBJECT, SHORT, SHORT, T2_OBJECT );
 void        B8i_print_trans( B8i_OBJECT, T2_OBJECT );
+
+/* BU.c */
+BU_OBJECT  BU_create( );
+void        BU_destroy( BU_OBJECT );
+BU_OBJECT   BU_set_trans( BU_OBJECT, SHORT, SHORT, T2_OBJECT );
+void        BU_print_trans( BU_OBJECT, T2_OBJECT );
 
 /* Colon.c */
 extern int  disp_flag;
