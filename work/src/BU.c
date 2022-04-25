@@ -40,12 +40,11 @@ BU_OBJECT BU_create()
     BU-> Type    = BU_Object;
     BU-> BU_from = -1;
     BU-> BU_input = -1;
-    BU-> BU_output = s_alloc( 2 );
+    BU-> BU_output = s_alloc( 10 );
     BU-> BU_output[ 0 ] = MAXSHORT;
     BU-> BU_output[ 1 ] = MAXSHORT;
     BU-> BU_to = -1;
     BU-> BU_ptok = Tn = Tn_create();
-    BU-> BU_ts = Salloc( 100 );
 
     result = Tn_insert( Tn, "", 0 );
     assert( result == 0 );
@@ -58,7 +57,6 @@ void BU_destroy( BU_OBJECT BU )
     if ( BU != NULL ) {
         Sfree( (char *) BU-> BU_output );
         Tn_destroy( BU-> BU_ptok );
-        Sfree( BU-> BU_ts );
     }
     Sfree( (char *) BU );
 }
@@ -68,8 +66,8 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
 {
     Tn_OBJECT Tn;
     int octet = 257;
-    char *cstr_from, *ts;
-    int leng_from, i;
+    char *cstr_from, ts[ 10 ];
+    int leng_from, i, c1, type;
 
     BU-> BU_from = from;
     BU-> BU_input = symb;
@@ -79,29 +77,81 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
         BU-> BU_output[ 1 ] = MAXSHORT;
         BU-> BU_to = FINAL;
     } else {
-        if ( symb >= 2 && symb <= 258 ) {
+        if ( symb >= 2 && symb <= 257 ) {
             octet = symb - 2;
         }
 
-        if ( octet <= 255  ) {
+        if ( octet <= 127  ) {
+            if ( from == 0 ) {
+                /* easy one-octet case -- read then copy */
+
+                BU-> BU_output[ 0 ] = symb;
+                BU-> BU_output[ 1 ] = MAXSHORT;
+                BU-> BU_to = 0;
+
+            } else {
+                /* good but truncated prefix -- dump prefix and copy octet */
+
+                Tn = BU-> BU_ptok;
+                cstr_from = Tn_name( Tn, from );
+                leng_from = Tn_length( Tn, from );
+                for ( i = 0; i < leng_from; ++i ) {
+                    BU-> BU_output[ i ] = ts[ 0 ] + 2;
+                }
+                BU-> BU_output[ leng_from ] = symb;
+                BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
+                BU-> BU_to = 0;
+
+            }
+        } else if ( octet <= 255  ) {
+
             Tn = BU-> BU_ptok;
             cstr_from = Tn_name( Tn, from );
             leng_from = Tn_length( Tn, from );
-            if ( Ssize( BU-> BU_ts ) < leng_from + 1 ) {
-                BU-> BU_ts = Srealloc( BU-> BU_ts, leng_from + 1 );
-            }
-            ts = BU-> BU_ts;
             for ( i = 0; i < leng_from; ++i ) {
                 ts[ i ] = cstr_from[ i ];
             }
-            i = leng_from;
-            ts[ i ] = '\0';
-            BU-> BU_output[ 0 ] = T2_insert( T2_Sigma, ts, i );
-            BU-> BU_output[ 1 ] = MAXSHORT;
-            BU-> BU_to = 0;
+            ts[ leng_from ] = symb;
+            ts[ leng_from + 1 ] = '\0';
+
+            c1 = ts[ 0 ];
+                 if ( ( c1 & 0x80 ) == 0x00 ) { type = 0; }
+            else if ( ( c1 & 0xc0 ) == 0x80 ) { type = 1; }
+            else if ( ( c1 & 0xe0 ) == 0xc0 ) { type = 2; }
+            else if ( ( c1 & 0xf0 ) == 0xe0 ) { type = 3; }
+            else if ( ( c1 & 0xf8 ) == 0xf0 ) { type = 4; }
+            else { type = 5; }
+
+            if ( from == 0 && ( type < 2 || type > 4 ) ) {
+                /* easy one-octet case -- read then copy */
+
+                BU-> BU_output[ 0 ] = symb;
+                BU-> BU_output[ 1 ] = MAXSHORT;
+                BU-> BU_to = 0;
+
+            } else if ( ( octet & 0xc0 ) == 0x80 ) {
+                if ( leng_from + 1 == type ) {
+                    /* well formed UTF-8 sequence */
+
+                    BU-> BU_output[ 0 ] =
+                        T2_insert( T2_Sigma, ts, leng_from + 1 );
+                    BU-> BU_output[ 1 ] = MAXSHORT;
+                    BU-> BU_to = 0;
+
+                } else {
+                    /* well formed UTF-8 prefix */
+
+                    BU-> BU_output[ 0 ] = MAXSHORT;
+                    BU-> BU_to = Tn_insert( Tn, ts, leng_from + 1 );
+
+                }
+            }
         } else {
+            /* input is not an octet -- domain error */
+
             BU-> BU_to = MAXSHORT;
             BU-> BU_output[ 0 ] = MAXSHORT;
+
         }
     }
     return( BU );

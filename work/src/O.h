@@ -184,7 +184,6 @@ typedef struct BU_desc {
     SHORT *         BU_output;
     SHORT           BU_to;
     Tn_OBJECT       BU_ptok;
-    char *          BU_ts;
 } *     BU_OBJECT;
 
 #define OPEN            0
