@@ -81,7 +81,9 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
             octet = symb - 2;
         }
 
-        if ( octet <= 127  ) {
+        if ( octet <= 0x7F  ) {
+            /* one octet ASCII */
+
             if ( from == 0 ) {
                 /* easy one-octet case -- read then copy */
 
@@ -96,42 +98,46 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
                 cstr_from = Tn_name( Tn, from );
                 leng_from = Tn_length( Tn, from );
                 for ( i = 0; i < leng_from; ++i ) {
-                    BU-> BU_output[ i ] = ts[ 0 ] + 2;
+                    BU-> BU_output[ i ] = cstr_from[ i ] + 2;
                 }
                 BU-> BU_output[ leng_from ] = symb;
                 BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
                 BU-> BU_to = 0;
 
             }
-        } else if ( octet <= 255  ) {
+        } else if ( octet <= 0xBF ) {
+            /* a continuation octet */
 
-            Tn = BU-> BU_ptok;
-            cstr_from = Tn_name( Tn, from );
-            leng_from = Tn_length( Tn, from );
-            for ( i = 0; i < leng_from; ++i ) {
-                ts[ i ] = cstr_from[ i ];
-            }
-            ts[ leng_from ] = symb;
-            ts[ leng_from + 1 ] = '\0';
-
-            c1 = ts[ 0 ];
-                 if ( ( c1 & 0x80 ) == 0x00 ) { type = 0; }
-            else if ( ( c1 & 0xc0 ) == 0x80 ) { type = 1; }
-            else if ( ( c1 & 0xe0 ) == 0xc0 ) { type = 2; }
-            else if ( ( c1 & 0xf0 ) == 0xe0 ) { type = 3; }
-            else if ( ( c1 & 0xf8 ) == 0xf0 ) { type = 4; }
-            else { type = 5; }
-
-            if ( from == 0 && ( type < 2 || type > 4 ) ) {
-                /* easy one-octet case -- read then copy */
+            if ( from == 0 ) {
+                /* orphan continuation octet */
 
                 BU-> BU_output[ 0 ] = symb;
                 BU-> BU_output[ 1 ] = MAXSHORT;
                 BU-> BU_to = 0;
 
-            } else if ( ( octet & 0xc0 ) == 0x80 ) {
-                if ( leng_from + 1 == type ) {
-                    /* well formed UTF-8 sequence */
+            } else {
+                /* add it to the sequence if appropriate */
+
+                Tn = BU-> BU_ptok;
+                cstr_from = Tn_name( Tn, from );
+                leng_from = Tn_length( Tn, from );
+                for ( i = 0; i < leng_from; ++i ) {
+                    ts[ i ] = cstr_from[ i ];
+                }
+                ts[ leng_from ] = symb;
+                ts[ leng_from + 1 ] = '\0';
+
+                /* Check if valid prefix here */
+
+                c1 = ts[ 0 ];
+                     if ( ( c1 & 0x80 ) == 0x00 ) { type = 0; }
+                else if ( ( c1 & 0xc0 ) == 0x80 ) { type = 1; }
+                else if ( ( c1 & 0xe0 ) == 0xc0 ) { type = 2; }
+                else if ( ( c1 & 0xf0 ) == 0xe0 ) { type = 3; }
+                else if ( ( c1 & 0xf8 ) == 0xf0 ) { type = 4; }
+                else { type = 5; }
+
+                if ( leng_from == type ) {
 
                     BU-> BU_output[ 0 ] =
                         T2_insert( T2_Sigma, ts, leng_from + 1 );
@@ -139,13 +145,39 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
                     BU-> BU_to = 0;
 
                 } else {
-                    /* well formed UTF-8 prefix */
 
                     BU-> BU_output[ 0 ] = MAXSHORT;
                     BU-> BU_to = Tn_insert( Tn, ts, leng_from + 1 );
 
                 }
             }
+        } else if ( octet <= 0xF7 ) {
+            /* start a new sequence */
+
+            Tn = BU-> BU_ptok;
+            cstr_from = Tn_name( Tn, from );
+            leng_from = Tn_length( Tn, from );
+            for ( i = 0; i < leng_from; ++i ) {
+                BU-> BU_output[ i ] = cstr_from[ i ] + 2;
+            }
+            BU-> BU_output[ leng_from ] = MAXSHORT;
+
+            ts[ 0 ] = octet;
+            ts[ 1 ] = '\0';
+            BU-> BU_to = Tn_insert( Tn, ts, 1 );
+
+        } else if ( octet <= 0xFF ) {
+
+            Tn = BU-> BU_ptok;
+            cstr_from = Tn_name( Tn, from );
+            leng_from = Tn_length( Tn, from );
+            for ( i = 0; i < leng_from; ++i ) {
+                BU-> BU_output[ i ] = cstr_from[ i ] + 2;
+            }
+            BU-> BU_output[ leng_from ] = octet;
+            BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
+            BU-> BU_to = 0;
+
         } else {
             /* input is not an octet -- domain error */
 
