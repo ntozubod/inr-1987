@@ -77,22 +77,23 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
         BU-> BU_output[ 1 ] = MAXSHORT;
         BU-> BU_to = FINAL;
     } else {
+        octet = MAXSHORT:
         if ( symb >= 2 && symb <= 257 ) {
             octet = symb - 2;
         }
 
         if ( octet <= 0x7F  ) {
-            /* one octet ASCII */
+            /* one-octet case (7-bit ASCII) */
 
             if ( from == 0 ) {
-                /* easy one-octet case -- read then copy */
+                /* easy one-octet case -- just copy */
 
                 BU-> BU_output[ 0 ] = symb;
                 BU-> BU_output[ 1 ] = MAXSHORT;
                 BU-> BU_to = 0;
 
             } else {
-                /* good but truncated prefix -- dump prefix and copy octet */
+                /* have a UTF-8 prefix -- dump it, copy octet */
 
                 Tn = BU-> BU_ptok;
                 cstr_from = Tn_name( Tn, from );
@@ -103,17 +104,19 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
                 BU-> BU_output[ leng_from ] = symb;
                 BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
                 BU-> BU_to = 0;
+                /* utf8_parse_errors += leng_from; */
 
             }
-        } else if ( octet <= 0xBF ) {
-            /* a continuation octet */
+        } else if ( octet <= 0xBF ) {  /* 0xBF == 10111111 */
+            /* a continuation octet starting with bits '10' */
 
             if ( from == 0 ) {
-                /* orphan continuation octet */
+                /* orphan continuation octet -- just copy */
 
                 BU-> BU_output[ 0 ] = symb;
                 BU-> BU_output[ 1 ] = MAXSHORT;
                 BU-> BU_to = 0;
+                /* utf8_parse_errors++; */
 
             } else {
                 /* add it to the sequence if appropriate */
@@ -151,8 +154,9 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
 
                 }
             }
-        } else if ( octet <= 0xF7 ) {
-            /* start a new sequence */
+        } else if ( octet <= 0xF7 ) {  /* 0xF7 == 11110111 */
+            /* starts with '110', '1110', or '11110' -- new sequence */
+            /* dump prefix -- remember new octet */
 
             Tn = BU-> BU_ptok;
             cstr_from = Tn_name( Tn, from );
@@ -165,8 +169,11 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
             ts[ 0 ] = octet;
             ts[ 1 ] = '\0';
             BU-> BU_to = Tn_insert( Tn, ts, 1 );
+            /* utf8_parse_errors += leng_from; */
 
-        } else if ( octet <= 0xFF ) {
+        } else if ( octet <= 0xFF ) {  /* 0xFF == 11111111 */
+            /* all other octet values -- all errors */
+            /* dump prefix and new octet */
 
             Tn = BU-> BU_ptok;
             cstr_from = Tn_name( Tn, from );
@@ -177,12 +184,27 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
             BU-> BU_output[ leng_from ] = octet;
             BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
             BU-> BU_to = 0;
+            /* utf8_parse_errors += leng_from + 1; */
 
         } else {
             /* input is not an octet -- domain error */
+            /* dump prefix and whatever token seen */
 
-            BU-> BU_to = MAXSHORT;
-            BU-> BU_output[ 0 ] = MAXSHORT;
+            Tn = BU-> BU_ptok;
+            cstr_from = Tn_name( Tn, from );
+            leng_from = Tn_length( Tn, from );
+            for ( i = 0; i < leng_from; ++i ) {
+                BU-> BU_output[ i ] = cstr_from[ i ] + 2;
+            }
+            BU-> BU_output[ leng_from ] = octet;
+            BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
+            BU-> BU_to = 0;
+            /* utf8_parse_errors += leng_from + 1; */
+
+            /* ALTERNATIVELY: go to dead state */
+            /* BU-> BU_output[ 0 ] = MAXSHORT; */
+            /* BU-> BU_to = MAXSHORT; */
+            /* utf8_parse_errors++; */
 
         }
     }
