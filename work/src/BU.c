@@ -67,7 +67,7 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
     Tn_OBJECT Tn;
     int octet = 257;
     char *cstr_from, ts[ 10 ];
-    int leng_from, i, c1, type;
+    int leng_from, i, c1, c2, c3, c4, cp, type, valid, complete;
 
     BU-> BU_from = from;
     BU-> BU_input = symb;
@@ -77,7 +77,7 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
         BU-> BU_output[ 1 ] = MAXSHORT;
         BU-> BU_to = FINAL;
     } else {
-        octet = MAXSHORT:
+        octet = MAXSHORT;
         if ( symb >= 2 && symb <= 257 ) {
             octet = symb - 2;
         }
@@ -140,11 +140,63 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
                 else if ( ( c1 & 0xf8 ) == 0xf0 ) { type = 4; }
                 else { type = 5; }
 
+                complete = 0;
+                valid = 0;
+
                 if ( leng_from == type ) {
+                    complete = 0;
+                    switch ( type ) {
+
+                    case 2:
+                        c2 = ts[ 1 ];
+                        cp = ( ( c1 & 0x1f ) << 6 )
+                           +   ( c2 & 0x3f );
+                        if ( cp > 0x7f ) {
+                            valid = 1;
+                        }
+                        break;
+
+                    case 3:
+                        c2 = ts[ 1 ];
+                        c3 = ts[ 2 ];
+                        cp = ( ( c1 & 0x0f ) << 12 )
+                           + ( ( c2 & 0x3f ) <<  6 )
+                           +   ( c3 & 0x3f );
+                        if (   ( 0x03ff < cp && cp < 0xd800 )
+                            || ( 0xdfff < cp ) ) {
+                            valid = 1;
+                        }
+                        break;
+ 
+                    case 4:
+                        c2 = ts[ 1 ];
+                        c3 = ts[ 2 ];
+                        c4 = ts[ 3 ];
+                        cp = ( ( c1 & 0x0f ) << 18 )
+                           + ( ( c2 & 0x3f ) << 12 )
+                           + ( ( c3 & 0x3f ) <<  6 )
+                           +   ( c4 & 0x3f );
+                        if ( 0xffff < cp && cp <= 0x10ffff ) {
+                            valid = 1;
+                        }
+                        break;
+                    }
+                }
+
+                if ( complete && valid ) {
 
                     BU-> BU_output[ 0 ] =
                         T2_insert( T2_Sigma, ts, leng_from + 1 );
                     BU-> BU_output[ 1 ] = MAXSHORT;
+                    BU-> BU_to = 0;
+
+                } else if ( complete ) {
+
+                    for ( i = 0; i < leng_from; ++i ) {
+                        BU-> BU_output[ i ] = cstr_from[ i ] + 2;
+                    }
+                    BU-> BU_output[ leng_from ] = octet;
+                    BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
                     BU-> BU_to = 0;
 
                 } else {
