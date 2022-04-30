@@ -33,8 +33,6 @@
 BU_OBJECT BU_create()
 {
     BU_OBJECT BU;
-    Tn_OBJECT Tn;
-    int result;
 
     BU = (BU_OBJECT) Salloc( sizeof(struct BU_desc) );
     BU-> Type    = BU_Object;
@@ -44,10 +42,6 @@ BU_OBJECT BU_create()
     BU-> BU_output[ 0 ] = MAXSHORT;
     BU-> BU_output[ 1 ] = MAXSHORT;
     BU-> BU_to = -1;
-    BU-> BU_ptok = Tn = Tn_create();
-
-    result = Tn_insert( Tn, "", 0 );
-    assert( result == 0 );
 
     return( BU );
 }
@@ -56,7 +50,6 @@ void BU_destroy( BU_OBJECT BU )
 {
     if ( BU != NULL ) {
         Sfree( (char *) BU-> BU_output );
-        Tn_destroy( BU-> BU_ptok );
     }
     Sfree( (char *) BU );
 }
@@ -64,203 +57,241 @@ void BU_destroy( BU_OBJECT BU )
 BU_OBJECT BU_set_trans( BU_OBJECT BU,
     SHORT from, SHORT symb, T2_OBJECT T2_Sigma )
 {
-    Tn_OBJECT Tn;
     int octet = 257;
-    char *cstr_from, ts[ 10 ];
-    int leng_from, i, c1, c2, c3, c4, cp, type, valid, complete;
+    char ts[ 10 ];
+    int next_type, octet_valid, state_memo;
+    int state_type, sm_contains, i;
 
     BU-> BU_from = from;
     BU-> BU_input = symb;
 
     if ( from == START && symb == 1 ) {
+
         BU-> BU_output[ 0 ] = symb;
         BU-> BU_output[ 1 ] = MAXSHORT;
         BU-> BU_to = FINAL;
+        return ( BU );
+
     } else {
-        octet = MAXSHORT;
-        if ( symb >= 2 && symb <= 257 ) {
-            octet = symb - 2;
-        }
 
-        if ( octet <= 0x7F  ) {
-            /* one-octet case (7-bit ASCII) */
+        sm_contains = 0;
 
-            if ( from == 0 ) {
-                /* easy one-octet case -- just copy */
+        /* first deal with any accumulated octets */
+        if ( from > 0 ) {
 
-                BU-> BU_output[ 0 ] = symb;
-                BU-> BU_output[ 1 ] = MAXSHORT;
-                BU-> BU_to = 0;
+            state_type = BU-> BU_from & 0xF;
+            state_memo = BU-> BU_from >> 4;
 
-            } else {
-                /* have a UTF-8 prefix -- dump it, copy octet */
+            octet = MAXSHORT;
+            if ( symb >= 2 && symb <= 257 ) {
+                octet = symb - 2;
+            }
 
-                Tn = BU-> BU_ptok;
-                cstr_from = Tn_name( Tn, from );
-                leng_from = Tn_length( Tn, from );
-                for ( i = 0; i < leng_from; ++i ) {
-                    BU-> BU_output[ i ] = cstr_from[ i ] + 2;
-                }
-                BU-> BU_output[ leng_from ] = symb;
-                BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
-                BU-> BU_to = 0;
-                /* utf8_parse_errors += leng_from; */
+            switch( state_type ) {
+
+            /* ========== 2 octet cases ========== */
+
+            case 2:
+                /* state_memo contains 1 octet          */
+                /* expect 1 more continuation octet     */
+                /* any continuation octet is acceptable */
+
+                sm_contains = 1;
+                octet_valid = ( octet >= 0x80 && octet <= 0xBF );
+                next_type   = 0;
+                break;
+
+            /* ========== 3 octet cases ========== */
+            /* ========== 1 - 2 subcase ========== */
+
+            case 3:
+                /* state_memo contains 1 octet          */
+                /* expect 2 more continuation octets    */
+                /* continuation octets 80-9F disallowed */
+
+                sm_contains = 1;
+                octet_valid = ( octet >= 0xA0 && octet <= 0xBF );
+                next_type   = 6;
+                break;
+
+            case 4:
+                /* state_memo contains 1 octet          */
+                /* expect 2 more continuation octets    */
+                /* continuation octets A0-BF disallowed */
+
+                sm_contains = 1;
+                octet_valid = ( octet >= 0x80 && octet <= 0x9F );
+                next_type   = 6;
+                break;
+
+            case 5:
+                /* state_memo contains 1 octet          */
+                /* expect 2 more continuation octets    */
+                /* any continuation octet is acceptable */
+
+                sm_contains = 1;
+                octet_valid = ( octet >= 0x80 && octet <= 0xBF );
+                next_type   = 6;
+                break;
+
+            /* ========== 2 - 1 subcase ========== */
+
+            case 6:
+                /* state_memo contains 2 octets         */
+                /* expect 1 more continuation octet     */
+                /* any continuation octet is acceptable */
+
+                sm_contains = 2;
+                octet_valid = ( octet >= 0x80 && octet <= 0xBF );
+                next_type   = 0;
+                break;
+
+            /* ========== 4 octet cases ========== */
+            /* ========== 1 - 3 subcase ========== */
+
+            case 7:
+                /* state_memo contains 1 octet          */
+                /* expect 3 more continuation octets    */
+                /* continuation octets 80-8F disallowed */
+
+                sm_contains = 1;
+                octet_valid = ( octet >= 0x90 && octet <= 0xBF );
+                next_type   = 10;
+            break;
+
+            case 8:
+                /* state_memo contains 1 octet          */
+                /* expect 3 more continuation octets    */
+                /* continuation octets 90-BF disallowed */
+
+                sm_contains = 1;
+                octet_valid = ( octet >= 0x80 && octet <= 0x8F );
+                next_type   = 10;
+                break;
+
+            case 9:
+                /* state_memo contains 1 octet          */
+                /* expect 3 more continuation octets    */
+                /* any continuation octet is acceptable */
+
+                sm_contains = 1;
+                octet_valid = ( octet >= 0x80 && octet <= 0xBF );
+                next_type   = 10;
+                break;
+
+            /* ========== 2 - 2 subcase ========== */
+
+            case 10:
+                /* state_memo contains 2 octets         */
+                /* expect 2 more continuation octets    */
+                /* any continuation octet is acceptable */
+
+                sm_contains = 2;
+                octet_valid = ( octet >= 0x80 && octet <= 0xBF );
+                next_type   = 11;
+                break;
+
+            /* ========== 3 - 1 subcase ========== */
+
+            case 11:
+                /* state_memo contains 3 octets         */
+                /* expect 1 more continuation octet    */
+                /* any continuation octet is acceptable */
+
+                sm_contains = 3;
+                octet_valid = ( octet >= 0x80 && octet <= 0xBF );
+                next_type   = 0;
+                break;
+
+            default:
+                Error( "shouldn't occur" );
 
             }
-        } else if ( octet <= 0xBF ) {  /* 0xBF == 10111111 */
-            /* a continuation octet starting with bits '10' */
+            if ( octet_valid ) {
 
-            if ( from == 0 ) {
-                /* orphan continuation octet -- just copy */
+                if ( next_type == 0 ) {
+                    /* a complete valid sequence */
 
-                BU-> BU_output[ 0 ] = symb;
-                BU-> BU_output[ 1 ] = MAXSHORT;
-                BU-> BU_to = 0;
-                /* utf8_parse_errors++; */
-
-            } else {
-                /* add it to the sequence if appropriate */
-
-                Tn = BU-> BU_ptok;
-                cstr_from = Tn_name( Tn, from );
-                leng_from = Tn_length( Tn, from );
-                for ( i = 0; i < leng_from; ++i ) {
-                    ts[ i ] = cstr_from[ i ];
-                }
-                ts[ leng_from ] = symb;
-                ts[ leng_from + 1 ] = '\0';
-
-                /* Check if valid prefix here */
-
-                c1 = ts[ 0 ];
-                     if ( ( c1 & 0x80 ) == 0x00 ) { type = 0; }
-                else if ( ( c1 & 0xc0 ) == 0x80 ) { type = 1; }
-                else if ( ( c1 & 0xe0 ) == 0xc0 ) { type = 2; }
-                else if ( ( c1 & 0xf0 ) == 0xe0 ) { type = 3; }
-                else if ( ( c1 & 0xf8 ) == 0xf0 ) { type = 4; }
-                else { type = 5; }
-
-                complete = 0;
-                valid = 0;
-
-                if ( leng_from == type ) {
-                    complete = 0;
-                    switch ( type ) {
-
-                    case 2:
-                        c2 = ts[ 1 ];
-                        cp = ( ( c1 & 0x1f ) << 6 )
-                           +   ( c2 & 0x3f );
-                        if ( cp > 0x7f ) {
-                            valid = 1;
-                        }
-                        break;
-
-                    case 3:
-                        c2 = ts[ 1 ];
-                        c3 = ts[ 2 ];
-                        cp = ( ( c1 & 0x0f ) << 12 )
-                           + ( ( c2 & 0x3f ) <<  6 )
-                           +   ( c3 & 0x3f );
-                        if (   ( 0x03ff < cp && cp < 0xd800 )
-                            || ( 0xdfff < cp ) ) {
-                            valid = 1;
-                        }
-                        break;
- 
-                    case 4:
-                        c2 = ts[ 1 ];
-                        c3 = ts[ 2 ];
-                        c4 = ts[ 3 ];
-                        cp = ( ( c1 & 0x0f ) << 18 )
-                           + ( ( c2 & 0x3f ) << 12 )
-                           + ( ( c3 & 0x3f ) <<  6 )
-                           +   ( c4 & 0x3f );
-                        if ( 0xffff < cp && cp <= 0x10ffff ) {
-                            valid = 1;
-                        }
-                        break;
+                    for ( i = sm_contains; --i >= 0; ) {
+                        ts[ i ] = state_memo & 0xFF;
+                        state_memo >>= 4;
                     }
-                }
-
-                if ( complete && valid ) {
-
+                    ts[ sm_contains ] = octet;
+                    ts[ sm_contains + 1 ] = '\0';
+                    
                     BU-> BU_output[ 0 ] =
-                        T2_insert( T2_Sigma, ts, leng_from + 1 );
-                    BU-> BU_output[ 1 ] = MAXSHORT;
-                    BU-> BU_to = 0;
-
-                } else if ( complete ) {
-
-                    for ( i = 0; i < leng_from; ++i ) {
-                        BU-> BU_output[ i ] = cstr_from[ i ] + 2;
-                    }
-                    BU-> BU_output[ leng_from ] = octet;
-                    BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
-                    BU-> BU_to = 0;
+                        T2_insert( T2_Sigma, ts, sm_contains + 1 );
 
                 } else {
+                    /* a larger partial valid sequence */
 
                     BU-> BU_output[ 0 ] = MAXSHORT;
-                    BU-> BU_to = Tn_insert( Tn, ts, leng_from + 1 );
+                    BU-> BU_to = 
+                        (((( state_memo << 8 ) + octet ) << 4 )
+                            + next_type );
 
                 }
+                return ( BU );
+
+            } else {
+                /* dump the content of state_memo before proceeding */
+
+                for ( i = sm_contains; --i >= 0; ) {
+                    BU-> BU_output[ i ] = ( state_memo & 0xFF ) + 2;
+                    state_memo >>= 4;
+                }
+
+                /* note drop trough to from == 0 case */
+
             }
-        } else if ( octet <= 0xF7 ) {  /* 0xF7 == 11110111 */
-            /* starts with '110', '1110', or '11110' -- new sequence */
-            /* dump prefix -- remember new octet */
 
-            Tn = BU-> BU_ptok;
-            cstr_from = Tn_name( Tn, from );
-            leng_from = Tn_length( Tn, from );
-            for ( i = 0; i < leng_from; ++i ) {
-                BU-> BU_output[ i ] = cstr_from[ i ] + 2;
-            }
-            BU-> BU_output[ leng_from ] = MAXSHORT;
+        /* end if from > 0 */
+        }
 
-            ts[ 0 ] = octet;
-            ts[ 1 ] = '\0';
-            BU-> BU_to = Tn_insert( Tn, ts, 1 );
-            /* utf8_parse_errors += leng_from; */
+        if ( octet <= 0x7F ) {
+            /* next is single octet case */
 
-        } else if ( octet <= 0xFF ) {  /* 0xFF == 11111111 */
-            /* all other octet values -- all errors */
-            /* dump prefix and new octet */
-
-            Tn = BU-> BU_ptok;
-            cstr_from = Tn_name( Tn, from );
-            leng_from = Tn_length( Tn, from );
-            for ( i = 0; i < leng_from; ++i ) {
-                BU-> BU_output[ i ] = cstr_from[ i ] + 2;
-            }
-            BU-> BU_output[ leng_from ] = octet;
-            BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
+            BU-> BU_output[ sm_contains ] = symb;
+            BU-> BU_output[ sm_contains + 1 ] = MAXSHORT;
             BU-> BU_to = 0;
-            /* utf8_parse_errors += leng_from + 1; */
+            return ( BU );
 
         } else {
-            /* input is not an octet -- domain error */
-            /* dump prefix and whatever token seen */
 
-            Tn = BU-> BU_ptok;
-            cstr_from = Tn_name( Tn, from );
-            leng_from = Tn_length( Tn, from );
-            for ( i = 0; i < leng_from; ++i ) {
-                BU-> BU_output[ i ] = cstr_from[ i ] + 2;
+            if ( octet >= 0xC2 && octet <= 0xDF ) {
+                next_type = 2;
+            } else if ( octet == 0xE0 ) {
+                next_type = 3;
+            } else if ( octet == 0xED ) {
+                next_type = 4;
+            } else if ( octet >= 0xE1 && octet <= 0xEF ) {
+                next_type = 5;
+            } else if ( octet == 0xF0 ) {
+                next_type = 7;
+            } else if ( octet == 0xF4 ) {
+                next_type = 8;
+            } else if ( octet >= 0xF1 && octet <= 0xF3 ) {
+                next_type = 9;
             }
-            BU-> BU_output[ leng_from ] = octet;
-            BU-> BU_output[ leng_from + 1 ] = MAXSHORT;
-            BU-> BU_to = 0;
-            /* utf8_parse_errors += leng_from + 1; */
 
-            /* ALTERNATIVELY: go to dead state */
-            /* BU-> BU_output[ 0 ] = MAXSHORT; */
-            /* BU-> BU_to = MAXSHORT; */
-            /* utf8_parse_errors++; */
+            if ( next_type > 0 ) {
+                /* next is start of multiple octet case */
 
+                BU-> BU_output[ sm_contains ] = MAXSHORT;
+                BU-> BU_to = ( octet << 4 ) + next_type;
+                return ( BU );
+
+            } else {
+                /* next is error */
+
+                BU-> BU_output[ sm_contains ] = symb;
+                BU-> BU_output[ sm_contains + 1 ] = MAXSHORT;
+                BU-> BU_to = 0;
+                return ( BU );
+
+            }
         }
     }
-    return( BU );
 }
 
 void BU_print_trans( BU_OBJECT BU, T2_OBJECT T2_Sigma )
