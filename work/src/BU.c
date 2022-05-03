@@ -38,8 +38,8 @@
  *
  * Output is in one of the following forms based on the value of BU_options:
  * 1 : Unicode token is the collected UTF-8 sequence ( default )
- * 2 : Unicode token in the standard form U+HHHH ( or U+HHHHH, U+HHHHHH as
- *     necessary where H is one of the hex digits 0-9, A-F.
+ * 2 : Unicode token in the standard form U+HHHH ( or U-HHHHHH as
+ *     necessary ) where H is one of the hex digits 0-9, A-F.
  * 3 -- Others may be added as needed.
  *
  * 0 : This is a special case that leaves the octets as they are but uses
@@ -250,7 +250,55 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
                     break;
 
                 case 2:
-                    Error( "not impl" );
+                    switch ( sm_contains ) {
+                    case 1:
+                        ts[ 0 ] = 'U'; ts[ 1 ] = '+'; ts[ 2 ] = '0';
+                        ts[ 3 ] = hexmap[
+                                  ( ( state_memo >>  2 ) & 0x7 ) ];
+                        ts[ 4 ] = hexmap[
+                                  ( ( state_memo <<  2 ) & 0xC )
+                                + ( ( octet      >>  4 ) & 0x3 ) ];
+                        ts[ 5 ] = hexmap[ octet & 0xF ];
+                        ts[ 6 ] = '\0';
+                        BU-> BU_output[ output_idx++ ]
+                            = T2_insert( T2_Sigma, ts, 6 );
+                        break;
+
+                    case 2:
+                        ts[ 0 ] = 'U'; ts[ 1 ] = '+';
+                        ts[ 2 ] = hexmap[
+                                  ( ( state_memo >>  8 ) & 0xF ) ];
+                        ts[ 3 ] = hexmap[
+                                  ( ( state_memo >>  2 ) & 0xF ) ];
+                        ts[ 4 ] = hexmap[
+                                  ( ( state_memo <<  2 ) & 0xC )
+                                + ( ( octet      >>  4 ) & 0x3 ) ];
+                        ts[ 5 ] = hexmap[ octet & 0xF ];
+                        ts[ 6 ] = '\0';
+                        BU-> BU_output[ output_idx++ ]
+                            = T2_insert( T2_Sigma, ts, 6 );
+                        break;
+
+                    case 3:
+                        ts[ 0 ] = 'U'; ts[ 1 ] = '-';
+                        ts[ 2 ] = hexmap[
+                                  ( ( state_memo >> 18 ) & 0x1 ) ];
+                        ts[ 3 ] = hexmap[
+                                  ( ( state_memo >> 14 ) & 0xC )
+                                + ( ( state_memo >> 12 ) & 0x3 ) ];
+                        ts[ 4 ] = hexmap[
+                                  ( ( state_memo >>  8 ) & 0xF ) ];
+                        ts[ 5 ] = hexmap[
+                                  ( ( state_memo >>  2 ) & 0xF ) ];
+                        ts[ 6 ] = hexmap[
+                                  ( ( state_memo <<  2 ) & 0xC )
+                                + ( ( octet      >>  4 ) & 0x3 ) ];
+                        ts[ 7 ] = hexmap[ octet & 0xF ];
+                        ts[ 8 ] = '\0';
+                        BU-> BU_output[ output_idx++ ]
+                            = T2_insert( T2_Sigma, ts, 8 );
+                        break;
+                    }
                     break;
 
                 default:
