@@ -183,6 +183,7 @@ typedef struct BU_desc {
     SHORT           BU_input;
     SHORT *         BU_output;
     SHORT           BU_to;
+    SHORT           BU_options;
 } *     BU_OBJECT;
 
 #define OPEN            0
