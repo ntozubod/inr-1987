@@ -58,7 +58,7 @@ BU_OBJECT BU_create()
     BU-> BU_output[ 0 ] = MAXSHORT;
     BU-> BU_output[ 1 ] = MAXSHORT;
     BU-> BU_to = -1;
-    BU-> BU_options = 0;
+    BU-> BU_options = 1;
 
     return( BU );
 }
@@ -77,7 +77,8 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
     int octet = 257;
     char ts[ 10 ];
     int next_type, octet_valid, state_memo;
-    int state_type, sm_contains, i;
+    int state_type, sm_contains, i, output_idx;
+    char hexmap[17] = "0123456789ABCDEF";
 
     BU-> BU_from = from;
     BU-> BU_input = symb;
@@ -215,25 +216,52 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
             Error( "shouldn't occur" );
 
         }
+
+        output_idx = 0;
+
         if ( octet_valid ) {
 
             if ( next_type == 0 ) {
                 /* a complete valid sequence */
 
-                for ( i = sm_contains; --i >= 0; ) {
-                    ts[ i ] = state_memo & 0xFF;
-                    state_memo >>= 4;
+                switch ( BU-> BU_options ) {
+                case 0:
+                    for ( i = sm_contains; --i >= 0; ) {
+                        BU-> BU_output[ output_idx + i ]
+                            = ( state_memo & 0xFF ) + 2;
+                        state_memo >>= 4;
+                    }
+                    output_idx += sm_contains;
+                    BU-> BU_output[ output_idx++ ] = 258;
+                    BU-> BU_output[ output_idx++ ] = MAXSHORT;
+                    break;
+
+                case 1:
+                    for ( i = sm_contains; --i >= 0; ) {
+                        ts[ i ] = state_memo & 0xFF;
+                        state_memo >>= 4;
+                    }
+                    ts[ sm_contains ] = octet;
+                    ts[ sm_contains + 1 ] = '\0';
+
+                    BU-> BU_output[ output_idx++ ] =
+                        T2_insert( T2_Sigma, ts, sm_contains + 1 );
+                    BU-> BU_output[ output_idx++ ] = MAXSHORT;
+                    break;
+
+                case 2:
+                    Error( "not impl" );
+                    break;
+
+                default:
+                    Error( "not defined" );
+                    break;
                 }
-                ts[ sm_contains ] = octet;
-                ts[ sm_contains + 1 ] = '\0';
-                
-                BU-> BU_output[ 0 ] =
-                    T2_insert( T2_Sigma, ts, sm_contains + 1 );
 
             } else {
                 /* a larger partial valid sequence */
 
-                BU-> BU_output[ 0 ] = MAXSHORT;
+                BU-> BU_output[ output_idx++ ] = MAXSHORT;
                 BU-> BU_to = 
                     (((( state_memo << 8 ) + octet ) << 4 )
                         + next_type );
@@ -245,31 +273,52 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
             /* dump the content of state_memo before proceeding */
 
             for ( i = sm_contains; --i >= 0; ) {
-                BU-> BU_output[ i ] = ( state_memo & 0xFF ) + 2;
+                ts[ i ] = ( state_memo & 0xFF );
                 state_memo >>= 4;
+            }
+            for ( i = 0; i < sm_contains; ++i ) {
+                BU-> BU_output[ output_idx++ ] = ts[ i ] + 2;
+                if ( BU-> BU_options == 0 ) {
+                    BU-> BU_output[ output_idx++ ] = 258;
+                }
             }
 
             /* note drop trough to from == 0 case */
-
         }
 
     /* end if from > 0 */
     }
 
-    if ( from == START && symb == 1 ) {
+    if ( symb == 1 ) {
 
-        BU-> BU_output[ 0 ] = symb;
-        BU-> BU_output[ 1 ] = MAXSHORT;
+        BU-> BU_output[ output_idx++ ] = symb;
+        BU-> BU_output[ output_idx++ ] = MAXSHORT;
         BU-> BU_to = FINAL;
         return ( BU );
-    }
 
-
-    if ( octet <= 0x7F ) {
+    } else if ( octet <= 0x7F ) {
         /* next is single octet case */
 
-        BU-> BU_output[ sm_contains ] = symb;
-        BU-> BU_output[ sm_contains + 1 ] = MAXSHORT;
+        switch ( BU-> BU_options ) {
+        case 0:
+            BU-> BU_output[ output_idx++ ] = symb;
+            BU-> BU_output[ output_idx++ ] = 258;
+            break;
+
+        case 1:
+            BU-> BU_output[ output_idx++ ] = symb;
+            break;
+
+        case 2:
+            ts[ 0 ] = 'U'; ts[ 1 ] = '+'; ts[ 2 ] = '0'; ts[ 3 ] = '0';
+            ts[ 4 ] = hexmap[ ( octet >> 4 ) && 0x0F ];
+            ts[ 5 ] = hexmap[ octet & 0x0F ];
+            ts[ 6 ] = '\0';
+            BU-> BU_output[ output_idx++ ] = T2_insert( T2_Sigma, ts, 6 );
+            break;
+        }
+
+        BU-> BU_output[ output_idx++ ] = MAXSHORT;
         BU-> BU_to = 0;
         return ( BU );
 
@@ -294,15 +343,18 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
         if ( next_type > 0 ) {
             /* next is start of multiple octet case */
 
-            BU-> BU_output[ sm_contains ] = MAXSHORT;
+            BU-> BU_output[ output_idx++ ] = MAXSHORT;
             BU-> BU_to = ( octet << 4 ) + next_type;
             return ( BU );
 
         } else {
             /* next is error */
 
-            BU-> BU_output[ sm_contains ] = symb;
-            BU-> BU_output[ sm_contains + 1 ] = MAXSHORT;
+            BU-> BU_output[ output_idx++ ] = symb;
+            if ( BU-> BU_options == 0 ) {
+                BU-> BU_output[ output_idx++ ] = 258;
+            }
+            BU-> BU_output[ output_idx++ ] = MAXSHORT;
             BU-> BU_to = 0;
             return ( BU );
 
