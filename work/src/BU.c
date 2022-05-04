@@ -54,7 +54,7 @@ BU_OBJECT BU_create()
     BU-> Type    = BU_Object;
     BU-> BU_from = -1;
     BU-> BU_input = -1;
-    BU-> BU_output = s_alloc( 10 );
+    BU-> BU_output = s_alloc( 10000 );
     BU-> BU_output[ 0 ] = MAXSHORT;
     BU-> BU_output[ 1 ] = MAXSHORT;
     BU-> BU_to = -1;
@@ -75,7 +75,7 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
     SHORT from, SHORT symb, T2_OBJECT T2_Sigma )
 {
     int octet = 257;
-    char ts[ 10 ];
+    char ts[ 10000 ];
     int next_type, octet_valid, state_memo;
     int state_type, sm_contains, i, output_idx;
     char hexmap[17] = "0123456789ABCDEF";
@@ -84,17 +84,22 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
     BU-> BU_input = symb;
 
     sm_contains = 0;
+    output_idx = 0;
+
+    octet = MAXSHORT;
+    if ( symb >= 2 && symb <= 257 ) {
+        octet = symb - 2;
+    }
 
     /* first deal with any accumulated octets */
     if ( from > 0 ) {
 
         state_type = BU-> BU_from & 0xF;
         state_memo = BU-> BU_from >> 4;
-
-        octet = MAXSHORT;
-        if ( symb >= 2 && symb <= 257 ) {
-            octet = symb - 2;
-        }
+/*
+printf( "state_type %d\n", state_type );
+printf( "state_memo %x\n", state_memo );
+*/
 
         switch( state_type ) {
 
@@ -217,8 +222,6 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
 
         }
 
-        output_idx = 0;
-
         if ( octet_valid ) {
 
             if ( next_type == 0 ) {
@@ -229,7 +232,7 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
                     for ( i = sm_contains; --i >= 0; ) {
                         BU-> BU_output[ output_idx + i ]
                             = ( state_memo & 0xFF ) + 2;
-                        state_memo >>= 4;
+                        state_memo >>= 8;
                     }
                     output_idx += sm_contains;
                     BU-> BU_output[ output_idx++ ] = 258;
@@ -239,7 +242,7 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
                 case 1:
                     for ( i = sm_contains; --i >= 0; ) {
                         ts[ i ] = state_memo & 0xFF;
-                        state_memo >>= 4;
+                        state_memo >>= 8;
                     }
                     ts[ sm_contains ] = octet;
                     ts[ sm_contains + 1 ] = '\0';
@@ -305,6 +308,7 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
                     Error( "not defined" );
                     break;
                 }
+                BU-> BU_to = 0;
 
             } else {
                 /* a larger partial valid sequence */
@@ -322,7 +326,7 @@ BU_OBJECT BU_set_trans( BU_OBJECT BU,
 
             for ( i = sm_contains; --i >= 0; ) {
                 ts[ i ] = ( state_memo & 0xFF );
-                state_memo >>= 4;
+                state_memo >>= 8;
             }
             for ( i = 0; i < sm_contains; ++i ) {
                 BU-> BU_output[ output_idx++ ] = ts[ i ] + 2;
