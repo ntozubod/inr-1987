@@ -246,6 +246,9 @@ A_OBJECT do_an_a( A_OBJECT A, char *op )
     } else if ( !strcmp("unblast4",op) ) {
         A = AB_comp( A, B_create_B4i(), TT2 );
         disp_flag = 1;
+    } else if ( !strcmp("bu",op) ) {
+        A = AB_comp( A, B_create_BU(), TT2 );
+        disp_flag = 1;
     } else if ( (num = tonum(op)) >= 0 ) {
         if ( A_report ) fprintf( fpout, "(pow)\n" );
         A = A_catpow( A, num );

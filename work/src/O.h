@@ -410,6 +410,7 @@ A_OBJECT    A_clsseq( A_OBJECT );
 /* B.c */
 B_OBJECT    B_create_B4( );
 B_OBJECT    B_create_B4i( );
+B_OBJECT    B_create_BU( );
 void        B_destroy( B_OBJECT );
 B_OBJECT    B_set_trans( B_OBJECT, SHORT, SHORT, T2_OBJECT );
 void        B_print_trans( B_OBJECT, T2_OBJECT );
@@ -437,7 +438,7 @@ B8i_OBJECT  B8i_set_trans( B8i_OBJECT, SHORT, SHORT, T2_OBJECT );
 void        B8i_print_trans( B8i_OBJECT, T2_OBJECT );
 
 /* BU.c */
-BU_OBJECT  BU_create( );
+BU_OBJECT   BU_create( );
 void        BU_destroy( BU_OBJECT );
 BU_OBJECT   BU_set_trans( BU_OBJECT, SHORT, SHORT, T2_OBJECT );
 void        BU_print_trans( BU_OBJECT, T2_OBJECT );
